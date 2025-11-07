@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import mockData from '../data/mock-data.json' with { type: 'json' };
+import { mockData } from '../data';
 import ScanQR from './ScanQR';
 import ConfirmPayment from './ConfirmPayment';
 import SendMoney from './SendMoney';

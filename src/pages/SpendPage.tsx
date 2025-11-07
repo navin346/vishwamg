@@ -2,16 +2,7 @@
 import React from 'react';
 import { useAppContext } from '../context/AppContext';
 import InfoCard from '../components/InfoCard';
-import transactionsInrData from '../data/mock-transactions-inr.json' with { type: 'json' };
-import transactionsUsdData from '../data/mock-transactions-usd.json' with { type: 'json' };
-
-type Transaction = {
-    id: string;
-    merchant: string;
-    category: string;
-    amount: number;
-    date: string;
-};
+import { transactionsInrData, transactionsUsdData, type TransactionSummary } from '../data';
 
 const categoryIcons: { [key: string]: string } = {
     Food: '🍔',
@@ -76,7 +67,7 @@ const SpendPage: React.FC = () => {
                 <div>
                     <h3 className="text-lg font-semibold text-slate-300 mb-4">Recent Transactions</h3>
                     <ul className="space-y-3">
-                        {transactions.map((tx: Transaction) => (
+                        {transactions.map((tx: TransactionSummary) => (
                             <li key={tx.id} className="flex items-center justify-between bg-slate-800/50 p-3 md:p-4 rounded-lg border border-slate-700">
                                 <div className="flex items-center gap-4">
                                     <div className="bg-slate-700 rounded-full w-10 h-10 flex-shrink-0 flex items-center justify-center text-xl">
