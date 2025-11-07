@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import VirtualCard from './VirtualCard';
-import mockData from '../data/mock-data.json' with { type: 'json' };
+import { mockData } from '../data';
 import DepositModal from './DepositModal';
 import SendModal from './SendModal';
 import WithdrawModal from './WithdrawModal';

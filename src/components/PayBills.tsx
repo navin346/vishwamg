@@ -1,22 +1,11 @@
 import React, { useState } from 'react';
-import billersData from '../data/mock-billers.json' with { type: 'json' };
+import { billersData, type BillerCategory, type BillerDetails } from '../data';
 
 interface PayBillsProps {
     onCancel: () => void;
 }
 
 type Step = 'category' | 'biller' | 'fetch' | 'details' | 'success';
-
-interface Biller {
-    name: string;
-    logo: string;
-}
-
-interface Category {
-    name: string;
-    icon: string;
-    billers: Biller[];
-}
 
 const ArrowLeftIcon: React.FC<{ className?: string }> = ({ className }) => (
     <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -56,8 +45,8 @@ const CheckmarkIcon: React.FC = () => (
 
 const PayBills: React.FC<PayBillsProps> = ({ onCancel }) => {
     const [step, setStep] = useState<Step>('category');
-    const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
-    const [selectedBiller, setSelectedBiller] = useState<Biller | null>(null);
+    const [selectedCategory, setSelectedCategory] = useState<BillerCategory | null>(null);
+    const [selectedBiller, setSelectedBiller] = useState<BillerDetails | null>(null);
     const [customerId, setCustomerId] = useState('');
     const [isFetching, setIsFetching] = useState(false);
     
@@ -67,12 +56,12 @@ const PayBills: React.FC<PayBillsProps> = ({ onCancel }) => {
         amount: '1200.00',
     };
 
-    const handleCategorySelect = (category: Category) => {
+    const handleCategorySelect = (category: BillerCategory) => {
         setSelectedCategory(category);
         setStep('biller');
     };
 
-    const handleBillerSelect = (biller: Biller) => {
+    const handleBillerSelect = (biller: BillerDetails) => {
         setSelectedBiller(biller);
         setStep('fetch');
     };
