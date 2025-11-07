@@ -1,0 +1,11 @@
+
+{
+  "transactions": [
+    { "id": "t1_usd", "merchant": "Starbucks", "category": "Food", "amount": 5.75, "date": "Oct 28" },
+    { "id": "t2_usd", "merchant": "Netflix", "category": "Entertainment", "amount": 15.49, "date": "Oct 28" },
+    { "id": "t3_usd", "merchant": "Amazon.com", "category": "Shopping", "amount": 78.90, "date": "Oct 27" },
+    { "id": "t4_usd", "merchant": "Uber", "category": "Travel", "amount": 22.50, "date": "Oct 26" },
+    { "id": "t5_usd", "merchant": "T-Mobile", "category": "Bills", "amount": 55.00, "date": "Oct 25" },
+    { "id": "t6_usd", "merchant": "Whole Foods", "category": "Shopping", "amount": 112.30, "date": "Oct 24" }
+  ]
+}

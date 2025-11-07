@@ -1,0 +1,7 @@
+{
+  "name": "React PWA Starter",
+  "description": "A modern, clean, and functional Progressive Web App starter template built with React, TypeScript, and Tailwind CSS. It includes a service worker for offline capabilities and a custom install prompt.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}

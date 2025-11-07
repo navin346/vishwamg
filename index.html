@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vishwam</title>
+    
+    <!-- Web App Manifest -->
+    <link rel="manifest" href="/manifest.json" />
+
+    <!-- Theme Color for browsers -->
+    <meta name="theme-color" content="#1e293b">
+
+    <!-- Icons for iOS -->
+    <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+      /* Simple smooth scroll behavior */
+      html {
+        scroll-behavior: smooth;
+      }
+
+      /* Custom CSS for 3D Card Flip Animation */
+      .card-flip-container {
+        perspective: 1000px;
+      }
+      .card {
+        transition: transform 0.6s;
+        transform-style: preserve-3d;
+      }
+      .card-flipper.flipped .card {
+        transform: rotateY(180deg);
+      }
+      .card-front, .card-back {
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden; /* Safari */
+      }
+      .card-back {
+        transform: rotateY(180deg);
+      }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "react": "https://aistudiocdn.com/react@^19.2.0"
+  }
+}
+</script>
+</head>
+<body class="bg-slate-900 text-white">
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+</body>
+</html>

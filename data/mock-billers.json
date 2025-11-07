@@ -1,0 +1,54 @@
+{
+    "categories": [
+        {
+            "name": "Electricity",
+            "icon": "💡",
+            "billers": [
+                { "name": "BESCOM", "logo": "B" },
+                { "name": "Tata Power", "logo": "T" },
+                { "name": "Adani Electricity", "logo": "A" }
+            ]
+        },
+        {
+            "name": "Water",
+            "icon": "💧",
+             "billers": [
+                { "name": "Delhi Jal Board", "logo": "D" },
+                { "name": "BWSSB", "logo": "B" }
+            ]
+        },
+        {
+            "name": "Mobile Recharge",
+            "icon": "📱",
+             "billers": [
+                { "name": "Jio", "logo": "J" },
+                { "name": "Airtel", "logo": "A" },
+                { "name": "Vodafone Idea", "logo": "V" }
+            ]
+        },
+        {
+            "name": "Gas",
+            "icon": "🔥",
+             "billers": [
+                { "name": "GAIL Gas", "logo": "G" },
+                { "name": "Mahanagar Gas", "logo": "M" }
+            ]
+        },
+        {
+            "name": "Broadband",
+            "icon": "🌐",
+             "billers": [
+                { "name": "Airtel Xstream", "logo": "A" },
+                { "name": "JioFiber", "logo": "J" }
+            ]
+        },
+        {
+            "name": "DTH",
+            "icon": "📺",
+            "billers": [
+                { "name": "Tata Play", "logo": "T" },
+                { "name": "Airtel Digital TV", "logo": "A" }
+            ]
+        }
+    ]
+}
