@@ -1,0 +1,51 @@
+{
+  "india": [
+    {
+      "id": "in-1",
+      "name": "Aarav Sharma",
+      "phone": "+91 98765 43210",
+      "upiId": "aarav@okaxis",
+      "avatarColor": "#38bdf8"
+    },
+    {
+      "id": "in-2",
+      "name": "Neha Verma",
+      "phone": "+91 91234 56789",
+      "upiId": "neha@okicici",
+      "avatarColor": "#34d399"
+    },
+    {
+      "id": "in-3",
+      "name": "Rohit Patel",
+      "phone": "+91 99887 66554",
+      "upiId": "rohit@ybl",
+      "avatarColor": "#fbbf24"
+    }
+  ],
+  "international": [
+    {
+      "id": "int-1",
+      "name": "Emily Carter",
+      "phone": "+1 415 555 0102",
+      "email": "emily.carter@example.com",
+      "walletAddress": "emily.usdc",
+      "avatarColor": "#38bdf8"
+    },
+    {
+      "id": "int-2",
+      "name": "Lucas Fernandez",
+      "phone": "+34 600 123 456",
+      "email": "lucas.fernandez@example.es",
+      "walletAddress": "lucas.es.usdc",
+      "avatarColor": "#a855f7"
+    },
+    {
+      "id": "int-3",
+      "name": "Ayumi Tanaka",
+      "phone": "+81 80-1234-5678",
+      "email": "ayumi.t@example.jp",
+      "walletAddress": "ayumi.jp.usdc",
+      "avatarColor": "#f97316"
+    }
+  ]
+}

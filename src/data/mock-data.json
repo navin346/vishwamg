@@ -8,9 +8,19 @@
       "name": "J. DOE",
       "expiry": "12/28",
       "cvv": "123"
-    }
+    },
+    "walletAddress": "usd.vishwam.global"
   },
   "india": {
+    "balance": "85,234.50",
+    "currency": "INR",
+    "card": {
+      "number": "4556 7890 1234 5678",
+      "name": "A. SHARMA",
+      "expiry": "08/29",
+      "cvv": "908"
+    },
+    "upiHandle": "vishwam@upi",
     "linkedAccounts": [
       {
         "bankName": "HDFC Bank",

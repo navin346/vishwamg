@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
+import { contactsDirectory, type ContactEntry } from '../data';
 
 // Re-using the CheckmarkIcon for success animation
 const CheckmarkIcon: React.FC = () => (
@@ -38,18 +39,38 @@ interface SendModalProps {
 }
 
 const SendModal: React.FC<SendModalProps> = ({ isOpen, onClose, onSendSuccess }) => {
+  const contacts = useMemo(() => contactsDirectory.international, []);
   const [recipient, setRecipient] = useState('');
   const [amount, setAmount] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedContact, setSelectedContact] = useState<ContactEntry | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+
+  const filteredContacts = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+    if (!query) return contacts;
+    return contacts.filter((contact) =>
+      contact.name.toLowerCase().includes(query) ||
+      contact.phone.toLowerCase().includes(query) ||
+      (contact.email?.toLowerCase().includes(query) ?? false)
+    );
+  }, [contacts, searchQuery]);
 
   useEffect(() => {
     // Reset state when modal is closed
     if (!isOpen) {
       setRecipient('');
       setAmount('');
+      setSearchQuery('');
+      setSelectedContact(null);
       setIsProcessing(false);
     }
   }, [isOpen]);
+
+  const handleContactSelect = (contact: ContactEntry) => {
+    setSelectedContact(contact);
+    setRecipient(contact.email ?? contact.walletAddress ?? contact.phone);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -83,8 +104,69 @@ const SendModal: React.FC<SendModalProps> = ({ isOpen, onClose, onSendSuccess })
                   </svg>
                 </button>
               </div>
-              
+
               <div className="space-y-4">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm font-semibold text-white">Recent Contacts</p>
+                    <span className="text-xs text-slate-500 uppercase tracking-wide">Synced</span>
+                  </div>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      placeholder="Search email, wallet or phone"
+                      className="w-full bg-slate-900 border border-slate-700 rounded-lg py-3 pl-4 pr-10 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                    />
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z" />
+                    </svg>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    {filteredContacts.map((contact) => (
+                      <button
+                        key={contact.id}
+                        type="button"
+                        onClick={() => handleContactSelect(contact)}
+                        className={`flex items-center space-x-3 rounded-2xl border p-3 text-left transition-colors ${
+                          selectedContact?.id === contact.id
+                            ? 'border-cyan-400 bg-slate-900'
+                            : 'border-slate-700 bg-slate-900 hover:border-slate-600'
+                        }`}
+                      >
+                        <span
+                          className="h-10 w-10 rounded-full flex items-center justify-center text-white font-semibold"
+                          style={{ backgroundColor: contact.avatarColor }}
+                        >
+                          {contact.name
+                            .split(' ')
+                            .map((part) => part[0])
+                            .join('')
+                            .slice(0, 2)
+                            .toUpperCase()}
+                        </span>
+                        <span>
+                          <p className="text-sm font-semibold text-white">{contact.name}</p>
+                          <p className="text-xs text-slate-400">{contact.email ?? contact.walletAddress ?? contact.phone}</p>
+                        </span>
+                      </button>
+                    ))}
+                    {filteredContacts.length === 0 && (
+                      <p className="col-span-2 text-xs text-slate-500 text-center py-4 border border-dashed border-slate-700 rounded-2xl">
+                        No contacts matched “{searchQuery}”.
+                      </p>
+                    )}
+                  </div>
+                </div>
+
                 <div>
                   <label htmlFor="recipient" className="block text-sm font-medium text-slate-400 mb-1">Phone Number or Email</label>
                   <input
@@ -94,10 +176,27 @@ const SendModal: React.FC<SendModalProps> = ({ isOpen, onClose, onSendSuccess })
                     onChange={(e) => setRecipient(e.target.value)}
                     placeholder="name@example.com"
                     required
-                    autoFocus
                     className="w-full bg-slate-900 border border-slate-700 rounded-lg py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500"
                   />
                 </div>
+                {selectedContact && (
+                  <div className="flex items-center justify-between bg-slate-900 border border-cyan-400/30 rounded-lg p-3">
+                    <div>
+                      <p className="text-sm font-semibold text-white">{selectedContact.name}</p>
+                      <p className="text-xs text-slate-400">{selectedContact.email ?? selectedContact.walletAddress ?? selectedContact.phone}</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelectedContact(null);
+                        setRecipient('');
+                      }}
+                      className="text-xs text-slate-400 underline"
+                    >
+                      Clear
+                    </button>
+                  </div>
+                )}
                 <div>
                   <label htmlFor="amount" className="block text-sm font-medium text-slate-400 mb-1">USD Amount</label>
                   <div className="relative">

@@ -1,19 +1,12 @@
 import React, { useState } from 'react';
-import mockData from '../data/mock-data.json' with { type: 'json' };
-import ScanQR from './ScanQR';
-import ConfirmPayment from './ConfirmPayment';
+import { mockData } from '../data';
 import SendMoney from './SendMoney';
-import PayBills from './PayBills';
+import Shopping from './Shopping';
 import AddCreditCard from './AddCreditCard';
+import ReceiveMoney from './ReceiveMoney';
+import VirtualCard from './VirtualCard';
 
 // --- Icon Components ---
-
-const QRIcon: React.FC<{ className?: string }> = ({ className }) => (
-    <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125-1.125h-4.5A1.125 1.125 0 013.75 9.375v-4.5zM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 01-1.125-1.125v-4.5zM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0113.5 9.375v-4.5z" />
-        <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 14.625v4.5a1.125 1.125 0 001.125 1.125h4.5a1.125 1.125 0 001.125-1.125v-4.5a1.125 1.125 0 00-1.125-1.125h-4.5a1.125 1.125 0 00-1.125 1.125z" />
-    </svg>
-);
 
 const SendMoneyIcon: React.FC<{ className?: string }> = ({ className }) => (
      <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
@@ -21,15 +14,15 @@ const SendMoneyIcon: React.FC<{ className?: string }> = ({ className }) => (
     </svg>
 );
 
-const PayBillsIcon: React.FC<{ className?: string }> = ({ className }) => (
+const ReceiveIcon: React.FC<{ className?: string }> = ({ className }) => (
     <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
     </svg>
 );
 
-const RechargeIcon: React.FC<{ className?: string }> = ({ className }) => (
+const ShoppingIcon: React.FC<{ className?: string }> = ({ className }) => (
     <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V6a4 4 0 118 0v1m-9 4h10l.867 7.804A2 2 0 0115.883 21H8.117a2 2 0 01-1.984-2.196L7 11z" />
     </svg>
 );
 
@@ -61,7 +54,7 @@ interface ActionButtonProps {
 
 const ActionButton: React.FC<ActionButtonProps> = ({ label, icon, colorClasses, onClick }) => {
     return (
-        <button 
+        <button
             onClick={onClick}
             className={`flex flex-col items-center justify-center aspect-square rounded-2xl shadow-lg p-4 text-white font-semibold transform hover:scale-105 transition-transform duration-300 ease-in-out ${colorClasses}`}>
             <div className="mb-2">{icon}</div>
@@ -70,32 +63,31 @@ const ActionButton: React.FC<ActionButtonProps> = ({ label, icon, colorClasses, 
     )
 }
 
-type View = 'dashboard' | 'scan' | 'confirm' | 'send' | 'payBills' | 'addCard';
+type View = 'dashboard' | 'send' | 'receive' | 'shopping' | 'addCard';
 
 
 const IndiaDashboard: React.FC = () => {
-    const { linkedAccounts } = mockData.india;
+    const { linkedAccounts, balance, currency, card, upiHandle } = mockData.india;
     const [view, setView] = useState<View>('dashboard');
+    const [isCardFlipped, setIsCardFlipped] = useState(false);
 
-    const handlePaymentConfirm = () => {
-        alert('Payment Successful!'); // Simple feedback for the demo
-        setView('dashboard');
-    };
-
-    if (view === 'scan') {
-        return <ScanQR onTestPaymentClick={() => setView('confirm')} onCancel={() => setView('dashboard')} />;
-    }
-
-    if (view === 'confirm') {
-        return <ConfirmPayment onConfirm={handlePaymentConfirm} onCancel={() => setView('dashboard')} />;
-    }
-    
     if (view === 'send') {
         return <SendMoney onCancel={() => setView('dashboard')} />;
     }
-    
-    if (view === 'payBills') {
-        return <PayBills onCancel={() => setView('dashboard')} />;
+
+    if (view === 'receive') {
+        return (
+            <ReceiveMoney
+                onCancel={() => setView('dashboard')}
+                currency={currency}
+                accountLabel="UPI ID"
+                accountValue={upiHandle}
+            />
+        );
+    }
+
+    if (view === 'shopping') {
+        return <Shopping onCancel={() => setView('dashboard')} />;
     }
 
     if (view === 'addCard') {
@@ -104,45 +96,75 @@ const IndiaDashboard: React.FC = () => {
 
 
     return (
-        <main className="container mx-auto p-4 md:p-8">
-            {/* Header */}
-            <div className="text-left mb-8">
-                <h1 className="text-3xl font-bold text-white">Welcome to Vishwam</h1>
-            </div>
-            
-            {/* 2x2 Action Grid */}
-            <div className="grid grid-cols-2 gap-4 md:gap-6 mb-10">
-                <ActionButton 
-                    label="Scan QR"
-                    icon={<QRIcon className="w-10 h-10" />}
-                    colorClasses="bg-gradient-to-br from-green-400 to-teal-500"
-                    onClick={() => setView('scan')}
-                />
-                <ActionButton 
-                    label="Send Money"
-                    icon={<SendMoneyIcon className="w-10 h-10" />}
-                    colorClasses="bg-gradient-to-br from-blue-400 to-indigo-500"
-                    onClick={() => setView('send')}
-                />
-                <ActionButton 
-                    label="Pay Bills"
-                    icon={<PayBillsIcon className="w-10 h-10" />}
-                    colorClasses="bg-gradient-to-br from-purple-400 to-violet-500"
-                    onClick={() => setView('payBills')}
-                />
-                 <ActionButton 
-                    label="Recharge"
-                    icon={<RechargeIcon className="w-10 h-10" />}
-                    colorClasses="bg-gradient-to-br from-orange-400 to-red-500"
-                />
-            </div>
+        <main className="container mx-auto p-4 md:p-8 space-y-10">
+            <header className="text-left space-y-3">
+                <p className="text-sm uppercase tracking-wide text-slate-400">Multi-currency wallet</p>
+                <h1 className="text-3xl md:text-4xl font-bold text-white">Welcome back, Aditi</h1>
+                <p className="text-slate-400">Your balances and cards stay consistent across India and international modes.</p>
+            </header>
 
-            {/* Linked Accounts Section */}
-            <div>
-                <h2 className="text-xl font-bold text-slate-200 mb-4">Linked Accounts</h2>
+            <section className="grid md:grid-cols-[1.1fr,1fr] gap-8">
+                <div className="bg-slate-800/50 border border-slate-700 rounded-3xl p-6 flex flex-col space-y-6">
+                    <div>
+                        <p className="text-sm text-slate-400">Total Balance</p>
+                        <p className="text-4xl md:text-5xl font-bold text-white mt-2">₹{balance}</p>
+                        <p className="text-xs uppercase tracking-wide text-slate-500 mt-1">Settled in {currency}</p>
+                    </div>
+                    <div>
+                        <VirtualCard cardData={card} isFlipped={isCardFlipped} />
+                        <div className="mt-4 flex justify-end">
+                            <button
+                                onClick={() => setIsCardFlipped((prev) => !prev)}
+                                className="inline-flex items-center px-4 py-2 rounded-lg bg-slate-700 text-slate-200 text-sm hover:bg-slate-600"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2zm8 4h6m-6 3h4m-8-4h.01" />
+                                </svg>
+                                {isCardFlipped ? 'Hide CVV' : 'Show CVV'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="bg-slate-800/40 border border-slate-700 rounded-3xl p-6 space-y-6">
+                    <h2 className="text-lg font-semibold text-white">Quick Actions</h2>
+                    <div className="grid grid-cols-2 gap-4">
+                        <ActionButton
+                            label="Send"
+                            icon={<SendMoneyIcon className="w-10 h-10" />}
+                            colorClasses="bg-gradient-to-br from-blue-400 to-indigo-500"
+                            onClick={() => setView('send')}
+                        />
+                        <ActionButton
+                            label="Receive"
+                            icon={<ReceiveIcon className="w-10 h-10" />}
+                            colorClasses="bg-gradient-to-br from-green-400 to-teal-500"
+                            onClick={() => setView('receive')}
+                        />
+                        <ActionButton
+                            label="Shopping"
+                            icon={<ShoppingIcon className="w-10 h-10" />}
+                            colorClasses="bg-gradient-to-br from-purple-400 to-violet-500"
+                            onClick={() => setView('shopping')}
+                        />
+                        <ActionButton
+                            label="Add Card"
+                            icon={<CreditCardIcon className="w-10 h-10" />}
+                            colorClasses="bg-gradient-to-br from-orange-400 to-red-500"
+                            onClick={() => setView('addCard')}
+                        />
+                    </div>
+                </div>
+            </section>
+
+            <section className="space-y-4">
+                <div className="flex items-center justify-between">
+                    <h2 className="text-xl font-bold text-white">Linked Accounts</h2>
+                    <button className="text-sm text-cyan-400 hover:text-cyan-300">Manage</button>
+                </div>
                 <div className="space-y-3">
                     {linkedAccounts.map((account, index) => (
-                         <div key={index} className="bg-slate-800 rounded-xl p-4 shadow-lg border border-slate-700">
+                        <div key={index} className="bg-slate-800 rounded-xl p-4 shadow-lg border border-slate-700">
                             <div className="flex items-center space-x-4">
                                 <div className="bg-slate-700 p-3 rounded-full">
                                     <BankIcon className="w-6 h-6 text-cyan-400" />
@@ -154,21 +176,22 @@ const IndiaDashboard: React.FC = () => {
                             </div>
                         </div>
                     ))}
-                   
+
                     <div className="grid grid-cols-2 gap-3">
-                         <button className="w-full flex items-center justify-center space-x-2 bg-slate-800 hover:bg-slate-700 text-cyan-400 font-semibold py-3 px-2 rounded-xl shadow-lg transition-colors duration-300 border border-slate-700 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 focus:ring-offset-slate-900">
+                        <button className="w-full flex items-center justify-center space-x-2 bg-slate-800 hover:bg-slate-700 text-cyan-400 font-semibold py-3 px-2 rounded-xl shadow-lg transition-colors duration-300 border border-slate-700 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 focus:ring-offset-slate-900">
                             <PlusIcon className="w-5 h-5" />
                             <span className="text-sm">Add Bank</span>
                         </button>
-                         <button 
+                        <button
                             onClick={() => setView('addCard')}
-                            className="w-full flex items-center justify-center space-x-2 bg-slate-800 hover:bg-slate-700 text-cyan-400 font-semibold py-3 px-2 rounded-xl shadow-lg transition-colors duration-300 border border-slate-700 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 focus:ring-offset-slate-900">
+                            className="w-full flex items-center justify-center space-x-2 bg-slate-800 hover:bg-slate-700 text-cyan-400 font-semibold py-3 px-2 rounded-xl shadow-lg transition-colors duration-300 border border-slate-700 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 focus:ring-offset-slate-900"
+                        >
                             <CreditCardIcon className="w-5 h-5" />
                             <span className="text-sm">Add Credit Card</span>
                         </button>
                     </div>
                 </div>
-            </div>
+            </section>
 
         </main>
     );
