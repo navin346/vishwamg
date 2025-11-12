@@ -9,13 +9,29 @@
     <link rel="manifest" href="/manifest.json" />
 
     <!-- Theme Color for browsers -->
-    <meta name="theme-color" content="#1e293b">
+    <meta name="theme-color" content="#0D0C22">
 
     <!-- Icons for iOS -->
     <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
 
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+            },
+          }
+        }
+      }
+    </script>
 
     <style>
       /* Simple smooth scroll behavior */
@@ -52,7 +68,7 @@
 }
 </script>
 </head>
-<body class="bg-slate-900 text-white">
+<body class="bg-[#0D0C22] text-slate-100 font-sans">
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>

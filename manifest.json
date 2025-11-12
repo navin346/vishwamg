@@ -1,8 +1,7 @@
-
 {
-  "short_name": "React PWA",
-  "name": "React PWA Starter",
-  "description": "A starter template for building Progressive Web Apps with React.",
+  "short_name": "Vishwam",
+  "name": "Vishwam Super-App",
+  "description": "The future of finance, simplified.",
   "icons": [
     {
       "src": "/icons/icon-72x72.png",

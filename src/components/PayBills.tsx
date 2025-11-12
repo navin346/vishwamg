@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { billersData, type BillerCategory, type BillerDetails } from '../data';
+import { type BillerCategory, type BillerDetails } from '../data';
+import billersData from '../data/mock-billers.json';
 
 interface PayBillsProps {
     onCancel: () => void;

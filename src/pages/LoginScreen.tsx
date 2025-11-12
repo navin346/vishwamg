@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 interface LoginScreenProps {
@@ -27,26 +26,32 @@ const EmailIcon: React.FC = () => (
   </svg>
 );
 
+const GlobeIcon: React.FC<{ className?: string }> = ({ className }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M3.255 15.245L4 12m16.745 3.245L20 12h-2m-4-8v2m0 4h.01M12 21v-2m4-4h2M4 12H2m18 0h2M12 4V2m0 18v2" />
+    </svg>
+);
+
 const LoginScreen: React.FC<LoginScreenProps> = ({ onEmailSignIn }) => {
   const handleSocialSignIn = () => alert('Coming Soon!');
 
   return (
-    <div className="min-h-screen bg-slate-900 text-slate-100 flex flex-col justify-center items-center p-4">
-      <div className="w-full max-w-sm">
+    <div className="min-h-screen bg-[#0D0C22] text-slate-100 flex flex-col justify-center items-center p-4 relative overflow-hidden">
+        <div className="absolute -top-1/2 -left-1/4 w-[150%] h-[150%] bg-gradient-to-br from-purple-900/50 via-cyan-600/30 to-green-600/20 opacity-30 animate-[spin_20s_linear_infinite]"></div>
+      <div className="w-full max-w-sm z-10">
         <div className="text-center mb-12">
-           <div className="bg-cyan-500 p-3 rounded-xl inline-block mb-4">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
-              </svg>
+           <div className="bg-black/20 backdrop-blur-md border border-white/10 p-4 rounded-2xl inline-block mb-4">
+              <GlobeIcon className="h-10 w-10 text-white" />
           </div>
-          <h1 className="text-4xl font-bold text-white mb-2">Stablecoin Super-App</h1>
+          <h1 className="text-4xl font-bold text-white mb-2">Welcome to Vishwam</h1>
           <p className="text-lg text-slate-400">The future of finance, simplified.</p>
         </div>
 
         <div className="space-y-4">
           <button 
             onClick={handleSocialSignIn}
-            className="w-full flex items-center justify-center gap-3 bg-slate-800 hover:bg-slate-700 text-white font-bold py-3 px-4 rounded-lg shadow-lg transition-colors duration-300 border border-slate-700"
+            className="w-full flex items-center justify-center gap-3 bg-slate-800/50 hover:bg-slate-800 text-white font-bold py-3 px-4 rounded-lg shadow-lg transition-colors duration-300 border border-white/10"
           >
             <GoogleIcon />
             Sign in with Google
@@ -54,15 +59,21 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onEmailSignIn }) => {
           
           <button 
             onClick={handleSocialSignIn}
-            className="w-full flex items-center justify-center gap-3 bg-slate-800 hover:bg-slate-700 text-white font-bold py-3 px-4 rounded-lg shadow-lg transition-colors duration-300 border border-slate-700"
+            className="w-full flex items-center justify-center gap-3 bg-slate-800/50 hover:bg-slate-800 text-white font-bold py-3 px-4 rounded-lg shadow-lg transition-colors duration-300 border border-white/10"
           >
             <XIcon />
             Sign in with X
           </button>
           
+          <div className="relative flex py-3 items-center">
+            <div className="flex-grow border-t border-slate-700"></div>
+            <span className="flex-shrink mx-4 text-slate-500 text-sm">OR</span>
+            <div className="flex-grow border-t border-slate-700"></div>
+          </div>
+          
           <button 
             onClick={onEmailSignIn}
-            className="w-full flex items-center justify-center gap-3 bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-3 px-4 rounded-lg shadow-lg transition-colors duration-300"
+            className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-cyan-500 to-purple-500 hover:opacity-90 text-white font-bold py-3 px-4 rounded-lg shadow-lg transition-opacity duration-300"
           >
             <EmailIcon />
             Sign in with Email

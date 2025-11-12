@@ -1,6 +1,4 @@
-
 import React, { useState } from 'react';
-import Header from './components/Header';
 import BottomNav from './components/BottomNav';
 import HomePage from './pages/HomePage';
 import SpendPage from './pages/SpendPage';
@@ -27,9 +25,10 @@ const MainApp: React.FC = () => {
   
   return (
     <AppProvider>
-      <div className="min-h-screen bg-slate-900 text-slate-100 font-sans pb-20">
-        <Header />
-        {renderContent()}
+      <div className="min-h-screen bg-[#0D0C22] text-slate-100 font-sans pb-24">
+        <div className="container mx-auto max-w-lg">
+            {renderContent()}
+        </div>
         <BottomNav activeTab={activeTab} setActiveTab={setActiveTab} />
       </div>
     </AppProvider>

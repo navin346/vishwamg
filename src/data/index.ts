@@ -1,7 +1,3 @@
-import mockDataJson from './mock-data.json';
-import mockTransactionsInrJson from './mock-transactions-inr.json';
-import mockTransactionsUsdJson from './mock-transactions-usd.json';
-import mockBillersJson from './mock-billers.json';
 
 export interface InternationalCardDetails {
   number: string;
@@ -56,8 +52,3 @@ export interface BillerCategory {
 export interface BillersDirectory {
   categories: BillerCategory[];
 }
-
-export const mockData = mockDataJson as MockAppData;
-export const transactionsInrData = mockTransactionsInrJson as TransactionsResponse;
-export const transactionsUsdData = mockTransactionsUsdJson as TransactionsResponse;
-export const billersData = mockBillersJson as BillersDirectory;

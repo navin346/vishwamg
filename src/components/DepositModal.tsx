@@ -16,7 +16,7 @@ const CheckmarkIcon: React.FC = () => (
             stroke-dashoffset: 166;
             stroke-width: 2;
             stroke-miterlimit: 10;
-            stroke: #7ac142;
+            stroke: #4ade80;
             fill: none;
             animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
         }
@@ -41,10 +41,11 @@ const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose, onDepositS
   const [isProcessing, setIsProcessing] = useState(false);
 
   useEffect(() => {
-    // Reset state when modal is closed
     if (!isOpen) {
-      setAmount('');
-      setIsProcessing(false);
+      setTimeout(() => {
+        setAmount('');
+        setIsProcessing(false);
+      }, 300); // Wait for closing animation
     }
   }, [isOpen]);
 
@@ -59,15 +60,18 @@ const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose, onDepositS
     }
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex justify-center items-center z-50 p-4" aria-modal="true" role="dialog">
-      <div className="bg-slate-800 border border-slate-700 rounded-xl shadow-2xl w-full max-w-md transform transition-all">
+    <div 
+        className={`fixed inset-0 z-50 flex justify-center items-end md:items-center p-4 transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} 
+        aria-modal="true" 
+        role="dialog"
+    >
+      <div className="fixed inset-0 bg-black/60" onClick={onClose}></div>
+      <div className={`bg-slate-800/80 backdrop-blur-xl border border-white/10 rounded-t-2xl md:rounded-2xl shadow-2xl w-full max-w-md transform transition-transform duration-300 ease-in-out ${isOpen ? 'translate-y-0' : 'translate-y-full'}`}>
         {isProcessing ? (
-          <div className="flex flex-col items-center justify-center p-8 h-64">
+          <div className="flex flex-col items-center justify-center p-8 h-80">
              <CheckmarkIcon />
-             <p className="text-xl font-bold text-white mt-4">Success!</p>
+             <p className="text-2xl font-bold text-white mt-4">Deposit Successful!</p>
           </div>
         ) : (
           <form onSubmit={handleSubmit}>
@@ -82,7 +86,7 @@ const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose, onDepositS
               </div>
               
               <div className="relative">
-                <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400 text-2xl">$</span>
+                <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400 text-3xl">$</span>
                 <input
                   type="number"
                   step="0.01"
@@ -92,15 +96,15 @@ const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose, onDepositS
                   placeholder="100.00"
                   required
                   autoFocus
-                  className="w-full bg-slate-900 border border-slate-700 rounded-lg py-4 pl-10 pr-4 text-white text-2xl font-semibold focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                  className="w-full bg-[#0D0C22]/50 border-2 border-slate-700 rounded-lg py-4 pl-12 pr-4 text-white text-3xl font-bold focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-cyan-400"
                 />
               </div>
             </div>
 
-            <div className="bg-slate-900/50 p-6 rounded-b-xl">
+            <div className="bg-black/20 p-6 rounded-b-xl">
               <button
                 type="submit"
-                className="w-full bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-3 px-4 rounded-lg shadow-lg transition-colors duration-300 disabled:bg-slate-600 disabled:cursor-not-allowed"
+                className="w-full bg-gradient-to-r from-cyan-500 to-purple-500 hover:opacity-90 text-white font-bold py-4 px-4 rounded-lg shadow-lg transition-opacity duration-300 disabled:from-slate-600 disabled:to-slate-700 disabled:cursor-not-allowed"
                 disabled={!amount || parseFloat(amount) <= 0}
               >
                 Pay with US Bank Account

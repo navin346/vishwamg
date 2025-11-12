@@ -1,6 +1,5 @@
-
 // A unique name for the cache
-const CACHE_NAME = 'react-pwa-starter-v1';
+const CACHE_NAME = 'vishwam-pwa-v1';
 
 // List of assets to cache on installation
 const urlsToCache = [
