@@ -1,9 +1,5 @@
 import React from 'react';
 
-interface LoginScreenProps {
-  onEmailSignIn: () => void;
-}
-
 // Inline SVG Icon Components
 const GoogleIcon: React.FC = () => (
   <svg className="w-5 h-5" viewBox="0 0 48 48">
@@ -14,18 +10,6 @@ const GoogleIcon: React.FC = () => (
   </svg>
 );
 
-const XIcon: React.FC = () => (
-  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-  </svg>
-);
-
-const EmailIcon: React.FC = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-    <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-  </svg>
-);
-
 const GlobeIcon: React.FC<{ className?: string }> = ({ className }) => (
     <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -33,50 +17,44 @@ const GlobeIcon: React.FC<{ className?: string }> = ({ className }) => (
     </svg>
 );
 
+
+interface LoginScreenProps {
+  onEmailSignIn: () => void;
+}
+
 const LoginScreen: React.FC<LoginScreenProps> = ({ onEmailSignIn }) => {
   const handleSocialSignIn = () => alert('Coming Soon!');
 
   return (
-    <div className="min-h-screen bg-[#0D0C22] text-slate-100 flex flex-col justify-center items-center p-4 relative overflow-hidden">
-        <div className="absolute -top-1/2 -left-1/4 w-[150%] h-[150%] bg-gradient-to-br from-purple-900/50 via-cyan-600/30 to-green-600/20 opacity-30 animate-[spin_20s_linear_infinite]"></div>
-      <div className="w-full max-w-sm z-10">
-        <div className="text-center mb-12">
-           <div className="bg-black/20 backdrop-blur-md border border-white/10 p-4 rounded-2xl inline-block mb-4">
+    <div className="min-h-screen bg-near-black text-white flex flex-col justify-center items-center p-4">
+      <div className="w-full max-w-sm text-center">
+        <div className="mb-12">
+           <div className="bg-surface border border-white/10 p-4 rounded-2xl inline-block mb-4">
               <GlobeIcon className="h-10 w-10 text-white" />
           </div>
-          <h1 className="text-4xl font-bold text-white mb-2">Welcome to Vishwam</h1>
-          <p className="text-lg text-slate-400">The future of finance, simplified.</p>
+          <h1 className="text-4xl font-bold text-white">Vishwam</h1>
+          <p className="text-lg text-subtle">The future of finance, simplified.</p>
         </div>
 
         <div className="space-y-4">
           <button 
+            onClick={onEmailSignIn}
+            className="w-full bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 hover:opacity-90 text-white font-bold py-3 px-4 rounded-lg shadow-lg transition-opacity duration-300 animate-gradient-pan"
+            style={{ backgroundSize: '200% auto' }}
+          >
+            Continue with Email
+          </button>
+           <div className="relative flex py-3 items-center">
+            <div className="flex-grow border-t border-white/10"></div>
+            <span className="flex-shrink mx-4 text-subtle text-sm">OR</span>
+            <div className="flex-grow border-t border-white/10"></div>
+          </div>
+          <button 
             onClick={handleSocialSignIn}
-            className="w-full flex items-center justify-center gap-3 bg-slate-800/50 hover:bg-slate-800 text-white font-bold py-3 px-4 rounded-lg shadow-lg transition-colors duration-300 border border-white/10"
+            className="w-full flex items-center justify-center gap-3 bg-surface hover:bg-white/10 text-white font-bold py-3 px-4 rounded-lg transition-colors duration-300 border border-white/10"
           >
             <GoogleIcon />
-            Sign in with Google
-          </button>
-          
-          <button 
-            onClick={handleSocialSignIn}
-            className="w-full flex items-center justify-center gap-3 bg-slate-800/50 hover:bg-slate-800 text-white font-bold py-3 px-4 rounded-lg shadow-lg transition-colors duration-300 border border-white/10"
-          >
-            <XIcon />
-            Sign in with X
-          </button>
-          
-          <div className="relative flex py-3 items-center">
-            <div className="flex-grow border-t border-slate-700"></div>
-            <span className="flex-shrink mx-4 text-slate-500 text-sm">OR</span>
-            <div className="flex-grow border-t border-slate-700"></div>
-          </div>
-          
-          <button 
-            onClick={onEmailSignIn}
-            className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-cyan-500 to-purple-500 hover:opacity-90 text-white font-bold py-3 px-4 rounded-lg shadow-lg transition-opacity duration-300"
-          >
-            <EmailIcon />
-            Sign in with Email
+            Continue with Google
           </button>
         </div>
       </div>

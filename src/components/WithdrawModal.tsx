@@ -52,13 +52,15 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ isOpen, onClose, onWithdr
       }, 300);
     }
   }, [isOpen]);
+  
+  useEffect(() => {
+    if(isOpen) {
+        setStep(areBankDetailsAdded ? 'enterAmount' : 'options');
+    }
+  }, [isOpen, areBankDetailsAdded]);
 
   const handleOptionClick = () => {
-    if (!areBankDetailsAdded) {
-      setStep('addBank');
-    } else {
-      setStep('enterAmount');
-    }
+    setStep('addBank');
   };
   
   const handleSaveDetails = (e: React.FormEvent) => {
@@ -102,13 +104,13 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ isOpen, onClose, onWithdr
         return (
             <div className="p-6">
                 <div className="space-y-4">
-                    <button onClick={handleOptionClick} className="w-full text-left bg-slate-700/50 hover:bg-slate-700 p-4 rounded-lg transition-colors border border-white/10">
+                    <button onClick={handleOptionClick} className="w-full text-left bg-near-black/50 hover:bg-white/5 p-4 rounded-lg transition-colors border border-white/10">
                         <p className="font-semibold text-white">Withdraw to Bank Account</p>
-                        <p className="text-sm text-slate-400">Standard transfer (1-3 days)</p>
+                        <p className="text-sm text-subtle">Standard transfer (1-3 days)</p>
                     </button>
-                    <button onClick={handleOptionClick} className="w-full text-left bg-slate-700/50 hover:bg-slate-700 p-4 rounded-lg transition-colors border border-white/10">
+                    <button onClick={handleOptionClick} className="w-full text-left bg-near-black/50 hover:bg-white/5 p-4 rounded-lg transition-colors border border-white/10">
                         <p className="font-semibold text-white">Withdraw to UPI (India)</p>
-                        <p className="text-sm text-slate-400">Instant transfer</p>
+                        <p className="text-sm text-subtle">Instant transfer</p>
                     </button>
                 </div>
             </div>
@@ -118,24 +120,22 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ isOpen, onClose, onWithdr
     if (step === 'addBank') {
         return (
             <form onSubmit={handleSaveDetails}>
-                <div className="p-6">
-                    <div className="space-y-4">
-                         <div>
-                            <label htmlFor="accountHolder" className="block text-sm font-medium text-slate-300 mb-2">Account Holder Name</label>
-                            <input id="accountHolder" type="text" required className="w-full bg-[#0D0C22]/50 border-2 border-slate-700 rounded-lg py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-cyan-400" />
-                        </div>
-                        <div>
-                            <label htmlFor="accountNumber" className="block text-sm font-medium text-slate-300 mb-2">Account Number</label>
-                            <input id="accountNumber" type="text" inputMode="numeric" required className="w-full bg-[#0D0C22]/50 border-2 border-slate-700 rounded-lg py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-cyan-400" />
-                        </div>
-                        <div>
-                            <label htmlFor="routingNumber" className="block text-sm font-medium text-slate-300 mb-2">Routing Number</label>
-                            <input id="routingNumber" type="text" inputMode="numeric" required className="w-full bg-[#0D0C22]/50 border-2 border-slate-700 rounded-lg py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-cyan-400" />
-                        </div>
+                <div className="p-6 space-y-4">
+                    <div>
+                        <label htmlFor="accountHolder" className="block text-sm font-medium text-subtle mb-2">Account Holder Name</label>
+                        <input id="accountHolder" type="text" required className="w-full bg-near-black/50 border-2 border-white/10 rounded-lg py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition" />
+                    </div>
+                    <div>
+                        <label htmlFor="accountNumber" className="block text-sm font-medium text-subtle mb-2">Account Number</label>
+                        <input id="accountNumber" type="text" inputMode="numeric" required className="w-full bg-near-black/50 border-2 border-white/10 rounded-lg py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition" />
+                    </div>
+                    <div>
+                        <label htmlFor="routingNumber" className="block text-sm font-medium text-subtle mb-2">Routing Number</label>
+                        <input id="routingNumber" type="text" inputMode="numeric" required className="w-full bg-near-black/50 border-2 border-white/10 rounded-lg py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition" />
                     </div>
                 </div>
-                 <div className="bg-black/20 p-6 rounded-b-xl">
-                    <button type="submit" className="w-full bg-gradient-to-r from-cyan-500 to-purple-500 hover:opacity-90 text-white font-bold py-4 px-4 rounded-lg shadow-lg">
+                 <div className="bg-black/20 p-6 rounded-b-xl mt-2">
+                    <button type="submit" className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:opacity-90 text-white font-bold py-4 px-4 rounded-lg shadow-lg">
                         Save Details
                     </button>
                 </div>
@@ -148,7 +148,7 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ isOpen, onClose, onWithdr
             <form onSubmit={handleWithdrawSubmit}>
                 <div className="p-6">
                     <div className="relative">
-                      <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400 text-3xl">$</span>
+                      <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-subtle text-3xl">$</span>
                       <input
                         type="number"
                         step="0.01"
@@ -158,14 +158,14 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ isOpen, onClose, onWithdr
                         placeholder="100.00"
                         required
                         autoFocus
-                        className="w-full bg-[#0D0C22]/50 border-2 border-slate-700 rounded-lg py-4 pl-12 pr-4 text-white text-3xl font-bold focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-cyan-400"
+                        className="w-full bg-near-black/50 border-2 border-white/10 rounded-lg py-4 pl-12 pr-4 text-white text-3xl font-bold focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
                       />
                     </div>
                 </div>
-                 <div className="bg-black/20 p-6 rounded-b-xl">
+                 <div className="bg-black/20 p-6 rounded-b-xl mt-2">
                     <button
                         type="submit"
-                        className="w-full bg-gradient-to-r from-cyan-500 to-purple-500 hover:opacity-90 text-white font-bold py-4 px-4 rounded-lg shadow-lg transition-opacity duration-300 disabled:from-slate-600 disabled:to-slate-700 disabled:cursor-not-allowed"
+                        className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:opacity-90 text-white font-bold py-4 px-4 rounded-lg shadow-lg transition-opacity duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                         disabled={!amount || parseFloat(amount) <= 0}
                     >
                         Withdraw
@@ -180,12 +180,12 @@ const WithdrawModal: React.FC<WithdrawModalProps> = ({ isOpen, onClose, onWithdr
 
   return (
     <div className={`fixed inset-0 z-50 flex justify-center items-end md:items-center p-4 transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} aria-modal="true" role="dialog">
-      <div className="fixed inset-0 bg-black/60" onClick={onClose}></div>
-      <div className={`bg-slate-800/80 backdrop-blur-xl border border-white/10 rounded-t-2xl md:rounded-2xl shadow-2xl w-full max-w-md transform transition-transform duration-300 ease-in-out ${isOpen ? 'translate-y-0' : 'translate-y-full'}`}>
+      <div className="fixed inset-0 bg-black/70" onClick={onClose}></div>
+      <div className={`bg-surface/80 backdrop-blur-xl border border-white/10 rounded-t-2xl md:rounded-2xl shadow-2xl w-full max-w-md transform transition-transform duration-300 ease-in-out ${isOpen ? 'translate-y-0' : 'translate-y-full'}`}>
         <div className="relative">
             <div className="p-6 flex justify-between items-center">
                  <h2 className="text-2xl font-bold text-white">{getTitle()}</h2>
-                <button type="button" onClick={onClose} className="text-slate-400 hover:text-white z-10" aria-label="Close withdraw modal">
+                <button type="button" onClick={onClose} className="text-subtle hover:text-white z-10" aria-label="Close withdraw modal">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                     </svg>

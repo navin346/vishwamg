@@ -24,7 +24,7 @@ const CheckmarkIcon: React.FC = () => (
             stroke-dashoffset: 166;
             stroke-width: 2;
             stroke-miterlimit: 10;
-            stroke: #7ac142;
+            stroke: #4ade80;
             fill: none;
             animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
         }
@@ -112,9 +112,9 @@ const PayBills: React.FC<PayBillsProps> = ({ onCancel }) => {
     };
 
     return (
-        <div className="fixed inset-0 bg-slate-900 z-30 flex flex-col">
-            <header className="p-4 flex items-center">
-                 <button onClick={handleBack} className="text-white p-2" aria-label="Back">
+        <div className="fixed inset-0 bg-near-black z-30 flex flex-col">
+            <header className="p-4 flex items-center border-b border-white/10">
+                 <button onClick={handleBack} className="text-white p-2 -ml-2" aria-label="Back">
                     <ArrowLeftIcon className="w-6 h-6" />
                 </button>
                 <h1 className="text-xl font-bold text-white mx-auto pr-8">{getTitle()}</h1>
@@ -124,9 +124,9 @@ const PayBills: React.FC<PayBillsProps> = ({ onCancel }) => {
                 {step === 'category' && (
                     <div className="grid grid-cols-3 gap-4">
                         {billersData.categories.map(cat => (
-                            <button key={cat.name} onClick={() => handleCategorySelect(cat)} className="flex flex-col items-center justify-center p-4 bg-slate-800 rounded-lg aspect-square">
+                            <button key={cat.name} onClick={() => handleCategorySelect(cat)} className="flex flex-col items-center justify-center p-4 bg-surface rounded-lg aspect-square border border-white/10 hover:bg-white/5 transition-colors">
                                 <span className="text-3xl">{cat.icon}</span>
-                                <span className="text-sm mt-2 text-slate-300">{cat.name}</span>
+                                <span className="text-sm mt-2 text-subtle text-center">{cat.name}</span>
                             </button>
                         ))}
                     </div>
@@ -135,8 +135,8 @@ const PayBills: React.FC<PayBillsProps> = ({ onCancel }) => {
                 {step === 'biller' && selectedCategory && (
                     <div className="space-y-3">
                         {selectedCategory.billers.map(biller => (
-                            <button key={biller.name} onClick={() => handleBillerSelect(biller)} className="w-full flex items-center space-x-4 p-4 bg-slate-800 rounded-lg text-left">
-                                <div className="w-10 h-10 bg-slate-700 rounded-full flex items-center justify-center text-xl font-bold">{biller.logo}</div>
+                            <button key={biller.name} onClick={() => handleBillerSelect(biller)} className="w-full flex items-center space-x-4 p-4 bg-surface rounded-lg text-left border border-white/10 hover:bg-white/5 transition-colors">
+                                <div className="w-10 h-10 bg-near-black border border-white/10 rounded-full flex items-center justify-center text-xl font-bold">{biller.logo}</div>
                                 <span className="font-semibold text-white">{biller.name}</span>
                             </button>
                         ))}
@@ -144,10 +144,10 @@ const PayBills: React.FC<PayBillsProps> = ({ onCancel }) => {
                 )}
 
                 {step === 'fetch' && (
-                    <form onSubmit={handleFetchBill}>
-                        <p className="text-slate-400 text-center mb-6">Enter your customer ID to fetch your latest bill.</p>
+                    <form onSubmit={handleFetchBill} className="flex flex-col h-full">
+                        <p className="text-subtle text-center mb-6">Enter your customer ID for {selectedBiller?.name} to fetch your latest bill.</p>
                          <div>
-                            <label htmlFor="customerId" className="block text-sm font-medium text-slate-400 mb-1">
+                            <label htmlFor="customerId" className="block text-sm font-medium text-subtle mb-1">
                                 Customer ID
                             </label>
                             <input
@@ -158,10 +158,11 @@ const PayBills: React.FC<PayBillsProps> = ({ onCancel }) => {
                                 placeholder="e.g., 123456789"
                                 required
                                 autoFocus
-                                className="w-full bg-slate-800 border border-slate-700 rounded-lg py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                                className="w-full bg-surface border border-white/10 rounded-lg py-3 px-4 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                             />
                         </div>
-                        <button type="submit" disabled={isFetching || !customerId} className="w-full mt-8 bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-3 px-4 rounded-lg shadow-lg disabled:bg-slate-600">
+                        <div className="flex-grow"></div>
+                        <button type="submit" disabled={isFetching || !customerId} className="w-full mt-8 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold py-3 px-4 rounded-lg shadow-lg disabled:opacity-50">
                              {isFetching ? 'Fetching...' : 'Fetch Bill'}
                         </button>
                     </form>
@@ -170,20 +171,20 @@ const PayBills: React.FC<PayBillsProps> = ({ onCancel }) => {
                 {step === 'details' && selectedBiller && (
                     <div className="flex flex-col h-full">
                         <div className="flex-grow text-center">
-                             <div className="w-16 h-16 bg-slate-700 rounded-full flex items-center justify-center text-3xl font-bold mx-auto mb-4">{selectedBiller.logo}</div>
+                             <div className="w-16 h-16 bg-surface border border-white/10 rounded-full flex items-center justify-center text-3xl font-bold mx-auto mb-4">{selectedBiller.logo}</div>
                              <p className="font-semibold text-white text-lg">{selectedBiller.name}</p>
-                             <p className="text-sm text-slate-400 mb-8">Customer ID: {customerId}</p>
+                             <p className="text-sm text-subtle mb-8">Customer ID: {customerId}</p>
                              
-                             <div className="bg-slate-800 p-4 rounded-lg mb-4">
-                                <p className="text-sm text-slate-400">Due Date</p>
+                             <div className="bg-surface border border-white/10 p-4 rounded-lg mb-4">
+                                <p className="text-sm text-subtle">Due Date</p>
                                 <p className="text-lg font-semibold text-white">{mockBill.dueDate}</p>
                              </div>
-                              <div className="bg-slate-800 p-4 rounded-lg">
-                                <p className="text-sm text-slate-400">Amount Due</p>
+                              <div className="bg-surface border border-white/10 p-4 rounded-lg">
+                                <p className="text-sm text-subtle">Amount Due</p>
                                 <p className="text-4xl font-bold text-white">₹{mockBill.amount}</p>
                              </div>
                         </div>
-                        <button onClick={handlePayBill} disabled={isFetching} className="w-full mt-8 bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-3 px-4 rounded-lg shadow-lg disabled:bg-slate-600">
+                        <button onClick={handlePayBill} disabled={isFetching} className="w-full mt-8 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold py-3 px-4 rounded-lg shadow-lg disabled:opacity-50">
                              {isFetching ? 'Processing...' : `Pay ₹${mockBill.amount}`}
                         </button>
                     </div>
@@ -193,8 +194,8 @@ const PayBills: React.FC<PayBillsProps> = ({ onCancel }) => {
                     <div className="flex flex-col items-center justify-center text-center h-full">
                         <CheckmarkIcon />
                         <h2 className="text-2xl font-bold text-white mt-4">Payment Successful!</h2>
-                        <p className="text-slate-400 mt-2">Your bill for {selectedBiller?.name} has been paid.</p>
-                        <button onClick={resetAndExit} className="w-full mt-12 bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-3 px-4 rounded-lg shadow-lg">
+                        <p className="text-subtle mt-2">Your bill for {selectedBiller?.name} has been paid.</p>
+                        <button onClick={resetAndExit} className="w-full mt-12 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold py-3 px-4 rounded-lg shadow-lg">
                             Done
                         </button>
                     </div>

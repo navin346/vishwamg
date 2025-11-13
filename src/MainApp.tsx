@@ -25,7 +25,7 @@ const MainApp: React.FC = () => {
   
   return (
     <AppProvider>
-      <div className="min-h-screen bg-[#0D0C22] text-slate-100 font-sans pb-24">
+      <div className="min-h-screen bg-near-black text-white font-sans pb-28">
         <div className="container mx-auto max-w-lg">
             {renderContent()}
         </div>

@@ -66,8 +66,8 @@ const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose, onDepositS
         aria-modal="true" 
         role="dialog"
     >
-      <div className="fixed inset-0 bg-black/60" onClick={onClose}></div>
-      <div className={`bg-slate-800/80 backdrop-blur-xl border border-white/10 rounded-t-2xl md:rounded-2xl shadow-2xl w-full max-w-md transform transition-transform duration-300 ease-in-out ${isOpen ? 'translate-y-0' : 'translate-y-full'}`}>
+      <div className="fixed inset-0 bg-black/70" onClick={onClose}></div>
+      <div className={`bg-surface/80 backdrop-blur-xl border border-white/10 rounded-t-2xl md:rounded-2xl shadow-2xl w-full max-w-md transform transition-transform duration-300 ease-in-out ${isOpen ? 'translate-y-0' : 'translate-y-full'}`}>
         {isProcessing ? (
           <div className="flex flex-col items-center justify-center p-8 h-80">
              <CheckmarkIcon />
@@ -78,7 +78,7 @@ const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose, onDepositS
             <div className="p-6">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold text-white">Deposit Funds</h2>
-                <button type="button" onClick={onClose} className="text-slate-400 hover:text-white" aria-label="Close deposit modal">
+                <button type="button" onClick={onClose} className="text-subtle hover:text-white" aria-label="Close deposit modal">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                   </svg>
@@ -86,7 +86,7 @@ const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose, onDepositS
               </div>
               
               <div className="relative">
-                <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400 text-3xl">$</span>
+                <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-subtle text-3xl">$</span>
                 <input
                   type="number"
                   step="0.01"
@@ -96,15 +96,15 @@ const DepositModal: React.FC<DepositModalProps> = ({ isOpen, onClose, onDepositS
                   placeholder="100.00"
                   required
                   autoFocus
-                  className="w-full bg-[#0D0C22]/50 border-2 border-slate-700 rounded-lg py-4 pl-12 pr-4 text-white text-3xl font-bold focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-cyan-400"
+                  className="w-full bg-near-black/50 border-2 border-white/10 rounded-lg py-4 pl-12 pr-4 text-white text-3xl font-bold focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
                 />
               </div>
             </div>
 
-            <div className="bg-black/20 p-6 rounded-b-xl">
+            <div className="bg-black/20 p-6 rounded-b-xl mt-2">
               <button
                 type="submit"
-                className="w-full bg-gradient-to-r from-cyan-500 to-purple-500 hover:opacity-90 text-white font-bold py-4 px-4 rounded-lg shadow-lg transition-opacity duration-300 disabled:from-slate-600 disabled:to-slate-700 disabled:cursor-not-allowed"
+                className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:opacity-90 text-white font-bold py-4 px-4 rounded-lg shadow-lg transition-opacity duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={!amount || parseFloat(amount) <= 0}
               >
                 Pay with US Bank Account

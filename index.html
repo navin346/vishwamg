@@ -9,7 +9,7 @@
     <link rel="manifest" href="/manifest.json" />
 
     <!-- Theme Color for browsers -->
-    <meta name="theme-color" content="#0D0C22">
+    <meta name="theme-color" content="#0A0A0A">
 
     <!-- Icons for iOS -->
     <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
@@ -25,9 +25,23 @@
       tailwind.config = {
         theme: {
           extend: {
+            colors: {
+              'near-black': '#0A0A0A',
+              'surface': '#181818',
+              'subtle': '#888888',
+            },
             fontFamily: {
               sans: ['Inter', 'sans-serif'],
             },
+            animation: {
+              'gradient-pan': 'gradient-pan 3s ease infinite',
+            },
+            keyframes: {
+              'gradient-pan': {
+                '0%, 100%': { backgroundPosition: '0% 50%' },
+                '50%': { backgroundPosition: '100% 50%' },
+              }
+            }
           }
         }
       }
@@ -38,7 +52,10 @@
       html {
         scroll-behavior: smooth;
       }
-
+      body {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
       /* Custom CSS for 3D Card Flip Animation */
       .card-flip-container {
         perspective: 1000px;
@@ -57,6 +74,24 @@
       .card-back {
         transform: rotateY(180deg);
       }
+       .gradient-text {
+        background-clip: text;
+        -webkit-background-clip: text;
+        color: transparent;
+      }
+      .gradient-border-button::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: 9999px; /* Or same as button */
+        padding: 2px; /* border width */
+        background: linear-gradient(90deg, #8B5CF6, #EC4899);
+        -webkit-mask: 
+          linear-gradient(#fff 0 0) content-box, 
+          linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+      }
     </style>
 <script type="importmap">
 {
@@ -68,7 +103,7 @@
 }
 </script>
 </head>
-<body class="bg-[#0D0C22] text-slate-100 font-sans">
+<body class="bg-near-black text-white font-sans">
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>

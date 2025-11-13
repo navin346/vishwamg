@@ -16,12 +16,12 @@ const ActionButton: React.FC<{icon: React.ReactNode, label: string, onClick?: ()
     <div className="flex flex-col items-center space-y-2">
         <button 
             onClick={onClick}
-            className="bg-slate-800/70 hover:bg-slate-800 border border-white/10 rounded-full w-16 h-16 flex items-center justify-center transition-all duration-300 transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-[#0D0C22]"
+            className="relative bg-surface hover:bg-white/5 border border-white/10 rounded-full w-16 h-16 flex items-center justify-center transition-all duration-300 transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-near-black"
             aria-label={label}
         >
             {icon}
         </button>
-        <span className="text-sm font-medium text-slate-300">{label}</span>
+        <span className="text-sm font-medium text-subtle">{label}</span>
     </div>
 );
 
@@ -65,10 +65,10 @@ const InternationalDashboard: React.FC = () => {
       <main className="p-4 md:p-6 space-y-8">
         {/* Balance Display */}
         <div className="text-center pt-4">
-          <p className="text-lg text-slate-400 mb-1">Total Balance</p>
-          <h1 className="text-6xl font-extrabold text-white tracking-tight">
+          <p className="text-lg text-subtle mb-1">Total Balance</p>
+          <h1 className="text-6xl font-extrabold text-white tracking-tighter">
             ${balance}
-            <span className="text-4xl text-slate-500 ml-2 font-medium">{currency}</span>
+            <span className="text-4xl text-subtle ml-2 font-medium">{currency}</span>
           </h1>
         </div>
 
@@ -76,28 +76,24 @@ const InternationalDashboard: React.FC = () => {
         <div className="w-full">
             <VirtualCard cardData={card} isFlipped={isCardFlipped} />
         
-            {/* Action Button */}
             <div className="mt-6 flex justify-center">
                 <button
                     onClick={() => setIsCardFlipped(!isCardFlipped)}
-                    className="bg-slate-800/70 hover:bg-slate-800 border border-white/10 text-white font-bold py-3 px-6 rounded-lg shadow-lg transform hover:scale-105 transition-transform duration-300 ease-in-out flex items-center justify-center"
+                    className="bg-surface hover:bg-white/5 border border-white/10 text-white font-bold py-3 px-6 rounded-lg shadow-lg transform hover:scale-105 transition-transform duration-300 ease-in-out"
                     aria-label={isCardFlipped ? "Hide Card Details" : "Show Card Details"}
                 >
-                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-                    </svg>
                     {isCardFlipped ? 'Hide Details' : 'Show Details'}
                 </button>
             </div>
         </div>
         
         {/* Core Action Buttons */}
-        <div className="w-full mt-4">
+        <div className="w-full mt-4 bg-surface p-4 rounded-2xl border border-white/10">
           <div className="grid grid-cols-4 gap-4">
-            <ActionButton icon={<DepositIcon className="w-7 h-7 text-cyan-400" />} label="Deposit" onClick={() => setIsDepositModalOpen(true)} />
-            <ActionButton icon={<SendIcon className="w-7 h-7 text-green-400" />} label="Send" onClick={() => setIsSendModalOpen(true)} />
-            <ActionButton icon={<SwapIcon className="w-7 h-7 text-purple-400" />} label="Swap" />
-            <ActionButton icon={<WithdrawIcon className="w-7 h-7 text-orange-400" />} label="Withdraw" onClick={() => setIsWithdrawModalOpen(true)} />
+            <ActionButton icon={<DepositIcon className="w-7 h-7 text-white" />} label="Deposit" onClick={() => setIsDepositModalOpen(true)} />
+            <ActionButton icon={<SendIcon className="w-7 h-7 text-white" />} label="Send" onClick={() => setIsSendModalOpen(true)} />
+            <ActionButton icon={<SwapIcon className="w-7 h-7 text-white" />} label="Swap" />
+            <ActionButton icon={<WithdrawIcon className="w-7 h-7 text-white" />} label="Withdraw" onClick={() => setIsWithdrawModalOpen(true)} />
           </div>
         </div>
 

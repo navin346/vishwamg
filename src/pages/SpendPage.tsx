@@ -20,6 +20,14 @@ const categoryColors: { [key: string]: string } = {
     Entertainment: 'bg-pink-500',
 };
 
+const gradientColors = [
+    'from-purple-500 to-pink-500',
+    'from-pink-500 to-red-500',
+    'from-red-500 to-orange-500',
+    'from-orange-500 to-yellow-500',
+    'from-yellow-500 to-lime-500',
+];
+
 
 const SpendPage: React.FC = () => {
     const { userMode } = useAppContext();
@@ -43,24 +51,24 @@ const SpendPage: React.FC = () => {
         <main className="p-4 md:p-6 space-y-8">
             <div className="text-left pt-4">
                 <h1 className="text-3xl font-bold text-white">Spending Analytics</h1>
-                <p className="text-slate-400">Your spending summary in {userMode === 'INDIA' ? 'INR' : 'USD'}.</p>
+                <p className="text-subtle">Your spending summary in {userMode === 'INDIA' ? 'INR' : 'USD'}.</p>
             </div>
             
-            <div className="bg-slate-800/50 border border-white/10 rounded-xl shadow-lg p-6">
+            <div className="bg-surface border border-white/10 rounded-xl shadow-lg p-6">
                 {/* Bar Chart */}
                 <div className="mb-10">
-                    <h3 className="text-lg font-semibold text-slate-300 mb-4">By Category</h3>
-                    <div className="h-64 bg-black/20 p-4 rounded-lg flex justify-around items-end gap-2 md:gap-4 border border-white/10">
-                        {chartData.map(({ label, value }) => (
+                    <h3 className="text-lg font-semibold text-white/90 mb-4">By Category</h3>
+                    <div className="h-64 bg-near-black p-4 rounded-lg flex justify-around items-end gap-2 md:gap-4 border border-white/10">
+                        {chartData.map(({ label, value }, index) => (
                             <div key={label} className="flex flex-col items-center flex-1 h-full pt-4">
-                               <div className="w-full h-full flex items-end">
+                               <div className="w-full h-full flex items-end group">
                                      <div 
-                                        className={`w-full rounded-t-md transition-all duration-1000 ease-out ${categoryColors[label] || 'bg-cyan-500'}`}
+                                        className={`w-full rounded-t-md transition-all duration-1000 ease-out bg-gradient-to-t ${gradientColors[index % gradientColors.length]}`}
                                         style={{ height: maxValue > 0 ? `${(value / maxValue) * 100}%` : '0%' }}
                                         title={`${label}: ${currencySymbol}${value.toFixed(2)}`}
                                     ></div>
                                </div>
-                                <span className="text-xs text-slate-400 mt-2 truncate">{label}</span>
+                                <span className="text-xs text-subtle mt-2 truncate">{label}</span>
                             </div>
                         ))}
                     </div>
@@ -68,17 +76,17 @@ const SpendPage: React.FC = () => {
 
                 {/* Transaction List */}
                 <div>
-                    <h3 className="text-lg font-semibold text-slate-300 mb-4">Recent Transactions</h3>
+                    <h3 className="text-lg font-semibold text-white/90 mb-4">Recent Transactions</h3>
                     <ul className="space-y-3">
                         {transactions.map((tx: TransactionSummary) => (
-                            <li key={tx.id} className="flex items-center justify-between bg-black/20 p-3 md:p-4 rounded-lg border border-white/10">
+                            <li key={tx.id} className="flex items-center justify-between bg-near-black/50 p-3 md:p-4 rounded-lg border border-white/10">
                                 <div className="flex items-center gap-4">
-                                    <div className="bg-slate-700 rounded-full w-10 h-10 flex-shrink-0 flex items-center justify-center text-xl">
+                                    <div className="bg-surface rounded-full w-10 h-10 flex-shrink-0 flex items-center justify-center text-xl border border-white/10">
                                         {categoryIcons[tx.category] || '💰'}
                                     </div>
                                     <div>
                                         <p className="font-semibold text-white">{tx.merchant}</p>
-                                        <p className="text-sm text-slate-400">{tx.date}</p>
+                                        <p className="text-sm text-subtle">{tx.date}</p>
                                     </div>
                                 </div>
                                 <p className="font-semibold text-white text-md md:text-lg whitespace-nowrap">

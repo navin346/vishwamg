@@ -23,7 +23,7 @@ const OTPScreen: React.FC<OTPScreenProps> = ({ onSuccess }) => {
 
     const finalOtp = newOtp.join('');
     if (finalOtp.length === 6) {
-      if (finalOtp === '123456') {
+      if (finalOtp === '123456') { // Mock OTP check
         onSuccess();
       } else {
         setError('Invalid code. Please try again.');
@@ -40,10 +40,10 @@ const OTPScreen: React.FC<OTPScreenProps> = ({ onSuccess }) => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0D0C22] text-slate-100 flex flex-col justify-center items-center p-4">
+    <div className="min-h-screen bg-near-black text-white flex flex-col justify-center items-center p-4">
       <div className="w-full max-w-sm text-center">
         <h1 className="text-3xl font-bold text-white mb-2">Enter Verification Code</h1>
-        <p className="text-slate-400 mb-8">A 6-digit code was sent to your email.</p>
+        <p className="text-subtle mb-8">A 6-digit code was sent to your email.</p>
 
         <div className="flex justify-center gap-2 md:gap-3 mb-4" aria-label="One-time password input">
           {otp.map((data, index) => {
@@ -60,7 +60,7 @@ const OTPScreen: React.FC<OTPScreenProps> = ({ onSuccess }) => {
                 ref={(el) => {
                   inputsRef.current[index] = el;
                 }}
-                className="w-12 h-14 md:w-14 md:h-16 text-center text-2xl font-bold bg-slate-800/50 border-2 border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-cyan-400 transition-all"
+                className="w-12 h-14 md:w-14 md:h-16 text-center text-2xl font-bold bg-surface border-2 border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
                 aria-label={`Digit ${index + 1} of OTP`}
               />
             );
