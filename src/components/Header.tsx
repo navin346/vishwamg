@@ -1,5 +1,4 @@
 import React from 'react';
-import { useAppContext, UserMode } from '../context/AppContext';
 import { useTheme } from '../context/ThemeContext';
 
 interface HeaderProps {
@@ -7,38 +6,17 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ onLogout }) => {
-  const { userMode, setUserMode } = useAppContext();
   const { theme, toggleTheme } = useTheme();
-
-  const handleToggle = (mode: UserMode) => {
-    setUserMode(mode);
-  };
 
   return (
     <header className="bg-white/80 dark:bg-black/80 backdrop-blur-sm p-4 flex items-center justify-between sticky top-0 z-20 border-b border-neutral-200 dark:border-neutral-800">
-      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center font-bold text-white">
-        J
+      <div className="flex items-center gap-2">
+        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center font-bold text-white">
+          J
+        </div>
+        <span className="font-bold text-lg text-black dark:text-white">Vishwam</span>
       </div>
       
-      {/* Redesigned Toggle Switch */}
-      <div className="relative flex items-center p-1 rounded-full bg-neutral-200 dark:bg-neutral-800 w-40 h-9">
-        <div 
-          className={`absolute top-1 left-1 w-[calc(50%-4px)] h-7 rounded-full transition-all duration-300 ease-in-out ${userMode === 'INTERNATIONAL' ? 'translate-x-0 bg-violet-600' : 'translate-x-full bg-green-600'}`}
-        />
-        <button 
-          onClick={() => handleToggle('INTERNATIONAL')} 
-          className="relative z-10 w-1/2 text-center text-xs font-bold py-1 rounded-full text-white"
-        >
-          INT'L
-        </button>
-        <button 
-          onClick={() => handleToggle('INDIA')} 
-          className="relative z-10 w-1/2 text-center text-xs font-bold py-1 rounded-full text-white"
-        >
-          INDIA
-        </button>
-      </div>
-
       <div className="flex items-center gap-4">
         <button onClick={toggleTheme} aria-label="Toggle theme" className="text-neutral-500 dark:text-neutral-400 hover:text-black dark:hover:text-white transition-colors">
           {theme === 'light' ? (
@@ -49,7 +27,6 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
         </button>
         <button onClick={onLogout} aria-label="Logout">
           <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-neutral-500 dark:text-neutral-400 hover:text-black dark:hover:text-white transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            {/* FIX: The file was truncated here. Completed the SVG path and properly closed the component. */}
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4" />
           </svg>
         </button>
@@ -58,5 +35,4 @@ const Header: React.FC<HeaderProps> = ({ onLogout }) => {
   );
 };
 
-// FIX: Added missing default export to resolve the import error.
 export default Header;

@@ -1,6 +1,6 @@
 import React from 'react';
 
-type ActivePage = 'home' | 'pay' | 'history' | 'profile';
+type ActivePage = 'home' | 'pay' | 'history' | 'spends' | 'profile';
 
 interface BottomNavProps {
   activePage: ActivePage;
@@ -37,6 +37,9 @@ const BottomNav: React.FC<BottomNavProps> = ({ activePage, setActivePage }) => {
       </NavItem>
       <NavItem label="Pay" page="pay" activePage={activePage} setActivePage={setActivePage}>
         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+      </NavItem>
+       <NavItem label="Spends" page="spends" activePage={activePage} setActivePage={setActivePage}>
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" /><path strokeLinecap="round" strokeLinejoin="round" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" /></svg>
       </NavItem>
       <NavItem label="History" page="history" activePage={activePage} setActivePage={setActivePage}>
         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>

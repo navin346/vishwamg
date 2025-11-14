@@ -1,14 +1,23 @@
-import React from 'react';
-import { useAppContext } from '../context/AppContext';
-import { ActiveModal } from '../MainApp';
+import React, { useState } from 'react';
+import { useAppContext, UserMode } from '../context/AppContext';
+import { ActiveModal, BankAccountType } from '../MainApp';
 
 interface ProfileScreenProps {
     setActiveModal: (modal: ActiveModal) => void;
+    openLinkBankModal: (type: BankAccountType) => void;
 }
 
-const ProfileScreen: React.FC<ProfileScreenProps> = ({ setActiveModal }) => {
-    const { userMode, kycStatus } = useAppContext();
+const ProfileScreen: React.FC<ProfileScreenProps> = ({ setActiveModal, openLinkBankModal }) => {
+    const { userMode, setUserMode, kycStatus, ibanDetails, createIbanAccount, linkedAccounts } = useAppContext();
     const isInternational = userMode === 'INTERNATIONAL';
+    const [isCreatingIban, setIsCreatingIban] = useState(false);
+
+    const handleCreateIban = () => {
+        setIsCreatingIban(true);
+        createIbanAccount();
+        // The context will update ibanDetails after a delay,
+        // so we don't need to set isCreatingIban back to false here.
+    }
 
     const getKycStatusPill = () => {
         switch (kycStatus) {
@@ -22,11 +31,11 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ setActiveModal }) => {
     };
 
     return (
-        <div className="p-4 text-black dark:text-white">
-            <h1 className="text-3xl font-bold mb-6">Profile & Settings</h1>
+        <div className="p-4 text-black dark:text-white space-y-6">
+            <h1 className="text-3xl font-bold">Profile & Settings</h1>
 
             {/* User Info Card */}
-            <div className="bg-slate-50 dark:bg-neutral-900 rounded-xl p-4 flex items-center space-x-4 mb-6">
+            <div className="bg-slate-50 dark:bg-neutral-900 rounded-xl p-4 flex items-center space-x-4">
                 <div className="w-16 h-16 rounded-full bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center font-bold text-white text-2xl">
                     J
                 </div>
@@ -36,8 +45,22 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ setActiveModal }) => {
                 </div>
             </div>
 
+             {/* Mode Toggle */}
+            <div className="bg-slate-50 dark:bg-neutral-900 rounded-xl p-4">
+                 <h3 className="font-bold text-base mb-3">Account Mode</h3>
+                 <div className="relative flex items-center p-1 rounded-full bg-neutral-200 dark:bg-neutral-800 w-full h-10">
+                    <div className={`absolute top-1 left-1 w-[calc(50%-4px)] h-8 rounded-full transition-all duration-300 ease-in-out ${userMode === 'INTERNATIONAL' ? 'translate-x-0 bg-violet-600' : 'translate-x-full bg-green-600'}`} />
+                    <button onClick={() => setUserMode('INTERNATIONAL')} className="relative z-10 w-1/2 text-center text-sm font-bold py-1 rounded-full text-white">
+                        International
+                    </button>
+                    <button onClick={() => setUserMode('INDIA')} className="relative z-10 w-1/2 text-center text-sm font-bold py-1 rounded-full text-white">
+                        India
+                    </button>
+                </div>
+            </div>
+
             {/* KYC Status */}
-            <div className="bg-slate-50 dark:bg-neutral-900 rounded-xl p-4 mb-6">
+            <div className="bg-slate-50 dark:bg-neutral-900 rounded-xl p-4">
                 <div className="flex justify-between items-center mb-2">
                     <h3 className="font-bold">Identity Verification</h3>
                     {getKycStatusPill()}
@@ -56,19 +79,68 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ setActiveModal }) => {
             
             {/* International-specific Info */}
             {isInternational && (
-                <div className="bg-slate-50 dark:bg-neutral-900 rounded-xl p-4 mb-6">
+                <div className="bg-slate-50 dark:bg-neutral-900 rounded-xl p-4">
                     <h3 className="font-bold mb-2">Your IBAN Account</h3>
-                    <div className="bg-slate-200 dark:bg-neutral-800 rounded-lg p-3 font-mono text-sm">
-                        <p className="text-neutral-500 text-xs">IBAN</p>
-                        <p>DE89 3704 0044 0532 0130 00</p>
-                        <p className="text-neutral-500 text-xs mt-2">BIC</p>
-                        <p>COBADEFFXXX</p>
-                    </div>
-                     <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-2">Use these details to receive funds into your Vishwam wallet.</p>
+                    {ibanDetails ? (
+                         <div className="bg-slate-200 dark:bg-neutral-800 rounded-lg p-3 font-mono text-sm">
+                            <p className="text-neutral-500 text-xs">IBAN</p>
+                            <p>{ibanDetails.iban}</p>
+                            <p className="text-neutral-500 text-xs mt-2">BIC</p>
+                            <p>{ibanDetails.bic}</p>
+                        </div>
+                    ) : (
+                        <>
+                         <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-4">Activate your personal IBAN to receive bank transfers from around the world.</p>
+                         <button onClick={handleCreateIban} disabled={isCreatingIban} className="w-full bg-violet-600 hover:bg-violet-700 text-white font-bold py-2 px-4 rounded-lg transition-colors text-sm disabled:bg-violet-400 disabled:cursor-not-allowed">
+                            {isCreatingIban ? 'Activating...' : 'Create IBAN Account'}
+                         </button>
+                        </>
+                    )}
                 </div>
             )}
+
+            {/* Linked Accounts */}
+            <div className="bg-slate-50 dark:bg-neutral-900 rounded-xl p-4 space-y-3">
+                <h3 className="font-bold text-base mb-1">Linked Accounts</h3>
+                {isInternational && (
+                    <LinkedAccountItem 
+                        title="US Bank Account" 
+                        subtitle={linkedAccounts.us ? `${linkedAccounts.us.bankName} ••••${linkedAccounts.us.accountNumber.slice(-4)}` : "For adding funds (on-ramp)"}
+                        isLinked={!!linkedAccounts.us}
+                        onClick={() => openLinkBankModal('us')}
+                    />
+                )}
+                 <LinkedAccountItem 
+                    title="Indian Bank Account" 
+                    subtitle={linkedAccounts.inr ? `${linkedAccounts.inr.bankName} ••••${linkedAccounts.inr.accountNumber.slice(-4)}` : "For withdrawals (off-ramp)"}
+                    isLinked={!!linkedAccounts.inr}
+                    onClick={() => openLinkBankModal('inr')}
+                 />
+            </div>
+            
+            {/* App Settings */}
+            <div className="bg-slate-50 dark:bg-neutral-900 rounded-xl p-4">
+                <h3 className="font-bold text-base mb-3">App Settings</h3>
+                <button onClick={() => setActiveModal('manage_categories')} className="w-full flex justify-between items-center text-left p-2 -mx-2 rounded-lg hover:bg-slate-200 dark:hover:bg-neutral-800 transition-colors">
+                    <span>Manage Spending Categories</span>
+                    <svg className="w-5 h-5 text-neutral-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                </button>
+            </div>
         </div>
     );
 };
+
+const LinkedAccountItem: React.FC<{title: string, subtitle: string, isLinked: boolean, onClick: () => void}> = ({ title, subtitle, isLinked, onClick }) => (
+    <div className="flex items-center justify-between">
+        <div>
+            <p className="font-semibold text-sm">{title}</p>
+            <p className="text-xs text-neutral-500 dark:text-neutral-400">{subtitle}</p>
+        </div>
+        <button onClick={onClick} className={`text-sm font-bold px-3 py-1 rounded-md ${isLinked ? 'bg-slate-200 dark:bg-neutral-700 text-black dark:text-white' : 'bg-violet-100 dark:bg-violet-900/50 text-violet-700 dark:text-violet-300'}`}>
+            {isLinked ? 'Manage' : 'Add'}
+        </button>
+    </div>
+)
+
 
 export default ProfileScreen;

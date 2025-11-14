@@ -2,6 +2,7 @@ import React from 'react';
 import { useAppContext } from '../context/AppContext';
 import mockTransactionsUsd from '../data/mock-transactions-usd.json';
 import mockTransactionsInr from '../data/mock-transactions-inr.json';
+import { TransactionSummary } from '../data';
 
 const CategoryIcon: React.FC<{ category: string }> = ({ category }) => {
     let icon;
@@ -22,41 +23,4 @@ const CategoryIcon: React.FC<{ category: string }> = ({ category }) => {
             icon = <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>;
             break;
         default:
-            icon = <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" /></svg>;
-    }
-    return (
-        <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-neutral-800 mr-4 flex items-center justify-center text-slate-500 dark:text-slate-400">
-            {icon}
-        </div>
-    );
-};
-
-const HistoryScreen: React.FC = () => {
-  const { userMode } = useAppContext();
-  const isInternational = userMode === 'INTERNATIONAL';
-  const transactions = isInternational ? mockTransactionsUsd.transactions : mockTransactionsInr.transactions;
-
-  return (
-    <div className="p-4">
-      <h1 className="text-3xl font-bold mb-6 text-black dark:text-white">History</h1>
-      <div className="space-y-3">
-        {transactions.map(tx => (
-          <div key={tx.id} className="bg-white dark:bg-neutral-900/50 p-3 rounded-lg flex items-center justify-between hover:bg-slate-50 dark:hover:bg-neutral-800/50 transition-colors">
-            <div className="flex items-center">
-              <CategoryIcon category={tx.category} />
-              <div>
-                <p className="font-semibold text-black dark:text-white">{tx.merchant}</p>
-                <p className="text-xs text-neutral-500 dark:text-neutral-400">{tx.date}</p>
-              </div>
-            </div>
-            <p className="font-semibold text-sm text-red-500">
-              {isInternational ? '-$' : '-₹'}{tx.amount.toFixed(2)}
-            </p>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-};
-
-export default HistoryScreen;
+            icon = <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M17 
