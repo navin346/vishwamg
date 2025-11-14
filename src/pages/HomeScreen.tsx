@@ -46,23 +46,30 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ setActivePage, setActiveModal, 
             {/* Balance Card */}
             <div className="relative rounded-xl p-6 text-white shadow-xl overflow-hidden">
                  <div className="absolute inset-0 aurora-gradient"></div>
-                 <div className="relative flex flex-col items-center">
-                    <p className="text-sm text-indigo-200 dark:text-slate-400">Your Balance</p>
-                    <p className="text-4xl font-bold tracking-tight mt-1">
-                        {isInternational ? '$' : '₹'}{balance} <span className="text-lg font-normal text-indigo-300 dark:text-slate-500">{currency}</span>
+                 <div className="relative z-10">
+                    <div className="flex justify-between items-start">
+                        <p className="text-sm text-indigo-200">Your Balance</p>
+                        <button onClick={() => setActiveModal('scan_qr')} className="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white font-semibold py-2 px-3 rounded-full flex items-center gap-2 text-sm transition-colors transform active:scale-95 -mt-1">
+                            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M3 7V3H7" />
+                                <path d="M17 3H21V7" />
+                                <path d="M21 17V21H17" />
+                                <path d="M7 21H3V17" />
+                            </svg>
+                            Scan & Pay
+                        </button>
+                    </div>
+                    <p className="text-5xl font-bold tracking-tight mt-2">
+                        {isInternational ? '$' : '₹'}{balance} <span className="text-xl font-medium text-indigo-300/80">{currency}</span>
                     </p>
                 </div>
-                 <button onClick={() => setActiveModal('scan_qr')} className="absolute top-4 right-4 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white font-semibold py-2 px-3 rounded-full flex items-center gap-2 text-sm transition-colors transform active:scale-95">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v1m6 11h2m-6.5-13.5l.707-.707M12 20.5v.5M4.5 12H3m13.5 6.5l.707.707M6.207 6.207l-.707-.707M17.793 6.207l.707.707m-1.414 11.086l-.707.707" /></svg>
-                    Scan & Pay
-                 </button>
             </div>
 
             {/* Mode-specific display */}
             {isInternational ? (
                 <VirtualCard card={mockData.international.card} disabled={!isCardActive} />
             ) : (
-                <div className="bg-white dark:bg-neutral-900 rounded-xl p-4 space-y-2">
+                <div className="bg-white/80 dark:bg-neutral-900/80 backdrop-blur-sm rounded-xl p-4 space-y-2">
                     <h3 className="font-bold mb-2 px-2 text-gray-900 dark:text-white">Accounts & Cards</h3>
                     {mockData.india.linkedAccounts.map(account => (
                         <div key={account.bankName} className="flex items-center justify-between p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-neutral-800 transition-colors">
@@ -90,7 +97,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ setActivePage, setActiveModal, 
                 <QuickAction icon={<AddMoneyIcon />} label="Add Money" onClick={() => setActiveModal('add_money')} />
                 <QuickAction icon={<SendIcon />} label="Send" onClick={() => setActiveModal('send')} />
                 <QuickAction icon={<WithdrawIcon />} label="Withdraw" onClick={() => setActiveModal('withdraw')} />
-                <QuickAction icon={<BillsIcon />} label="Bills" onClick={() => { /* This could open a new bills modal */ }} />
+                <QuickAction icon={<BillsIcon />} label="Bills" onClick={() => setActiveModal('bills')} />
             </div>
 
             {/* Recent Activity */}
@@ -104,7 +111,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ setActivePage, setActiveModal, 
                 </div>
                 <div className="space-y-2">
                     {filteredTransactions.map(tx => (
-                        <button key={tx.id} onClick={() => onTransactionClick(tx)} className="w-full text-left bg-white dark:bg-neutral-900 p-3 rounded-lg flex items-center justify-between hover:bg-gray-100 dark:hover:bg-neutral-800 cursor-pointer transition-colors">
+                        <button key={tx.id} onClick={() => onTransactionClick(tx)} className="w-full text-left bg-white/70 dark:bg-neutral-900/70 backdrop-blur-sm p-3 rounded-lg flex items-center justify-between hover:bg-gray-100 dark:hover:bg-neutral-800 cursor-pointer transition-colors">
                             <div className="flex items-center gap-4">
                                 <CategoryIcon category={tx.category} />
                                 <div>
@@ -126,7 +133,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ setActivePage, setActiveModal, 
 
 const QuickAction: React.FC<{ icon: React.ReactNode; label: string, onClick?: () => void }> = ({ icon, label, onClick }) => (
     <button onClick={onClick} className="flex flex-col items-center group p-2">
-        <div className="w-14 h-14 bg-gray-100 dark:bg-neutral-800 rounded-2xl flex items-center justify-center text-2xl mb-2 group-hover:bg-gray-200 dark:group-hover:bg-neutral-700 transition-all transform group-active:scale-90">
+        <div className="w-14 h-14 bg-gray-100/80 dark:bg-neutral-800/80 backdrop-blur-sm rounded-2xl flex items-center justify-center text-2xl mb-2 group-hover:bg-gray-200 dark:group-hover:bg-neutral-700 transition-all transform group-active:scale-90">
             {icon}
         </div>
         <span className="text-xs font-medium text-gray-600 dark:text-neutral-300">{label}</span>

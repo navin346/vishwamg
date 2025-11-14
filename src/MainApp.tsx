@@ -13,11 +13,12 @@ import LinkBankAccountScreen from './pages/LinkBankAccountScreen';
 import ManageCategoriesScreen from './pages/ManageCategoriesScreen';
 import TransactionDetailScreen from './pages/TransactionDetailScreen';
 import ScanQRModal from './pages/ScanQRModal';
+import BillsScreen from './pages/BillsScreen';
 import { TransactionSummary } from './data';
 import { useTheme } from './context/ThemeContext';
 
 export type ActivePage = 'home' | 'spends' | 'profile';
-export type ActiveModal = 'send' | 'add_money' | 'withdraw' | 'kyc' | 'link_bank' | 'manage_categories' | 'transaction_detail' | 'scan_qr' | null;
+export type ActiveModal = 'send' | 'add_money' | 'withdraw' | 'kyc' | 'link_bank' | 'manage_categories' | 'transaction_detail' | 'scan_qr' | 'bills' | null;
 export type BankAccountType = 'us' | 'inr';
 
 interface MainAppProps {
@@ -34,9 +35,13 @@ const AppWithTheme: React.FC<MainAppProps> = ({ onLogout }) => {
   useEffect(() => {
     const body = document.body;
     if (theme === 'dark') {
+      body.classList.add('dark');
+      body.classList.remove('light');
       body.classList.add('bg-black');
       body.classList.remove('bg-gray-50');
     } else {
+      body.classList.add('light');
+      body.classList.remove('dark');
       body.classList.add('bg-gray-50');
       body.classList.remove('bg-black');
     }
@@ -88,20 +93,29 @@ const AppWithTheme: React.FC<MainAppProps> = ({ onLogout }) => {
           return selectedTransaction && <TransactionDetailScreen onClose={handleClose} transaction={selectedTransaction} />;
       case 'scan_qr':
           return <ScanQRModal onClose={handleClose} />;
+      case 'bills':
+          return <BillsScreen onClose={handleClose} />;
       default:
         return null;
     }
   }
 
   return (
-    <div className="relative mx-auto flex min-h-screen max-w-md flex-col border-x border-gray-200 dark:border-slate-800 bg-white dark:bg-black">
-      <Header onLogout={onLogout} />
-      <main className="flex-grow overflow-y-auto pb-20">
-        {renderContent()}
-      </main>
-      {renderModal()}
-      <BottomNav activePage={activePage} setActivePage={setActivePage} />
-    </div>
+    <>
+      <div className="blob-container">
+        <div className="blob blob1"></div>
+        <div className="blob blob2"></div>
+        <div className="blob blob3"></div>
+      </div>
+      <div className="relative mx-auto flex min-h-screen max-w-md flex-col border-x border-gray-200/50 dark:border-slate-800/50 bg-white/80 dark:bg-black/80 backdrop-blur-2xl">
+        <Header onLogout={onLogout} />
+        <main className="flex-grow overflow-y-auto pb-20">
+          {renderContent()}
+        </main>
+        {renderModal()}
+        <BottomNav activePage={activePage} setActivePage={setActivePage} />
+      </div>
+    </>
   );
 }
 
