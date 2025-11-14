@@ -1,6 +1,6 @@
 import React from 'react';
 
-type ActivePage = 'home' | 'pay' | 'history';
+type ActivePage = 'home' | 'pay' | 'history' | 'profile';
 
 interface BottomNavProps {
   activePage: ActivePage;
@@ -18,13 +18,13 @@ const NavItem: React.FC<{
   return (
     <button
       onClick={() => setActivePage(page)}
-      className={`flex flex-col items-center justify-center w-full transition-colors duration-200 relative ${isActive ? 'text-indigo-500 dark:text-indigo-400' : 'text-neutral-500 hover:text-black dark:hover:text-white'}`}
+      className={`flex flex-col items-center justify-center w-full transition-colors duration-200 relative pt-1 ${isActive ? 'text-violet-600 dark:text-violet-400' : 'text-neutral-500 hover:text-black dark:hover:text-white'}`}
       aria-label={`Go to ${label}`}
       aria-current={isActive ? 'page' : undefined}
     >
       {children}
       <span className="text-xs font-medium mt-0.5">{label}</span>
-      {isActive && <div className="absolute -bottom-1 h-1 w-6 rounded-full bg-indigo-500 dark:bg-indigo-400" />}
+      {isActive && <div className="absolute -bottom-0.5 h-1 w-6 rounded-full bg-violet-600 dark:bg-violet-400" />}
     </button>
   );
 };
@@ -40,6 +40,9 @@ const BottomNav: React.FC<BottomNavProps> = ({ activePage, setActivePage }) => {
       </NavItem>
       <NavItem label="History" page="history" activePage={activePage} setActivePage={setActivePage}>
         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+      </NavItem>
+      <NavItem label="Profile" page="profile" activePage={activePage} setActivePage={setActivePage}>
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
       </NavItem>
     </nav>
   );

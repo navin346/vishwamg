@@ -3,12 +3,15 @@ import mockData from '../data/mock-data.json';
 
 // Define the possible user modes
 export type UserMode = 'INTERNATIONAL' | 'INDIA';
+export type KycStatus = 'unverified' | 'pending' | 'verified';
 
 // Define the shape of the context data
 interface AppContextType {
   userMode: UserMode;
   setUserMode: (mode: UserMode) => void;
   balance: string;
+  kycStatus: KycStatus;
+  startKyc: () => void;
 }
 
 // Create the context with a default value
@@ -18,6 +21,7 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [userMode, setUserModeState] = useState<UserMode>('INTERNATIONAL');
   const [balance, setBalance] = useState<string>(mockData.international.balance);
+  const [kycStatus, setKycStatus] = useState<KycStatus>('unverified');
   
   const setUserMode = useCallback((mode: UserMode) => {
       setUserModeState(mode);
@@ -29,7 +33,15 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       }
   }, []);
 
-  const value = { userMode, setUserMode, balance };
+  const startKyc = useCallback(() => {
+    setKycStatus('pending');
+    // Simulate API call for KYC verification
+    setTimeout(() => {
+        setKycStatus('verified');
+    }, 3000);
+  }, []);
+
+  const value = { userMode, setUserMode, balance, kycStatus, startKyc };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 };

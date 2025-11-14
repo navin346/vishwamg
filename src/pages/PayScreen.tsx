@@ -2,21 +2,23 @@ import React from 'react';
 import mockBillers from '../data/mock-billers.json';
 
 const IconWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-    <div className="w-10 h-10 rounded-lg bg-slate-200 dark:bg-neutral-800 mr-4 flex items-center justify-center">
+    <div className="w-10 h-10 rounded-lg bg-slate-200 dark:bg-neutral-800 mr-4 flex items-center justify-center text-slate-600 dark:text-slate-300">
         {children}
     </div>
 );
 
 const CategoryIcon: React.FC<{ name: string }> = ({ name }) => {
-    switch (name) {
-        case 'Electricity': return <IconWrapper>💡</IconWrapper>; // Emojis are fine here as they are universally understood
-        case 'Water': return <IconWrapper>💧</IconWrapper>;
-        case 'Mobile Recharge': return <IconWrapper>📱</IconWrapper>;
-        case 'Gas': return <IconWrapper>🔥</IconWrapper>;
-        case 'Broadband': return <IconWrapper>🌐</IconWrapper>;
-        case 'DTH': return <IconWrapper>📺</IconWrapper>;
-        default: return <IconWrapper>🧾</IconWrapper>;
+    let icon;
+     switch (name) {
+        case 'Electricity': icon = <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>; break;
+        case 'Water': icon = <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 2.69l5.66 5.66a8 8 0 11-11.32 0L12 2.69z" /></svg>; break;
+        case 'Mobile Recharge': icon = <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 18h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>; break;
+        case 'Gas': icon = <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c2.236 1.118 4.674 1.118 6.91 0 2-1 2.657-2.657 2.657-2.657a8 8 0 012.09 11.314" /></svg>; break;
+        case 'Broadband': icon = <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071a10 10 0 0114.142 0M1.393 9.393a15 15 0 0121.214 0" /></svg>; break;
+        case 'DTH': icon = <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5.636 18.364a9 9 0 010-12.728M18.364 5.636a9 9 0 010 12.728M9.879 9.879a3 3 0 014.242 0M12 12v.01" /></svg>; break;
+        default: icon = <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>; break;
     }
+    return <IconWrapper>{icon}</IconWrapper>;
 };
 
 const PayScreen: React.FC = () => {
