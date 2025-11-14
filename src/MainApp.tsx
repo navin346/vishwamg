@@ -4,7 +4,6 @@ import Header from './components/Header';
 import BottomNav from './components/BottomNav';
 import HomeScreen from './pages/HomeScreen';
 import PayScreen from './pages/PayScreen';
-import HistoryScreen from './pages/HistoryScreen';
 import ProfileScreen from './pages/ProfileScreen';
 import SendMoneyScreen from './pages/SendMoneyScreen';
 import AddMoneyScreen from './pages/AddMoneyScreen';
@@ -16,7 +15,7 @@ import ManageCategoriesScreen from './pages/ManageCategoriesScreen';
 import TransactionDetailScreen from './pages/TransactionDetailScreen';
 import { TransactionSummary } from './data';
 
-export type ActivePage = 'home' | 'pay' | 'history' | 'spends' | 'profile';
+export type ActivePage = 'home' | 'pay' | 'spends' | 'profile';
 export type ActiveModal = 'send' | 'add_money' | 'withdraw' | 'kyc' | 'link_bank' | 'manage_categories' | 'transaction_detail' | null;
 export type BankAccountType = 'us' | 'inr';
 
@@ -43,17 +42,15 @@ const MainApp: React.FC<MainAppProps> = ({ onLogout }) => {
   const renderContent = () => {
     switch (activePage) {
       case 'home':
-        return <HomeScreen setActivePage={setActivePage} setActiveModal={setActiveModal} />;
+        return <HomeScreen setActivePage={setActivePage} setActiveModal={setActiveModal} onTransactionClick={handleOpenTransactionDetail} />;
       case 'pay':
         return <PayScreen />;
-      case 'history':
-        return <HistoryScreen onTransactionClick={handleOpenTransactionDetail} />;
       case 'spends':
         return <SpendsScreen onTransactionClick={handleOpenTransactionDetail} />;
       case 'profile':
         return <ProfileScreen setActiveModal={setActiveModal} openLinkBankModal={handleOpenLinkBankModal} />;
       default:
-        return <HomeScreen setActivePage={setActivePage} setActiveModal={setActiveModal} />;
+        return <HomeScreen setActivePage={setActivePage} setActiveModal={setActiveModal} onTransactionClick={handleOpenTransactionDetail} />;
     }
   };
 

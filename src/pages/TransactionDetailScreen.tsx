@@ -56,12 +56,13 @@ const TransactionDetailScreen: React.FC<ModalProps> = ({ onClose, transaction })
                         {currency}{transaction.amount.toFixed(2)}
                     </p>
                     <p className="font-semibold text-lg text-black dark:text-white mt-1">{transaction.merchant}</p>
-                    <p className="text-sm text-neutral-500 dark:text-neutral-400">{transaction.date}</p>
+                    <p className="text-sm text-neutral-500 dark:text-neutral-400">{transaction.date}, {transaction.timestamp}</p>
                 </div>
 
                 <div className="space-y-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg p-4">
                     <DetailRow label="Status" value="Completed" valueClass="text-green-600 dark:text-green-400" />
                     <DetailRow label="Category" value={transaction.category} />
+                    <DetailRow label="Paid With" value={transaction.method} />
                     <DetailRow label="Transaction ID" value={transaction.id} />
                 </div>
 

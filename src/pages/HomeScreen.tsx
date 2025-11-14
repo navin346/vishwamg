@@ -1,19 +1,45 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useAppContext } from '../context/AppContext';
 import mockData from '../data/mock-data.json';
 import VirtualCard from '../components/VirtualCard';
 import { ActiveModal, ActivePage } from '../MainApp';
+import mockTransactionsUsd from '../data/mock-transactions-usd.json';
+import mockTransactionsInr from '../data/mock-transactions-inr.json';
+import { TransactionSummary } from '../data';
 
 interface HomeScreenProps {
     setActivePage: (page: ActivePage) => void;
     setActiveModal: (modal: ActiveModal) => void;
+    onTransactionClick: (transaction: TransactionSummary) => void;
 }
 
-const HomeScreen: React.FC<HomeScreenProps> = ({ setActivePage, setActiveModal }) => {
+const CategoryIcon: React.FC<{ category: string }> = ({ category }) => {
+    let icon;
+    switch (category.toLowerCase()) {
+        case 'food': icon = <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6" /></svg>; break;
+        case 'shopping': icon = <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>; break;
+        case 'travel': icon = <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>; break;
+        case 'entertainment': icon = <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 012-2h3a2 2 0 012 2v14a2 2 0 01-2 2H7a2 2 0 01-2-2V5z" /></svg>; break;
+        case 'bills': icon = <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>; break;
+        default: icon = <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>; break;
+    }
+    return <div className="w-10 h-10 rounded-lg bg-slate-200 dark:bg-neutral-800 flex items-center justify-center text-slate-600 dark:text-slate-300">{icon}</div>;
+};
+
+
+const HomeScreen: React.FC<HomeScreenProps> = ({ setActivePage, setActiveModal, onTransactionClick }) => {
     const { userMode, balance, kycStatus } = useAppContext();
     const isInternational = userMode === 'INTERNATIONAL';
     const currency = isInternational ? mockData.international.currency : 'INR';
     const isCardActive = isInternational && kycStatus === 'verified';
+    const [filter, setFilter] = useState('all');
+
+    const { transactions, currencySymbol } = userMode === 'INTERNATIONAL'
+        ? { transactions: mockTransactionsUsd.transactions, currencySymbol: '$' }
+        : { transactions: mockTransactionsInr.transactions, currencySymbol: '₹' };
+    
+    // This is a mock filter. In a real app, you would filter by date.
+    const filteredTransactions = transactions.slice(0, filter === 'today' ? 2 : transactions.length);
 
     return (
         <div className="p-4 space-y-6">
@@ -63,6 +89,33 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ setActivePage, setActiveModal }
                 <QuickAction icon={<BillsIcon />} label="Bills" onClick={() => setActivePage('pay')} />
             </div>
 
+            {/* Recent Activity */}
+            <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                    <h2 className="text-xl font-bold text-black dark:text-white">Recent Activity</h2>
+                    <div className="flex items-center gap-2 text-sm">
+                        <FilterButton label="All" value="all" activeFilter={filter} setFilter={setFilter} />
+                        <FilterButton label="Today" value="today" activeFilter={filter} setFilter={setFilter} />
+                    </div>
+                </div>
+                <div className="space-y-2">
+                    {filteredTransactions.map(tx => (
+                        <button key={tx.id} onClick={() => onTransactionClick(tx)} className="w-full text-left bg-slate-50 dark:bg-neutral-900 p-3 rounded-lg flex items-center justify-between hover:bg-slate-100 dark:hover:bg-neutral-800 cursor-pointer transition-colors">
+                            <div className="flex items-center gap-4">
+                                <CategoryIcon category={tx.category} />
+                                <div>
+                                    <p className="font-semibold text-black dark:text-white">{tx.merchant}</p>
+                                    <p className="text-sm text-neutral-500 dark:text-neutral-400">{tx.method} &bull; {tx.timestamp}</p>
+                                </div>
+                            </div>
+                            <p className="font-bold text-black dark:text-white">
+                                {currencySymbol}{tx.amount.toFixed(2)}
+                            </p>
+                        </button>
+                    ))}
+                </div>
+            </div>
+
         </div>
     );
 };
@@ -75,6 +128,16 @@ const QuickAction: React.FC<{ icon: React.ReactNode; label: string, onClick?: ()
         <span className="text-xs font-medium text-slate-600 dark:text-neutral-300">{label}</span>
     </button>
 );
+
+const FilterButton: React.FC<{label: string, value: string, activeFilter: string, setFilter: (f: string) => void}> = ({ label, value, activeFilter, setFilter }) => (
+    <button 
+        onClick={() => setFilter(value)}
+        className={`px-3 py-1 rounded-full font-semibold ${activeFilter === value ? 'bg-violet-600 text-white' : 'bg-slate-200 dark:bg-neutral-800 text-black dark:text-white'}`}
+    >
+        {label}
+    </button>
+);
+
 
 // SVG Icons
 const AddMoneyIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-slate-600 dark:text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" /></svg>;

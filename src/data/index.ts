@@ -1,4 +1,5 @@
 
+
 export interface InternationalCardDetails {
   number: string;
   name: string;
@@ -32,6 +33,8 @@ export interface TransactionSummary {
   category: string;
   amount: number;
   date: string;
+  timestamp: string;
+  method: string;
 }
 
 export interface TransactionsResponse {
