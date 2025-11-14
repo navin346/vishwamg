@@ -1,35 +1,41 @@
 import React, { useState } from 'react';
-import BottomNav from './components/BottomNav';
-import HomePage from './pages/HomePage';
-import SpendPage from './pages/SpendPage';
-import ProfilePage from './pages/ProfilePage';
 import { AppProvider } from './context/AppContext';
+import Header from './components/Header';
+import BottomNav from './components/BottomNav';
+import HomeScreen from './pages/HomeScreen';
+import PayScreen from './pages/PayScreen';
+import HistoryScreen from './pages/HistoryScreen';
 
-export type Tab = 'home' | 'spend' | 'profile';
+type ActivePage = 'home' | 'pay' | 'history';
 
-const MainApp: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<Tab>('home');
+interface MainAppProps {
+  onLogout: () => void;
+}
+
+const MainApp: React.FC<MainAppProps> = ({ onLogout }) => {
+  const [activePage, setActivePage] = useState<ActivePage>('home');
 
   const renderContent = () => {
-    switch (activeTab) {
+    switch (activePage) {
       case 'home':
-        return <HomePage />;
-      case 'spend':
-        return <SpendPage />;
-      case 'profile':
-        return <ProfilePage />;
+        return <HomeScreen />;
+      case 'pay':
+        return <PayScreen />;
+      case 'history':
+        return <HistoryScreen />;
       default:
-        return <HomePage />;
+        return <HomeScreen />;
     }
   };
-  
+
   return (
     <AppProvider>
-      <div className="min-h-screen bg-near-black text-white font-sans pb-28">
-        <div className="container mx-auto max-w-lg">
-            {renderContent()}
-        </div>
-        <BottomNav activeTab={activeTab} setActiveTab={setActiveTab} />
+      <div className="flex flex-col h-screen bg-black">
+        <Header onLogout={onLogout} />
+        <main className="flex-grow overflow-y-auto pb-20">
+          {renderContent()}
+        </main>
+        <BottomNav activePage={activePage} setActivePage={setActivePage} />
       </div>
     </AppProvider>
   );

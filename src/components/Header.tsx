@@ -1,25 +1,39 @@
 import React from 'react';
+import { useAppContext, UserMode } from '../context/AppContext';
 
-// A simple globe icon for "Vishwam" which means "universe" or "world"
-const GlobeIcon: React.FC<{ className?: string }> = ({ className }) => (
-    <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-        <path strokeLinecap="round" strokeLinejoin="round" d="M3.255 15.245L4 12m16.745 3.245L20 12h-2m-4-8v2m0 4h.01M12 21v-2m4-4h2M4 12H2m18 0h2M12 4V2m0 18v2" />
-    </svg>
-);
+interface HeaderProps {
+    onLogout: () => void;
+}
 
+const Header: React.FC<HeaderProps> = ({ onLogout }) => {
+  const { userMode, setUserMode } = useAppContext();
 
-const Header: React.FC = () => {
+  const handleToggle = () => {
+    const newMode: UserMode = userMode === 'INTERNATIONAL' ? 'INDIA' : 'INTERNATIONAL';
+    setUserMode(newMode);
+  };
+
   return (
-    <header className="bg-slate-800/50 backdrop-blur-sm sticky top-0 z-10 border-b border-slate-700">
-      <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-        <div className="flex items-center space-x-3">
-            <div className="bg-gradient-to-tr from-cyan-500 to-blue-500 p-2 rounded-lg">
-                <GlobeIcon className="h-6 w-6 text-white" />
-            </div>
-            <h1 className="text-xl font-bold text-white">Vishwam</h1>
+    <header className="bg-black/80 backdrop-blur-sm p-4 flex items-center justify-between sticky top-0 z-10 border-b border-neutral-800">
+      <div className="w-8 h-8 rounded-full bg-indigo-500 flex items-center justify-center font-bold text-white">
+        J
+      </div>
+      
+      {/* Custom Toggle Switch */}
+      <div onClick={handleToggle} className="cursor-pointer flex items-center p-1 rounded-full bg-neutral-800 w-36">
+        <div className={`transition-all duration-300 ease-in-out w-1/2 text-center text-xs font-bold py-1 rounded-full ${userMode === 'INTERNATIONAL' ? 'bg-indigo-600 text-white' : 'text-neutral-400'}`}>
+          INT'L
+        </div>
+        <div className={`transition-all duration-300 ease-in-out w-1/2 text-center text-xs font-bold py-1 rounded-full ${userMode === 'INDIA' ? 'bg-green-600 text-white' : 'text-neutral-400'}`}>
+          INDIA
         </div>
       </div>
+
+      <button onClick={onLogout} aria-label="Logout">
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-neutral-400 hover:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+        </svg>
+      </button>
     </header>
   );
 };

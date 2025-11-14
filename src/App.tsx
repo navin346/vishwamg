@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import LoginScreen from './pages/LoginScreen';
 import OTPScreen from './pages/OTPScreen';
@@ -17,13 +16,17 @@ const App: React.FC = () => {
     setAuthStep('loggedIn');
   };
 
+  const handleLogout = () => {
+    setAuthStep('login');
+  };
+
   switch (authStep) {
     case 'login':
       return <LoginScreen onEmailSignIn={handleEmailSignIn} />;
     case 'otp':
       return <OTPScreen onSuccess={handleOtpSuccess} />;
     case 'loggedIn':
-      return <MainApp />;
+      return <MainApp onLogout={handleLogout} />;
     default:
       return <LoginScreen onEmailSignIn={handleEmailSignIn} />;
   }
