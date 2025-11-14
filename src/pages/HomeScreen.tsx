@@ -23,7 +23,7 @@ const CategoryIcon: React.FC<{ category: string }> = ({ category }) => {
         case 'bills': icon = <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>; break;
         default: icon = <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>; break;
     }
-    return <div className="w-10 h-10 rounded-lg bg-slate-200 dark:bg-neutral-800 flex items-center justify-center text-slate-600 dark:text-slate-300">{icon}</div>;
+    return <div className="w-10 h-10 rounded-lg bg-gray-100 dark:bg-neutral-800 flex items-center justify-center text-gray-600 dark:text-slate-300">{icon}</div>;
 };
 
 
@@ -44,36 +44,40 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ setActivePage, setActiveModal, 
     return (
         <div className="p-4 space-y-6">
             {/* Balance Card */}
-            <div className="relative rounded-xl p-6 text-center text-white shadow-xl overflow-hidden dark:bg-slate-900">
-                 <div className="absolute inset-0 dark:aurora-gradient bg-gradient-to-br from-violet-600 to-indigo-600"></div>
-                 <div className="relative">
+            <div className="relative rounded-xl p-6 text-white shadow-xl overflow-hidden">
+                 <div className="absolute inset-0 aurora-gradient"></div>
+                 <div className="relative flex flex-col items-center">
                     <p className="text-sm text-indigo-200 dark:text-slate-400">Your Balance</p>
                     <p className="text-4xl font-bold tracking-tight mt-1">
                         {isInternational ? '$' : '₹'}{balance} <span className="text-lg font-normal text-indigo-300 dark:text-slate-500">{currency}</span>
                     </p>
                 </div>
+                 <button onClick={() => setActiveModal('scan_qr')} className="absolute top-4 right-4 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white font-semibold py-2 px-3 rounded-full flex items-center gap-2 text-sm transition-colors transform active:scale-95">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v1m6 11h2m-6.5-13.5l.707-.707M12 20.5v.5M4.5 12H3m13.5 6.5l.707.707M6.207 6.207l-.707-.707M17.793 6.207l.707.707m-1.414 11.086l-.707.707" /></svg>
+                    Scan & Pay
+                 </button>
             </div>
 
             {/* Mode-specific display */}
             {isInternational ? (
                 <VirtualCard card={mockData.international.card} disabled={!isCardActive} />
             ) : (
-                <div className="bg-slate-50 dark:bg-neutral-900 rounded-xl p-4 space-y-2">
-                    <h3 className="font-bold mb-2 px-2 text-black dark:text-white">Accounts & Cards</h3>
+                <div className="bg-white dark:bg-neutral-900 rounded-xl p-4 space-y-2">
+                    <h3 className="font-bold mb-2 px-2 text-gray-900 dark:text-white">Accounts & Cards</h3>
                     {mockData.india.linkedAccounts.map(account => (
-                        <div key={account.bankName} className="flex items-center justify-between p-2 rounded-lg hover:bg-slate-200 dark:hover:bg-neutral-800 transition-colors">
+                        <div key={account.bankName} className="flex items-center justify-between p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-neutral-800 transition-colors">
                             <div className="flex items-center">
-                                <div className="w-8 h-8 rounded-full bg-slate-300 dark:bg-gray-700 mr-3"></div>
+                                <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 mr-3"></div>
                                 <div>
-                                    <p className="font-semibold text-sm text-black dark:text-white">{account.bankName}</p>
-                                    <p className="text-xs text-slate-500 dark:text-neutral-400">{account.accountNumberMask}</p>
+                                    <p className="font-semibold text-sm text-gray-900 dark:text-white">{account.bankName}</p>
+                                    <p className="text-xs text-gray-500 dark:text-neutral-400">{account.accountNumberMask}</p>
                                 </div>
                             </div>
-                            <svg className="w-5 h-5 text-slate-400 dark:text-neutral-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                            <svg className="w-5 h-5 text-gray-400 dark:text-neutral-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
                         </div>
                     ))}
-                     <button className="w-full text-left p-2 rounded-lg hover:bg-slate-200 dark:hover:bg-neutral-800 transition-colors flex items-center text-sm font-semibold text-violet-600 dark:text-violet-400">
-                         <div className="w-8 h-8 rounded-full border-2 border-dashed border-slate-400 dark:border-gray-600 mr-3 flex items-center justify-center">
+                     <button className="w-full text-left p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-neutral-800 transition-colors flex items-center text-sm font-semibold text-violet-600 dark:text-violet-400">
+                         <div className="w-8 h-8 rounded-full border-2 border-dashed border-gray-300 dark:border-gray-600 mr-3 flex items-center justify-center">
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" /></svg>
                          </div>
                         Add Credit Card to UPI
@@ -86,13 +90,13 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ setActivePage, setActiveModal, 
                 <QuickAction icon={<AddMoneyIcon />} label="Add Money" onClick={() => setActiveModal('add_money')} />
                 <QuickAction icon={<SendIcon />} label="Send" onClick={() => setActiveModal('send')} />
                 <QuickAction icon={<WithdrawIcon />} label="Withdraw" onClick={() => setActiveModal('withdraw')} />
-                <QuickAction icon={<BillsIcon />} label="Bills" onClick={() => setActivePage('pay')} />
+                <QuickAction icon={<BillsIcon />} label="Bills" onClick={() => { /* This could open a new bills modal */ }} />
             </div>
 
             {/* Recent Activity */}
             <div className="space-y-4">
                 <div className="flex justify-between items-center">
-                    <h2 className="text-xl font-bold text-black dark:text-white">Recent Activity</h2>
+                    <h2 className="text-xl font-bold text-gray-900 dark:text-white">Recent Activity</h2>
                     <div className="flex items-center gap-2 text-sm">
                         <FilterButton label="All" value="all" activeFilter={filter} setFilter={setFilter} />
                         <FilterButton label="Today" value="today" activeFilter={filter} setFilter={setFilter} />
@@ -100,15 +104,15 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ setActivePage, setActiveModal, 
                 </div>
                 <div className="space-y-2">
                     {filteredTransactions.map(tx => (
-                        <button key={tx.id} onClick={() => onTransactionClick(tx)} className="w-full text-left bg-slate-50 dark:bg-neutral-900 p-3 rounded-lg flex items-center justify-between hover:bg-slate-100 dark:hover:bg-neutral-800 cursor-pointer transition-colors">
+                        <button key={tx.id} onClick={() => onTransactionClick(tx)} className="w-full text-left bg-white dark:bg-neutral-900 p-3 rounded-lg flex items-center justify-between hover:bg-gray-100 dark:hover:bg-neutral-800 cursor-pointer transition-colors">
                             <div className="flex items-center gap-4">
                                 <CategoryIcon category={tx.category} />
                                 <div>
-                                    <p className="font-semibold text-black dark:text-white">{tx.merchant}</p>
-                                    <p className="text-sm text-neutral-500 dark:text-neutral-400">{tx.method} &bull; {tx.timestamp}</p>
+                                    <p className="font-semibold text-gray-900 dark:text-white">{tx.merchant}</p>
+                                    <p className="text-sm text-gray-500 dark:text-neutral-400">{tx.method} &bull; {tx.timestamp}</p>
                                 </div>
                             </div>
-                            <p className="font-bold text-black dark:text-white">
+                            <p className="font-bold text-gray-900 dark:text-white">
                                 {currencySymbol}{tx.amount.toFixed(2)}
                             </p>
                         </button>
@@ -122,17 +126,17 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ setActivePage, setActiveModal, 
 
 const QuickAction: React.FC<{ icon: React.ReactNode; label: string, onClick?: () => void }> = ({ icon, label, onClick }) => (
     <button onClick={onClick} className="flex flex-col items-center group p-2">
-        <div className="w-14 h-14 bg-slate-100 dark:bg-neutral-800 rounded-2xl flex items-center justify-center text-2xl mb-2 group-hover:bg-slate-200 dark:group-hover:bg-neutral-700 transition-all transform group-active:scale-90">
+        <div className="w-14 h-14 bg-gray-100 dark:bg-neutral-800 rounded-2xl flex items-center justify-center text-2xl mb-2 group-hover:bg-gray-200 dark:group-hover:bg-neutral-700 transition-all transform group-active:scale-90">
             {icon}
         </div>
-        <span className="text-xs font-medium text-slate-600 dark:text-neutral-300">{label}</span>
+        <span className="text-xs font-medium text-gray-600 dark:text-neutral-300">{label}</span>
     </button>
 );
 
 const FilterButton: React.FC<{label: string, value: string, activeFilter: string, setFilter: (f: string) => void}> = ({ label, value, activeFilter, setFilter }) => (
     <button 
         onClick={() => setFilter(value)}
-        className={`px-3 py-1 rounded-full font-semibold ${activeFilter === value ? 'bg-violet-600 text-white' : 'bg-slate-200 dark:bg-neutral-800 text-black dark:text-white'}`}
+        className={`px-3 py-1 rounded-full font-semibold ${activeFilter === value ? 'bg-violet-600 text-white' : 'bg-gray-200 dark:bg-neutral-800 text-gray-800 dark:text-white'}`}
     >
         {label}
     </button>
@@ -140,10 +144,10 @@ const FilterButton: React.FC<{label: string, value: string, activeFilter: string
 
 
 // SVG Icons
-const AddMoneyIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-slate-600 dark:text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" /></svg>;
-const SendIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-slate-600 dark:text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18" /></svg>;
-const WithdrawIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-slate-600 dark:text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" /></svg>;
-const BillsIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-slate-600 dark:text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>;
+const AddMoneyIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-600 dark:text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" /></svg>;
+const SendIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-600 dark:text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18" /></svg>;
+const WithdrawIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-600 dark:text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" /></svg>;
+const BillsIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-600 dark:text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>;
 
 
 export default HomeScreen;

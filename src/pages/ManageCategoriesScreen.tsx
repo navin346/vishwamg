@@ -27,25 +27,25 @@ const ManageCategoriesScreen: React.FC<ModalProps> = ({ onClose }) => {
     return (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-end justify-center">
             <div className="w-full max-w-md h-[90vh] bg-white dark:bg-slate-900 rounded-t-2xl shadow-xl flex flex-col animate-slide-up">
-                <div className="flex justify-between items-center p-4 border-b border-slate-200 dark:border-slate-800">
-                    <h2 className="text-xl font-bold text-black dark:text-white">Manage Categories</h2>
-                    <button onClick={onClose} className="text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-full p-1">
+                <div className="flex justify-between items-center p-4 border-b border-gray-200 dark:border-slate-800">
+                    <h2 className="text-xl font-bold text-gray-900 dark:text-white">Manage Categories</h2>
+                    <button onClick={onClose} className="text-gray-500 dark:text-neutral-400 hover:bg-gray-100 dark:hover:bg-neutral-800 rounded-full p-1">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                     </button>
                 </div>
                 
                 <div className="flex-grow p-4 overflow-y-auto space-y-2">
                     {categories.map(cat => (
-                        <div key={cat} className="flex items-center justify-between p-2 bg-slate-50 dark:bg-slate-800 rounded-lg">
+                        <div key={cat} className="flex items-center justify-between p-2 bg-gray-50 dark:bg-slate-800 rounded-lg">
                             {editingCategory?.oldName === cat ? (
                                 <input 
                                     type="text"
                                     value={editingCategory.newName}
                                     onChange={(e) => setEditingCategory({ ...editingCategory, newName: e.target.value })}
-                                    className="flex-grow bg-transparent focus:outline-none text-black dark:text-white"
+                                    className="flex-grow bg-transparent focus:outline-none text-gray-900 dark:text-white"
                                 />
                             ) : (
-                                <span className="text-black dark:text-white">{cat}</span>
+                                <span className="text-gray-900 dark:text-white">{cat}</span>
                             )}
                             <div className="flex items-center gap-2">
                                {editingCategory?.oldName === cat ? (
@@ -65,13 +65,13 @@ const ManageCategoriesScreen: React.FC<ModalProps> = ({ onClose }) => {
                     ))}
                 </div>
 
-                <div className="p-4 border-t border-slate-200 dark:border-slate-800 flex gap-2">
+                <div className="p-4 border-t border-gray-200 dark:border-slate-800 flex gap-2">
                     <input
                         type="text"
                         value={newCategory}
                         onChange={(e) => setNewCategory(e.target.value)}
                         placeholder="Add new category"
-                        className="w-full px-3 py-2 bg-neutral-100 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-violet-500 text-black dark:text-white"
+                        className="w-full px-3 py-2 bg-gray-100 dark:bg-neutral-800 border border-gray-300 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-violet-500 text-gray-900 dark:text-white"
                     />
                     <button
                         onClick={handleAdd}

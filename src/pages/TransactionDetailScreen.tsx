@@ -42,24 +42,24 @@ const TransactionDetailScreen: React.FC<ModalProps> = ({ onClose, transaction })
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-end justify-center">
             <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-t-2xl p-6 shadow-xl animate-slide-up">
                 <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-xl font-bold text-black dark:text-white">Transaction Details</h2>
-                    <button onClick={onClose} className="text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-full p-1">
+                    <h2 className="text-xl font-bold text-gray-900 dark:text-white">Transaction Details</h2>
+                    <button onClick={onClose} className="text-gray-500 dark:text-neutral-400 hover:bg-gray-100 dark:hover:bg-neutral-800 rounded-full p-1">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                     </button>
                 </div>
                 
                 <div className="text-center mb-6">
-                    <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-slate-100 dark:bg-slate-800 mb-4 text-slate-600 dark:text-slate-300">
+                    <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gray-100 dark:bg-slate-800 mb-4 text-gray-600 dark:text-slate-300">
                        <CategoryIcon category={transaction.category} />
                     </div>
-                    <p className="text-4xl font-bold text-black dark:text-white tracking-tight">
+                    <p className="text-4xl font-bold text-gray-900 dark:text-white tracking-tight">
                         {currency}{transaction.amount.toFixed(2)}
                     </p>
-                    <p className="font-semibold text-lg text-black dark:text-white mt-1">{transaction.merchant}</p>
-                    <p className="text-sm text-neutral-500 dark:text-neutral-400">{transaction.date}, {transaction.timestamp}</p>
+                    <p className="font-semibold text-lg text-gray-900 dark:text-white mt-1">{transaction.merchant}</p>
+                    <p className="text-sm text-gray-500 dark:text-neutral-400">{transaction.date}, {transaction.timestamp}</p>
                 </div>
 
-                <div className="space-y-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg p-4">
+                <div className="space-y-3 bg-gray-100 dark:bg-slate-800/50 rounded-lg p-4">
                     <DetailRow label="Status" value="Completed" valueClass="text-green-600 dark:text-green-400" />
                     <DetailRow label="Category" value={transaction.category} />
                     <DetailRow label="Paid With" value={transaction.method} />
@@ -68,7 +68,7 @@ const TransactionDetailScreen: React.FC<ModalProps> = ({ onClose, transaction })
 
                 <button
                     onClick={onClose}
-                    className="w-full mt-6 bg-slate-200 dark:bg-slate-700 text-black dark:text-white font-bold py-3 px-4 rounded-lg transition-transform transform active:scale-95"
+                    className="w-full mt-6 bg-gray-200 dark:bg-slate-700 text-gray-800 dark:text-white font-bold py-3 px-4 rounded-lg transition-transform transform active:scale-95"
                 >
                     Close
                 </button>
@@ -89,8 +89,8 @@ const TransactionDetailScreen: React.FC<ModalProps> = ({ onClose, transaction })
 
 const DetailRow: React.FC<{ label: string; value: string; valueClass?: string }> = ({ label, value, valueClass = ''}) => (
     <div className="flex justify-between items-center text-sm">
-        <p className="text-neutral-500 dark:text-neutral-400">{label}</p>
-        <p className={`font-semibold text-black dark:text-white ${valueClass}`}>{value}</p>
+        <p className="text-gray-500 dark:text-neutral-400">{label}</p>
+        <p className={`font-semibold text-gray-900 dark:text-white ${valueClass}`}>{value}</p>
     </div>
 );
 

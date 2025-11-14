@@ -7,7 +7,7 @@ interface BarChartProps {
 
 const BarChart: React.FC<BarChartProps> = ({ data, currency = '' }) => {
     if (data.length === 0) {
-        return <div className="text-center py-10 text-sm text-neutral-500">No spending data for this period.</div>;
+        return <div className="text-center py-10 text-sm text-gray-500">No spending data for this period.</div>;
     }
     const maxValue = Math.max(...data.map(d => d.value), 0);
     const chartHeight = 150;
@@ -42,7 +42,7 @@ const BarChart: React.FC<BarChartProps> = ({ data, currency = '' }) => {
                                 y={chartHeight + 15}
                                 textAnchor="middle"
                                 fontSize="10"
-                                className="fill-current text-neutral-500 dark:text-neutral-400"
+                                className="fill-current text-gray-500 dark:text-neutral-400"
                             >
                                 {d.label}
                             </text>
