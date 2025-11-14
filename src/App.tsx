@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import LoginScreen from './pages/LoginScreen';
 import OTPScreen from './pages/OTPScreen';
 import MainApp from './MainApp';
+import { ThemeProvider } from './context/ThemeContext';
 
 type AuthStep = 'login' | 'otp' | 'loggedIn';
 
@@ -19,17 +20,25 @@ const App: React.FC = () => {
   const handleLogout = () => {
     setAuthStep('login');
   };
+  
+  const renderAuthStep = () => {
+    switch (authStep) {
+      case 'login':
+        return <LoginScreen onEmailSignIn={handleEmailSignIn} />;
+      case 'otp':
+        return <OTPScreen onSuccess={handleOtpSuccess} />;
+      case 'loggedIn':
+        return <MainApp onLogout={handleLogout} />;
+      default:
+        return <LoginScreen onEmailSignIn={handleEmailSignIn} />;
+    }
+  };
 
-  switch (authStep) {
-    case 'login':
-      return <LoginScreen onEmailSignIn={handleEmailSignIn} />;
-    case 'otp':
-      return <OTPScreen onSuccess={handleOtpSuccess} />;
-    case 'loggedIn':
-      return <MainApp onLogout={handleLogout} />;
-    default:
-      return <LoginScreen onEmailSignIn={handleEmailSignIn} />;
-  }
+  return (
+    <ThemeProvider>
+      {renderAuthStep()}
+    </ThemeProvider>
+  );
 };
 
 export default App;

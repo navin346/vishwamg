@@ -36,17 +36,14 @@ const OTPScreen: React.FC<OTPScreenProps> = ({ onSuccess }) => {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-4">
+    <div className="min-h-screen bg-white dark:bg-black text-black dark:text-white flex flex-col items-center justify-center p-4">
       <div className="w-full max-w-sm text-center">
         <h1 className="text-3xl font-bold mb-2">Enter OTP</h1>
-        <p className="text-neutral-400 mb-8">A 6-digit code was sent to your email.</p>
+        <p className="text-neutral-500 dark:text-neutral-400 mb-8">A 6-digit code was sent to your email.</p>
 
         <div className="flex justify-center gap-2 mb-8">
           {otp.map((data, index) => (
             <input
-              // FIX: The ref callback function should not return a value.
-              // The original implicit return of the assignment was causing a type error.
-              // Wrapping the statement in curly braces fixes this by ensuring a void return.
               ref={(el) => { inputRefs.current[index] = el; }}
               key={index}
               type="text"
@@ -54,7 +51,7 @@ const OTPScreen: React.FC<OTPScreenProps> = ({ onSuccess }) => {
               value={data}
               onChange={(e) => handleChange(e.target, index)}
               onKeyDown={(e) => handleKeyDown(e, index)}
-              className="otp-input"
+              className="w-10 h-12 text-center text-xl rounded-lg bg-neutral-100 dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-700 text-black dark:text-white caret-indigo-500 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/40"
               aria-label={`OTP digit ${index + 1}`}
             />
           ))}

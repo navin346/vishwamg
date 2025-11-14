@@ -18,19 +18,19 @@ const MainApp: React.FC<MainAppProps> = ({ onLogout }) => {
   const renderContent = () => {
     switch (activePage) {
       case 'home':
-        return <HomeScreen />;
+        return <HomeScreen setActivePage={setActivePage} />;
       case 'pay':
         return <PayScreen />;
       case 'history':
         return <HistoryScreen />;
       default:
-        return <HomeScreen />;
+        return <HomeScreen setActivePage={setActivePage} />;
     }
   };
 
   return (
     <AppProvider>
-      <div className="flex flex-col h-screen bg-black">
+      <div className="relative mx-auto flex min-h-screen max-w-md flex-col border-x border-slate-200 dark:border-slate-800 bg-white dark:bg-black">
         <Header onLogout={onLogout} />
         <main className="flex-grow overflow-y-auto pb-20">
           {renderContent()}
