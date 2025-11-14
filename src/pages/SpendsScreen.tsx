@@ -4,10 +4,15 @@ import mockTransactionsUsd from '../data/mock-transactions-usd.json';
 import mockTransactionsInr from '../data/mock-transactions-inr.json';
 import PieChart from '../components/charts/PieChart';
 import BarChart from '../components/charts/BarChart';
+import { TransactionSummary } from '../data';
 
 type Timeframe = 'week' | 'month' | 'all';
 
-const SpendsScreen: React.FC = () => {
+interface SpendsScreenProps {
+    onTransactionClick: (transaction: TransactionSummary) => void;
+}
+
+const SpendsScreen: React.FC<SpendsScreenProps> = ({ onTransactionClick }) => {
     const { userMode } = useAppContext();
     const [timeframe, setTimeframe] = useState<Timeframe>('month');
 
@@ -80,7 +85,7 @@ const SpendsScreen: React.FC = () => {
                 <h3 className="font-bold text-lg mb-2 text-black dark:text-white">Transactions</h3>
                 <div className="space-y-2">
                     {filteredTransactions.map(tx => (
-                        <div key={tx.id} className="bg-white dark:bg-neutral-900/50 p-3 rounded-lg flex items-center justify-between">
+                        <button key={tx.id} onClick={() => onTransactionClick(tx)} className="w-full text-left bg-white dark:bg-neutral-900/50 p-3 rounded-lg flex items-center justify-between hover:bg-slate-100 dark:hover:bg-neutral-800 transition-colors cursor-pointer">
                             <div>
                                 <p className="font-semibold text-black dark:text-white">{tx.merchant}</p>
                                 <p className="text-xs text-neutral-500 dark:text-neutral-400">{tx.category} • {tx.date}</p>
@@ -88,7 +93,7 @@ const SpendsScreen: React.FC = () => {
                             <p className="font-semibold text-sm text-black dark:text-white">
                                 {currency}{tx.amount.toFixed(2)}
                             </p>
-                        </div>
+                        </button>
                     ))}
                 </div>
             </div>
