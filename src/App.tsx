@@ -7,6 +7,7 @@ import KycFormScreen from './pages/KycFormScreen';
 import MainApp from './MainApp';
 import { ThemeProvider } from './context/ThemeContext';
 import { AppProvider, useAppContext } from './context/AppContext';
+import BackgroundAnimation from './components/BackgroundAnimation';
 
 type AuthStep = 'login' | 'otp' | 'residency' | 'kycStart' | 'kycForm' | 'loggedIn';
 
@@ -57,6 +58,7 @@ const App: React.FC = () => {
   return (
     <ThemeProvider>
       <AppProvider>
+        <BackgroundAnimation />
         <AppContent />
       </AppProvider>
     </ThemeProvider>

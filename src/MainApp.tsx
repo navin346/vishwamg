@@ -126,11 +126,6 @@ const MainApp: React.FC<MainAppProps> = ({ onLogout }) => {
 
   return (
     <>
-      <div className="blob-container">
-        <div className="blob blob1"></div>
-        <div className="blob blob2"></div>
-        <div className="blob blob3"></div>
-      </div>
       <div className="relative mx-auto flex min-h-screen max-w-md flex-col border-x border-gray-200/50 dark:border-slate-800/50 bg-white/80 dark:bg-black/80 backdrop-blur-2xl">
         <Header onLogout={onLogout} />
         <main className="flex-grow overflow-y-auto pb-20">
