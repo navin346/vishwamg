@@ -5,9 +5,10 @@ import { ActiveModal, BankAccountType } from '../MainApp';
 interface ProfileScreenProps {
     setActiveModal: (modal: ActiveModal) => void;
     openLinkBankModal: (type: BankAccountType) => void;
+    installPrompt: any;
 }
 
-const ProfileScreen: React.FC<ProfileScreenProps> = ({ setActiveModal, openLinkBankModal }) => {
+const ProfileScreen: React.FC<ProfileScreenProps> = ({ setActiveModal, openLinkBankModal, installPrompt }) => {
     const { userMode, setUserMode, kycStatus, ibanDetails, createIbanAccount, linkedAccounts } = useAppContext();
     const isInternational = userMode === 'INTERNATIONAL';
     const [isCreatingIban, setIsCreatingIban] = useState(false);
@@ -125,6 +126,12 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ setActiveModal, openLinkB
                     <span>Manage Spending Categories</span>
                     <svg className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
                 </button>
+                 {installPrompt && (
+                    <button onClick={() => installPrompt.prompt()} className="w-full flex justify-between items-center text-left p-2 -mx-2 rounded-lg hover:bg-gray-100 dark:hover:bg-neutral-800 transition-colors mt-2">
+                        <span>Install Vishwam App</span>
+                        <svg className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                    </button>
+                )}
             </div>
         </div>
     );

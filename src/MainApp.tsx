@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { AppProvider } from './context/AppContext';
 import Header from './components/Header';
 import BottomNav from './components/BottomNav';
 import HomeScreen from './pages/HomeScreen';
@@ -31,12 +30,13 @@ interface SelectedBiller {
 }
 
 
-const AppWithTheme: React.FC<MainAppProps> = ({ onLogout }) => {
+const MainApp: React.FC<MainAppProps> = ({ onLogout }) => {
   const [activePage, setActivePage] = useState<ActivePage>('home');
   const [activeModal, setActiveModal] = useState<ActiveModal>(null);
   const [bankAccountType, setBankAccountType] = useState<BankAccountType>('us');
   const [selectedTransaction, setSelectedTransaction] = useState<TransactionSummary | null>(null);
   const [selectedBiller, setSelectedBiller] = useState<SelectedBiller | null>(null);
+  const [installPrompt, setInstallPrompt] = useState<any>(null);
   const { theme } = useTheme();
 
   useEffect(() => {
@@ -53,6 +53,15 @@ const AppWithTheme: React.FC<MainAppProps> = ({ onLogout }) => {
       body.classList.remove('bg-black');
     }
   }, [theme]);
+
+  useEffect(() => {
+    const handler = (e: Event) => {
+        e.preventDefault();
+        setInstallPrompt(e);
+    };
+    window.addEventListener('beforeinstallprompt', handler);
+    return () => window.removeEventListener('beforeinstallprompt', handler);
+  }, []);
 
 
   const handleOpenLinkBankModal = (type: BankAccountType) => {
@@ -77,7 +86,7 @@ const AppWithTheme: React.FC<MainAppProps> = ({ onLogout }) => {
       case 'spends':
         return <SpendsScreen onTransactionClick={handleOpenTransactionDetail} />;
       case 'profile':
-        return <ProfileScreen setActiveModal={setActiveModal} openLinkBankModal={handleOpenLinkBankModal} />;
+        return <ProfileScreen setActiveModal={setActiveModal} openLinkBankModal={handleOpenLinkBankModal} installPrompt={installPrompt} />;
       default:
         return <HomeScreen setActivePage={setActivePage} setActiveModal={setActiveModal} onTransactionClick={handleOpenTransactionDetail} />;
     }
@@ -133,14 +142,5 @@ const AppWithTheme: React.FC<MainAppProps> = ({ onLogout }) => {
     </>
   );
 }
-
-const MainApp: React.FC<MainAppProps> = ({ onLogout }) => {
-  return (
-    <AppProvider>
-      <AppWithTheme onLogout={onLogout} />
-    </AppProvider>
-  );
-};
-
 
 export default MainApp;

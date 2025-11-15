@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 interface BarChartProps {
     data: { label: string; value: number }[];
@@ -6,6 +6,8 @@ interface BarChartProps {
 }
 
 const BarChart: React.FC<BarChartProps> = ({ data, currency = '' }) => {
+    const [tooltip, setTooltip] = useState<{ x: number; y: number; value: string } | null>(null);
+
     if (data.length === 0) {
         return <div className="text-center py-10 text-sm text-gray-500">No spending data for this period.</div>;
     }
@@ -15,8 +17,18 @@ const BarChart: React.FC<BarChartProps> = ({ data, currency = '' }) => {
     const barMargin = 15;
     const width = data.length * (barWidth + barMargin);
 
+    const handleMouseEnter = (d: { label: string; value: number }, i: number, barHeight: number) => {
+        const x = i * (barWidth + barMargin) + barWidth / 2;
+        const y = chartHeight - barHeight - 10; // Position tooltip above the bar
+        setTooltip({ x, y, value: `${currency}${d.value.toFixed(2)}` });
+    };
+
+    const handleMouseLeave = () => {
+        setTooltip(null);
+    };
+
     return (
-        <div className="w-full overflow-x-auto">
+        <div className="w-full overflow-x-auto relative">
             <svg width={width} height={chartHeight + 20} className="font-sans">
                 {data.map((d, i) => {
                     const barHeight = maxValue > 0 ? (d.value / maxValue) * chartHeight : 0;
@@ -24,7 +36,7 @@ const BarChart: React.FC<BarChartProps> = ({ data, currency = '' }) => {
                     const y = chartHeight - barHeight;
 
                     return (
-                        <g key={i}>
+                        <g key={i} onMouseEnter={() => handleMouseEnter(d, i, barHeight)} onMouseLeave={handleMouseLeave}>
                             <rect
                                 x={x}
                                 y={y}
@@ -56,6 +68,14 @@ const BarChart: React.FC<BarChartProps> = ({ data, currency = '' }) => {
                     </linearGradient>
                 </defs>
             </svg>
+             {tooltip && (
+                <div 
+                    className="absolute bg-gray-800 dark:bg-black text-white text-xs rounded py-1 px-2 pointer-events-none transition-opacity duration-200"
+                    style={{ left: tooltip.x, top: tooltip.y, transform: 'translateX(-50%)' }}
+                >
+                    {tooltip.value}
+                </div>
+            )}
         </div>
     );
 };
