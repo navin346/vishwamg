@@ -49,15 +49,6 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ setActivePage, setActiveModal, 
                  <div className="relative z-10">
                     <div className="flex justify-between items-start">
                         <p className="text-sm text-indigo-200">Your Balance</p>
-                        <button onClick={() => setActiveModal('scan_qr')} className="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white font-semibold py-2 px-3 rounded-full flex items-center gap-2 text-sm transition-colors transform active:scale-95 -mt-1">
-                            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M3 7V3H7" />
-                                <path d="M17 3H21V7" />
-                                <path d="M21 17V21H17" />
-                                <path d="M7 21H3V17" />
-                            </svg>
-                            Scan & Pay
-                        </button>
                     </div>
                     <p className="text-5xl font-bold tracking-tight mt-2">
                         {isInternational ? '$' : '₹'}{balance} <span className="text-xl font-medium text-indigo-300/80">{currency}</span>
@@ -66,42 +57,15 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ setActivePage, setActiveModal, 
             </div>
 
             {/* Mode-specific display */}
-            {isInternational ? (
+            {isInternational && (
                 <VirtualCard card={mockData.international.card} disabled={!isCardActive} />
-            ) : (
-                <div className="grid grid-cols-2 gap-4">
-                    <button 
-                        onClick={() => setActiveModal('scan_qr')}
-                        className="bg-violet-600 hover:bg-violet-700 text-white rounded-xl p-4 flex flex-col items-center justify-center text-center aspect-square transition-transform transform active:scale-95 shadow-lg shadow-violet-500/30"
-                    >
-                        <svg className="w-10 h-10 mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M3 7V3H7" />
-                            <path d="M17 3H21V7" />
-                            <path d="M21 17V21H17" />
-                            <path d="M7 21H3V17" />
-                        </svg>
-                        <span className="font-bold">Scan & Pay</span>
-                        <span className="text-xs text-violet-200 mt-1">Pay any UPI QR</span>
-                    </button>
-                    <button 
-                        onClick={() => setActiveModal('bills')}
-                        className="bg-white dark:bg-neutral-800 text-gray-900 dark:text-white rounded-xl p-4 flex flex-col items-center justify-center text-center aspect-square transition-colors hover:bg-gray-100 dark:hover:bg-neutral-700 active:scale-95 transform shadow-lg dark:shadow-black/20"
-                    >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="w-10 h-10 mb-2 text-violet-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                        <span className="font-bold">Pay Bills</span>
-                        <span className="text-xs text-gray-500 dark:text-neutral-400 mt-1">Recharge & Utilities</span>
-                    </button>
-                </div>
             )}
 
             {/* Quick Actions */}
-            <div className="grid grid-cols-4 gap-2 text-center">
+            <div className="grid grid-cols-3 gap-2 text-center">
                 <QuickAction icon={<AddMoneyIcon />} label="Add Money" onClick={() => setActiveModal('add_money')} />
                 <QuickAction icon={<SendIcon />} label="Send" onClick={() => setActiveModal('send')} />
                 <QuickAction icon={<WithdrawIcon />} label="Withdraw" onClick={() => setActiveModal('withdraw')} />
-                <QuickAction icon={<BillsIcon />} label="Bills" onClick={() => setActiveModal('bills')} />
             </div>
 
             {/* Recent Activity */}
@@ -158,7 +122,6 @@ const FilterButton: React.FC<{label: string, value: string, activeFilter: string
 const AddMoneyIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-600 dark:text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" /></svg>;
 const SendIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-600 dark:text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18" /></svg>;
 const WithdrawIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-600 dark:text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" /></svg>;
-const BillsIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-600 dark:text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>;
 
 
 export default HomeScreen;

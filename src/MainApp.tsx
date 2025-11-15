@@ -16,9 +16,11 @@ import BillsScreen from './pages/BillsScreen';
 import PayBillModal from './pages/PayBillModal';
 import { TransactionSummary } from './data';
 import { useTheme } from './context/ThemeContext';
+import { useAppContext } from './context/AppContext';
+import GlobalPayScreen from './pages/GlobalPayScreen';
 
-export type ActivePage = 'home' | 'spends' | 'profile';
-export type ActiveModal = 'send' | 'add_money' | 'withdraw' | 'kyc' | 'link_bank' | 'manage_categories' | 'transaction_detail' | 'scan_qr' | 'bills' | 'pay_bill' | null;
+export type ActivePage = 'spends' | 'bills' | 'profile';
+export type ActiveModal = 'send' | 'add_money' | 'withdraw' | 'kyc' | 'link_bank' | 'manage_categories' | 'transaction_detail' | 'scan_qr' | 'pay_bill' | null;
 export type BankAccountType = 'us' | 'inr';
 
 interface MainAppProps {
@@ -31,13 +33,14 @@ interface SelectedBiller {
 
 
 const MainApp: React.FC<MainAppProps> = ({ onLogout }) => {
-  const [activePage, setActivePage] = useState<ActivePage>('home');
+  const [activePage, setActivePage] = useState<ActivePage>('spends');
   const [activeModal, setActiveModal] = useState<ActiveModal>(null);
   const [bankAccountType, setBankAccountType] = useState<BankAccountType>('us');
   const [selectedTransaction, setSelectedTransaction] = useState<TransactionSummary | null>(null);
   const [selectedBiller, setSelectedBiller] = useState<SelectedBiller | null>(null);
   const [installPrompt, setInstallPrompt] = useState<any>(null);
   const { theme } = useTheme();
+  const { userMode } = useAppContext();
 
   useEffect(() => {
     const body = document.body;
@@ -81,14 +84,18 @@ const MainApp: React.FC<MainAppProps> = ({ onLogout }) => {
 
   const renderContent = () => {
     switch (activePage) {
-      case 'home':
-        return <HomeScreen setActivePage={setActivePage} setActiveModal={setActiveModal} onTransactionClick={handleOpenTransactionDetail} />;
+      // The original 'home' screen is now split between 'spends' and 'profile' functionality.
+      // 'spends' is now the landing page.
       case 'spends':
         return <SpendsScreen onTransactionClick={handleOpenTransactionDetail} />;
+      case 'bills':
+        return userMode === 'INDIA' 
+          ? <BillsScreen onPayBiller={handleOpenPayBillModal} />
+          : <GlobalPayScreen />;
       case 'profile':
         return <ProfileScreen setActiveModal={setActiveModal} openLinkBankModal={handleOpenLinkBankModal} installPrompt={installPrompt} />;
       default:
-        return <HomeScreen setActivePage={setActivePage} setActiveModal={setActiveModal} onTransactionClick={handleOpenTransactionDetail} />;
+        return <SpendsScreen onTransactionClick={handleOpenTransactionDetail} />;
     }
   };
 
@@ -115,8 +122,6 @@ const MainApp: React.FC<MainAppProps> = ({ onLogout }) => {
           return selectedTransaction && <TransactionDetailScreen onClose={handleClose} transaction={selectedTransaction} />;
       case 'scan_qr':
           return <ScanQRModal onClose={handleClose} />;
-      case 'bills':
-          return <BillsScreen onClose={handleClose} onPayBiller={handleOpenPayBillModal} />;
       case 'pay_bill':
           return selectedBiller && <PayBillModal onClose={handleClose} billerName={selectedBiller.name} amount={selectedBiller.amount} />;
       default:
@@ -132,6 +137,18 @@ const MainApp: React.FC<MainAppProps> = ({ onLogout }) => {
           {renderContent()}
         </main>
         {renderModal()}
+        
+        {/* FAB for QR Scanner */}
+        <div className="absolute bottom-8 right-1/2 z-20 translate-x-1/2">
+             <button
+                onClick={() => setActiveModal('scan_qr')}
+                className="w-16 h-16 rounded-full bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-violet-500/50 transform transition-transform active:scale-90"
+                aria-label="Scan QR code"
+            >
+                 <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 4h4v4H4V4z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path><path d="M16 4h4v4h-4V4z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path><path d="M4 16h4v4H4v-4z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path><path d="M16 16h4v4h-4v-4z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path><path d="M10 12H4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path><path d="M20 12h-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path></svg>
+            </button>
+        </div>
+
         <BottomNav activePage={activePage} setActivePage={setActivePage} />
       </div>
     </>

@@ -12,8 +12,12 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [theme, setTheme] = useState<Theme>(() => {
     const storedTheme = localStorage.getItem('theme') as Theme | null;
-    // You can also check for user's system preference here
-    return storedTheme || 'dark';
+    if (storedTheme) {
+      return storedTheme;
+    }
+    // Check for user's system preference if no theme is stored
+    const userPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    return userPrefersDark ? 'dark' : 'light';
   });
 
   useEffect(() => {
@@ -21,6 +25,8 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     root.classList.remove(theme === 'dark' ? 'light' : 'dark');
     root.classList.add(theme);
     localStorage.setItem('theme', theme);
+    // Set color scheme for browser UI like scrollbars
+    root.style.colorScheme = theme;
   }, [theme]);
 
   const toggleTheme = () => {
