@@ -69,25 +69,29 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ setActivePage, setActiveModal, 
             {isInternational ? (
                 <VirtualCard card={mockData.international.card} disabled={!isCardActive} />
             ) : (
-                <div className="bg-white/80 dark:bg-neutral-900/80 backdrop-blur-sm rounded-xl p-4 space-y-2">
-                    <h3 className="font-bold mb-2 px-2 text-gray-900 dark:text-white">Accounts & Cards</h3>
-                    {mockData.india.linkedAccounts.map(account => (
-                        <div key={account.bankName} className="flex items-center justify-between p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-neutral-800 transition-colors">
-                            <div className="flex items-center">
-                                <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 mr-3"></div>
-                                <div>
-                                    <p className="font-semibold text-sm text-gray-900 dark:text-white">{account.bankName}</p>
-                                    <p className="text-xs text-gray-500 dark:text-neutral-400">{account.accountNumberMask}</p>
-                                </div>
-                            </div>
-                            <svg className="w-5 h-5 text-gray-400 dark:text-neutral-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-                        </div>
-                    ))}
-                     <button className="w-full text-left p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-neutral-800 transition-colors flex items-center text-sm font-semibold text-violet-600 dark:text-violet-400">
-                         <div className="w-8 h-8 rounded-full border-2 border-dashed border-gray-300 dark:border-gray-600 mr-3 flex items-center justify-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" /></svg>
-                         </div>
-                        Add Credit Card to UPI
+                <div className="grid grid-cols-2 gap-4">
+                    <button 
+                        onClick={() => setActiveModal('scan_qr')}
+                        className="bg-violet-600 hover:bg-violet-700 text-white rounded-xl p-4 flex flex-col items-center justify-center text-center aspect-square transition-transform transform active:scale-95 shadow-lg shadow-violet-500/30"
+                    >
+                        <svg className="w-10 h-10 mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M3 7V3H7" />
+                            <path d="M17 3H21V7" />
+                            <path d="M21 17V21H17" />
+                            <path d="M7 21H3V17" />
+                        </svg>
+                        <span className="font-bold">Scan & Pay</span>
+                        <span className="text-xs text-violet-200 mt-1">Pay any UPI QR</span>
+                    </button>
+                    <button 
+                        onClick={() => setActiveModal('bills')}
+                        className="bg-white dark:bg-neutral-800 text-gray-900 dark:text-white rounded-xl p-4 flex flex-col items-center justify-center text-center aspect-square transition-colors hover:bg-gray-100 dark:hover:bg-neutral-700 active:scale-95 transform shadow-lg dark:shadow-black/20"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="w-10 h-10 mb-2 text-violet-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        <span className="font-bold">Pay Bills</span>
+                        <span className="text-xs text-gray-500 dark:text-neutral-400 mt-1">Recharge & Utilities</span>
                     </button>
                 </div>
             )}

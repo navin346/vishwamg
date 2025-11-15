@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import mockBillers from '../data/mock-billers.json';
 
 interface ModalProps {
     onClose: () => void;
+    onPayBiller: (billerName: string, amount: number) => void;
 }
 
 const IconWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
@@ -25,7 +26,18 @@ const CategoryIcon: React.FC<{ name: string }> = ({ name }) => {
     return <IconWrapper>{icon}</IconWrapper>;
 };
 
-const BillsScreen: React.FC<ModalProps> = ({ onClose }) => {
+const BillsScreen: React.FC<ModalProps> = ({ onClose, onPayBiller }) => {
+    const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
+
+    const handleCategoryClick = (categoryName: string) => {
+        setExpandedCategory(expandedCategory === categoryName ? null : categoryName);
+    };
+
+    const handleBillerClick = (billerName: string) => {
+        // Hardcoded mock amount as requested for the demo
+        onPayBiller(billerName, 500);
+    };
+
     return (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-end justify-center">
             <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-t-2xl p-6 shadow-xl animate-slide-up h-[80vh] flex flex-col">
@@ -38,12 +50,33 @@ const BillsScreen: React.FC<ModalProps> = ({ onClose }) => {
                 <div className="flex-grow overflow-y-auto pr-2">
                     <div className="space-y-3">
                         {mockBillers.categories.map(category => (
-                            <div key={category.name} className="bg-gray-50 dark:bg-neutral-900 p-3 rounded-lg flex items-center justify-between hover:bg-gray-100 dark:hover:bg-neutral-800 cursor-pointer transition-colors">
-                                <div className="flex items-center">
-                                    <CategoryIcon name={category.name} />
-                                    <span className="font-semibold text-gray-900 dark:text-white">{category.name}</span>
-                                </div>
-                                <svg className="w-5 h-5 text-neutral-400 dark:text-neutral-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                            <div key={category.name}>
+                                <button
+                                    onClick={() => handleCategoryClick(category.name)}
+                                    className="w-full bg-gray-50 dark:bg-neutral-900 p-3 rounded-lg flex items-center justify-between hover:bg-gray-100 dark:hover:bg-neutral-800 cursor-pointer transition-colors"
+                                >
+                                    <div className="flex items-center">
+                                        <CategoryIcon name={category.name} />
+                                        <span className="font-semibold text-gray-900 dark:text-white">{category.name}</span>
+                                    </div>
+                                    <svg className={`w-5 h-5 text-neutral-400 dark:text-neutral-600 transition-transform ${expandedCategory === category.name ? 'rotate-90' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                                </button>
+                                {expandedCategory === category.name && (
+                                    <div className="pl-4 pr-2 py-2 space-y-2">
+                                        {category.billers.map(biller => (
+                                            <button
+                                                key={biller.name}
+                                                onClick={() => handleBillerClick(biller.name)}
+                                                className="w-full flex items-center p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-neutral-800 transition-colors text-left"
+                                            >
+                                                <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-neutral-700 flex items-center justify-center font-bold text-sm mr-3 text-gray-700 dark:text-gray-200 flex-shrink-0">
+                                                    {biller.logo}
+                                                </div>
+                                                <span className="text-gray-800 dark:text-gray-200">{biller.name}</span>
+                                            </button>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
                         ))}
                     </div>

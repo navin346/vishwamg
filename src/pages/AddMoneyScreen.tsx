@@ -1,10 +1,20 @@
 import React from 'react';
+import { useAppContext } from '../context/AppContext';
 
 interface ModalProps {
     onClose: () => void;
+    openLinkBankModal: () => void;
 }
 
-const AddMoneyScreen: React.FC<ModalProps> = ({ onClose }) => {
+const AddMoneyScreen: React.FC<ModalProps> = ({ onClose, openLinkBankModal }) => {
+    const { linkedAccounts } = useAppContext();
+    const isUsAccountLinked = !!linkedAccounts.us;
+
+    const handleGoToLinkBank = () => {
+        onClose();
+        openLinkBankModal();
+    };
+
     return (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-end justify-center">
             <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-t-2xl p-6 shadow-xl animate-slide-up">
@@ -15,38 +25,51 @@ const AddMoneyScreen: React.FC<ModalProps> = ({ onClose }) => {
                     </button>
                 </div>
 
-                <p className="text-sm text-gray-500 dark:text-neutral-400 mb-6">
-                    On-ramp funds from your linked US bank account.
-                </p>
-
-                <div className="space-y-4">
-                    <div>
-                        <label htmlFor="amount" className="text-sm font-medium text-gray-700 dark:text-neutral-300">Amount (USD)</label>
-                         <div className="relative mt-1">
-                             <span className="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-500">$</span>
-                             <input
-                                id="amount"
-                                type="number"
-                                placeholder="1,000.00"
-                                className="w-full pl-8 pr-4 py-3 bg-gray-100 dark:bg-neutral-800 border border-gray-300 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500 text-gray-900 dark:text-white"
-                            />
+                {isUsAccountLinked ? (
+                    <>
+                        <p className="text-sm text-gray-500 dark:text-neutral-400 mb-6">
+                            On-ramp funds from your linked US bank account.
+                        </p>
+                        <div className="space-y-4">
+                            <div>
+                                <label htmlFor="amount" className="text-sm font-medium text-gray-700 dark:text-neutral-300">Amount (USD)</label>
+                                 <div className="relative mt-1">
+                                     <span className="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-500">$</span>
+                                     <input
+                                        id="amount"
+                                        type="number"
+                                        placeholder="1,000.00"
+                                        className="w-full pl-8 pr-4 py-3 bg-gray-100 dark:bg-neutral-800 border border-gray-300 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500 text-gray-900 dark:text-white"
+                                    />
+                                </div>
+                            </div>
+                             <div>
+                                <label className="text-sm font-medium text-gray-700 dark:text-neutral-300">From</label>
+                                <div className="mt-1 w-full p-4 bg-gray-100 dark:bg-neutral-800 border border-gray-300 dark:border-neutral-700 rounded-lg">
+                                   <p className="font-semibold text-gray-900 dark:text-white">{linkedAccounts.us?.bankName}</p>
+                                   <p className="text-xs text-gray-500 dark:text-neutral-400">Checking •••• {linkedAccounts.us?.accountNumber.slice(-4)}</p>
+                                </div>
+                            </div>
                         </div>
+                        <button
+                            onClick={onClose}
+                            className="w-full mt-6 bg-violet-600 hover:bg-violet-700 text-white font-bold py-3 px-4 rounded-lg transition-transform transform active:scale-95"
+                        >
+                            Add Money
+                        </button>
+                    </>
+                ) : (
+                    <div className="text-center py-4">
+                        <h3 className="font-bold text-lg mb-2 text-gray-900 dark:text-white">Complete Your Setup</h3>
+                        <p className="text-sm text-gray-500 dark:text-neutral-400 mb-6">Please link your US bank account to add funds.</p>
+                        <button
+                            onClick={handleGoToLinkBank}
+                            className="w-full bg-violet-600 hover:bg-violet-700 text-white font-bold py-3 px-4 rounded-lg transition-transform transform active:scale-95"
+                        >
+                            Link Account
+                        </button>
                     </div>
-                     <div>
-                        <label className="text-sm font-medium text-gray-700 dark:text-neutral-300">From</label>
-                        <div className="mt-1 w-full p-4 bg-gray-100 dark:bg-neutral-800 border border-gray-300 dark:border-neutral-700 rounded-lg">
-                           <p className="font-semibold text-gray-900 dark:text-white">Bank of America</p>
-                           <p className="text-xs text-gray-500 dark:text-neutral-400">Checking •••• 1234</p>
-                        </div>
-                    </div>
-                </div>
-
-                <button
-                    onClick={onClose}
-                    className="w-full mt-6 bg-violet-600 hover:bg-violet-700 text-white font-bold py-3 px-4 rounded-lg transition-transform transform active:scale-95"
-                >
-                    Add Money
-                </button>
+                )}
             </div>
             <style>{`
                 @keyframes slide-up {

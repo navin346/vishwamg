@@ -14,22 +14,29 @@ import ManageCategoriesScreen from './pages/ManageCategoriesScreen';
 import TransactionDetailScreen from './pages/TransactionDetailScreen';
 import ScanQRModal from './pages/ScanQRModal';
 import BillsScreen from './pages/BillsScreen';
+import PayBillModal from './pages/PayBillModal';
 import { TransactionSummary } from './data';
 import { useTheme } from './context/ThemeContext';
 
 export type ActivePage = 'home' | 'spends' | 'profile';
-export type ActiveModal = 'send' | 'add_money' | 'withdraw' | 'kyc' | 'link_bank' | 'manage_categories' | 'transaction_detail' | 'scan_qr' | 'bills' | null;
+export type ActiveModal = 'send' | 'add_money' | 'withdraw' | 'kyc' | 'link_bank' | 'manage_categories' | 'transaction_detail' | 'scan_qr' | 'bills' | 'pay_bill' | null;
 export type BankAccountType = 'us' | 'inr';
 
 interface MainAppProps {
   onLogout: () => void;
 }
+interface SelectedBiller {
+    name: string;
+    amount: number;
+}
+
 
 const AppWithTheme: React.FC<MainAppProps> = ({ onLogout }) => {
   const [activePage, setActivePage] = useState<ActivePage>('home');
   const [activeModal, setActiveModal] = useState<ActiveModal>(null);
   const [bankAccountType, setBankAccountType] = useState<BankAccountType>('us');
   const [selectedTransaction, setSelectedTransaction] = useState<TransactionSummary | null>(null);
+  const [selectedBiller, setSelectedBiller] = useState<SelectedBiller | null>(null);
   const { theme } = useTheme();
 
   useEffect(() => {
@@ -58,6 +65,11 @@ const AppWithTheme: React.FC<MainAppProps> = ({ onLogout }) => {
     setActiveModal('transaction_detail');
   };
 
+  const handleOpenPayBillModal = (billerName: string, amount: number) => {
+    setSelectedBiller({ name: billerName, amount });
+    setActiveModal('pay_bill');
+  };
+
   const renderContent = () => {
     switch (activePage) {
       case 'home':
@@ -75,12 +87,13 @@ const AppWithTheme: React.FC<MainAppProps> = ({ onLogout }) => {
     const handleClose = () => {
         setActiveModal(null);
         setSelectedTransaction(null);
+        setSelectedBiller(null);
     };
     switch (activeModal) {
       case 'send':
         return <SendMoneyScreen onClose={handleClose} />;
       case 'add_money':
-        return <AddMoneyScreen onClose={handleClose} />;
+        return <AddMoneyScreen onClose={handleClose} openLinkBankModal={() => handleOpenLinkBankModal('us')} />;
       case 'withdraw':
         return <WithdrawScreen onClose={handleClose} openLinkBankModal={() => handleOpenLinkBankModal('inr')} setActiveModal={setActiveModal} />;
       case 'kyc':
@@ -94,7 +107,9 @@ const AppWithTheme: React.FC<MainAppProps> = ({ onLogout }) => {
       case 'scan_qr':
           return <ScanQRModal onClose={handleClose} />;
       case 'bills':
-          return <BillsScreen onClose={handleClose} />;
+          return <BillsScreen onClose={handleClose} onPayBiller={handleOpenPayBillModal} />;
+      case 'pay_bill':
+          return selectedBiller && <PayBillModal onClose={handleClose} billerName={selectedBiller.name} amount={selectedBiller.amount} />;
       default:
         return null;
     }
