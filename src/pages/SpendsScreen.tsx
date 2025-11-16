@@ -1,15 +1,22 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useAppContext } from '@/src/context/AppContext';
-import mockTransactionsUsd from '@/src/data/mock-transactions-usd.json';
-import mockTransactionsInr from '@/src/data/mock-transactions-inr.json';
+import { collection, query, where, getDocs, orderBy, Timestamp } from 'firebase/firestore';
+import { db } from '@/src/firebase';
 import PieChart from '@/src/components/charts/PieChart';
 import BarChart from '@/src/components/charts/BarChart';
 import { TransactionSummary } from '@/src/data';
-import mockData from '@/src/data/mock-data.json';
 import VirtualCard from '@/src/components/VirtualCard';
 import { ActiveModal } from '@/src/MainApp';
 
 type Timeframe = 'week' | 'month' | 'all';
+
+// Mock card details, as this isn't stored in Firestore for this version
+const mockCard = {
+  number: "1234 5678 9012 3456",
+  name: "J. DOE",
+  expiry: "12/28",
+  cvv: "123"
+};
 
 interface SpendsScreenProps {
     onTransactionClick: (transaction: TransactionSummary) => void;
@@ -17,26 +24,56 @@ interface SpendsScreenProps {
 }
 
 const SpendsScreen: React.FC<SpendsScreenProps> = ({ onTransactionClick, setActiveModal }) => {
-    const { userMode, balance, kycStatus, setAuthStep } = useAppContext();
+    const { user, userMode, balance, kycStatus, setAuthFlow } = useAppContext();
     const [timeframe, setTimeframe] = useState<Timeframe>('month');
+    const [transactions, setTransactions] = useState<TransactionSummary[]>([]);
+    const [loading, setLoading] = useState(true);
 
     const isInternational = userMode === 'INTERNATIONAL';
     const isCardActive = isInternational && kycStatus === 'verified';
+    const currency = isInternational ? '$' : '₹';
 
-    const { transactions, currency } = useMemo(() => ({
-        transactions: isInternational ? mockTransactionsUsd.transactions : mockTransactionsInr.transactions,
-        currency: isInternational ? '$' : '₹'
-    }), [userMode, isInternational]);
+    useEffect(() => {
+        const fetchTransactions = async () => {
+            if (!user) return;
+            setLoading(true);
+            try {
+                const currencyToFetch = isInternational ? 'USD' : 'INR';
+                const txCollection = collection(db, 'users', user.uid, 'transactions');
+                const q = query(txCollection, where('currency', '==', currencyToFetch), orderBy('timestamp', 'desc'));
+                
+                const querySnapshot = await getDocs(q);
+                const fetchedTransactions = querySnapshot.docs.map(doc => {
+                    const data = doc.data();
+                    // Convert Firestore Timestamp to a readable string date if needed
+                    const date = (data.timestamp as Timestamp).toDate().toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                    return {
+                        ...data,
+                        id: doc.id,
+                        date: date
+                    } as TransactionSummary;
+                });
+                setTransactions(fetchedTransactions);
+            } catch (error) {
+                console.error("Error fetching transactions: ", error);
+            } finally {
+                setLoading(false);
+            }
+        };
 
-    // This is a simplified version for mock data.
+        fetchTransactions();
+    }, [user, userMode]);
+
+
     const filteredTransactions = useMemo(() => {
+        if (loading) return [];
         switch (timeframe) {
             case 'week': return transactions.slice(0, 2);
             case 'month': return transactions.slice(0, 5);
             case 'all': return transactions;
             default: return transactions;
         }
-    }, [timeframe, transactions]);
+    }, [timeframe, transactions, loading]);
 
     const { totalSpent, categoryData, barChartData } = useMemo(() => {
         const total = filteredTransactions.reduce((sum, tx) => sum + tx.amount, 0);
@@ -53,10 +90,9 @@ const SpendsScreen: React.FC<SpendsScreenProps> = ({ onTransactionClick, setActi
 
     }, [filteredTransactions]);
 
-    // KYC Check handler for protected actions
     const handleProtectedAction = (modal: ActiveModal) => {
         if (kycStatus !== 'verified') {
-            setAuthStep('kycStart');
+            setAuthFlow('kycStart');
         } else {
             setActiveModal(modal);
         }
@@ -81,7 +117,7 @@ const SpendsScreen: React.FC<SpendsScreenProps> = ({ onTransactionClick, setActi
 
             {/* International Virtual Card */}
             {isInternational && (
-                <VirtualCard card={mockData.international.card} disabled={!isCardActive} />
+                <VirtualCard card={mockCard} disabled={!isCardActive} />
             )}
 
             {/* Quick Actions */}
@@ -119,8 +155,9 @@ const SpendsScreen: React.FC<SpendsScreenProps> = ({ onTransactionClick, setActi
              {/* Transactions List */}
              <div>
                 <h3 className="font-bold text-lg mb-2 text-gray-900 dark:text-white">Transactions</h3>
+                {loading ? <p className="text-sm text-gray-500">Loading transactions...</p> : (
                 <div className="space-y-2">
-                    {filteredTransactions.map(tx => (
+                    {filteredTransactions.length > 0 ? filteredTransactions.map(tx => (
                         <button key={tx.id} onClick={() => onTransactionClick(tx)} className="w-full text-left bg-white dark:bg-neutral-900/50 p-3 rounded-lg flex items-center justify-between hover:bg-gray-100 dark:hover:bg-neutral-800 transition-colors cursor-pointer">
                             <div>
                                 <p className="font-semibold text-gray-900 dark:text-white">{tx.merchant}</p>
@@ -130,8 +167,9 @@ const SpendsScreen: React.FC<SpendsScreenProps> = ({ onTransactionClick, setActi
                                 {currency}{tx.amount.toFixed(2)}
                             </p>
                         </button>
-                    ))}
+                    )) : <p className="text-sm text-center py-4 text-gray-500">No transactions for this period.</p>}
                 </div>
+                )}
             </div>
 
         </div>

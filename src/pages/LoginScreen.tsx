@@ -1,41 +1,80 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useAppContext } from '@/src/context/AppContext';
+import { FirebaseError } from 'firebase/app';
 
-interface LoginScreenProps {
-  onEmailSignIn: () => void;
-}
+const LoginScreen: React.FC = () => {
+  const { signUp, signIn } = useAppContext();
+  const [isSignUp, setIsSignUp] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
-const LoginScreen: React.FC<LoginScreenProps> = ({ onEmailSignIn }) => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
+    try {
+      if (isSignUp) {
+        await signUp(email, password);
+      } else {
+        await signIn(email, password);
+      }
+      // On success, the onAuthStateChanged listener in context will handle navigation
+    } catch (err) {
+      if (err instanceof FirebaseError) {
+        setError(err.message.replace('Firebase: ', ''));
+      } else {
+        setError("An unexpected error occurred.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-white dark:bg-black text-black dark:text-white flex flex-col items-center justify-center p-4">
       <div className="w-full max-w-sm text-center">
         <h1 className="text-5xl font-extrabold tracking-tight mb-2 bg-gradient-to-r from-indigo-500 to-purple-500 text-transparent bg-clip-text">VISHWAM</h1>
-        <p className="text-gray-500 dark:text-neutral-400 mb-12">The future of finance, simplified.</p>
+        <p className="text-gray-500 dark:text-neutral-400 mb-12">{isSignUp ? "Create your account" : "The future of finance, simplified."}</p>
         
-        <div className="w-full">
+        <form onSubmit={handleSubmit} className="w-full space-y-4">
           <input
             type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             placeholder="Enter your email"
-            className="w-full px-4 py-3 bg-gray-100 dark:bg-neutral-900 border border-gray-300 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-4 text-gray-900 dark:text-white"
+            className="w-full px-4 py-3 bg-gray-100 dark:bg-neutral-900 border border-gray-300 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-900 dark:text-white"
             aria-label="Email address"
+            required
           />
+           <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Enter your password"
+            className="w-full px-4 py-3 bg-gray-100 dark:bg-neutral-900 border border-gray-300 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-900 dark:text-white"
+            aria-label="Password"
+            required
+            minLength={6}
+          />
+          {error && <p className="text-red-500 text-sm text-left">{error}</p>}
           <button
-            onClick={onEmailSignIn}
-            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition-transform transform active:scale-95"
+            type="submit"
+            disabled={loading}
+            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition-transform transform active:scale-95 disabled:bg-indigo-400 disabled:cursor-not-allowed"
           >
-            Sign in with Email
+            {loading ? "Processing..." : (isSignUp ? "Sign Up" : "Sign In")}
           </button>
-        </div>
+        </form>
         
-        <div className="my-8 flex items-center">
-          <div className="flex-grow border-t border-gray-300 dark:border-neutral-700"></div>
-          <span className="flex-shrink mx-4 text-xs uppercase text-gray-400">OR</span>
-          <div className="flex-grow border-t border-gray-300 dark:border-neutral-700"></div>
-        </div>
+        <p className="text-sm text-gray-500 dark:text-neutral-400 mt-6">
+          {isSignUp ? "Already have an account?" : "Don't have an account?"}
+          <button onClick={() => { setIsSignUp(!isSignUp); setError(null); }} className="font-semibold text-indigo-500 hover:underline ml-1">
+            {isSignUp ? "Sign In" : "Sign Up"}
+          </button>
+        </p>
 
-        <button className="w-full bg-gray-200 hover:bg-gray-300 dark:bg-neutral-800 dark:hover:bg-neutral-700 text-gray-900 dark:text-white font-bold py-3 px-4 rounded-lg transition-colors flex items-center justify-center">
-          <svg className="w-5 h-5 mr-3" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12s5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24s8.955,20,20,20s20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"></path><path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"></path><path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.222,0-9.612-3.444-11.048-8.169l-6.522,5.025C9.505,39.556,16.227,44,24,44z"></path><path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571l6.19,5.238C42.022,35.251,44,30.028,44,24C44,22.659,43.862,21.35,43.611,20.083z"></path></svg>
-          Sign in with Google
-        </button>
       </div>
     </div>
   );

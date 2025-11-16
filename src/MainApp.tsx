@@ -36,10 +36,7 @@ const MainApp: React.FC<MainAppProps> = ({ onLogout }) => {
   const [selectedTransaction, setSelectedTransaction] = useState<TransactionSummary | null>(null);
   const [selectedBiller, setSelectedBiller] = useState<SelectedBiller | null>(null);
   const [installPrompt, setInstallPrompt] = useState<any>(null);
-  const { userMode, setAuthStep } = useAppContext();
-
-  // FIX: Removed the conflicting useEffect that set body classes.
-  // The ThemeContext now handles this 100% correctly on the <html> element.
+  const { userMode, setAuthFlow } = useAppContext();
 
   useEffect(() => {
     const handler = (e: Event) => {
@@ -68,7 +65,6 @@ const MainApp: React.FC<MainAppProps> = ({ onLogout }) => {
 
   const renderContent = () => {
     switch (activePage) {
-      // 'spends' is now the new "Home"
       case 'spends':
         return <SpendsScreen 
                   onTransactionClick={handleOpenTransactionDetail} 
@@ -99,10 +95,9 @@ const MainApp: React.FC<MainAppProps> = ({ onLogout }) => {
         setSelectedBiller(null);
     };
     
-    // This is the new "just-in-time" KYC trigger
     const handleGoToKyc = () => {
-      handleClose(); // Close the current modal if any
-      setAuthStep('kycStart'); // Trigger the KYC flow
+      handleClose(); 
+      setAuthFlow('kycStart'); // Trigger the KYC flow using the new context function
     };
 
     switch (activeModal) {
@@ -129,7 +124,6 @@ const MainApp: React.FC<MainAppProps> = ({ onLogout }) => {
 
   return (
     <>
-      {/* FIX: Background is now slightly transparent to let the animation show through. */}
       <div className="relative mx-auto flex min-h-screen max-w-md flex-col border-x border-gray-200/50 dark:border-slate-800/50 bg-gray-50/95 dark:bg-black/95 backdrop-blur-2xl">
         <Header onLogout={onLogout} />
         <main className="flex-grow overflow-y-auto pb-20">
@@ -137,10 +131,6 @@ const MainApp: React.FC<MainAppProps> = ({ onLogout }) => {
         </main>
         {renderModal()}
         
-        {/* FIX: FAB for QR Scanner.
-          Position changed from bottom-8 to bottom-20 (5rem)
-          to clear the nav bar.
-        */}
         <div className="absolute bottom-20 right-1/2 z-20 translate-x-1/2">
              <button
                 onClick={() => setActiveModal('scan_qr')}

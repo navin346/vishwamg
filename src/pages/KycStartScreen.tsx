@@ -6,14 +6,14 @@ interface KycStartScreenProps {
 }
 
 const KycStartScreen: React.FC<KycStartScreenProps> = ({ onSuccess }) => {
-  const { setAuthStep } = useAppContext();
+  const { setAuthFlow } = useAppContext();
 
   return (
     <div className="min-h-screen bg-black text-white flex flex-col items-center justify-between p-6">
         <div className="w-full max-w-sm text-left mt-24">
              {/* Add a close button to cancel KYC and go back to app */}
              <button 
-                onClick={() => setAuthStep('loggedIn')} 
+                onClick={() => setAuthFlow('loggedIn')} 
                 className="absolute top-4 right-4 text-neutral-500 hover:text-white p-2 rounded-full"
                 aria-label="Close KYC"
             >
@@ -47,7 +47,7 @@ const KycStartScreen: React.FC<KycStartScreenProps> = ({ onSuccess }) => {
 
         <div className="w-full max-w-sm">
              <button
-                onClick={onSuccess} // This will just go to kycForm
+                onClick={onSuccess} // This will now setAuthFlow('kycForm')
                 className="w-full bg-white text-black font-bold py-3 px-4 rounded-lg transition-colors"
               >
                 Continue

@@ -9,15 +9,14 @@ interface ProfileScreenProps {
 }
 
 const ProfileScreen: React.FC<ProfileScreenProps> = ({ setActiveModal, openLinkBankModal, installPrompt }) => {
-    const { userMode, setUserMode, kycStatus, ibanDetails, createIbanAccount, linkedAccounts, setAuthStep } = useAppContext();
+    const { userMode, setUserMode, kycStatus, ibanDetails, createIbanAccount, linkedAccounts, setAuthFlow } = useAppContext();
     const isInternational = userMode === 'INTERNATIONAL';
     const [isCreatingIban, setIsCreatingIban] = useState(false);
 
-    const handleCreateIban = () => {
+    const handleCreateIban = async () => {
         setIsCreatingIban(true);
-        createIbanAccount();
-        // The context will update ibanDetails after a delay,
-        // so we don't need to set isCreatingIban back to false here.
+        await createIbanAccount();
+        setIsCreatingIban(false);
     }
 
     const getKycStatusPill = () => {
@@ -72,7 +71,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ setActiveModal, openLinkB
                     {kycStatus === 'verified' && "Your account is fully verified. You have access to all features."}
                 </p>
                 {kycStatus === 'unverified' && (
-                    <button onClick={() => setAuthStep('kycStart')} className="w-full bg-violet-600 hover:bg-violet-700 text-white font-bold py-2 px-4 rounded-lg transition-colors text-sm">
+                    <button onClick={() => setAuthFlow('kycStart')} className="w-full bg-violet-600 hover:bg-violet-700 text-white font-bold py-2 px-4 rounded-lg transition-colors text-sm">
                         Start KYC
                     </button>
                 )}
