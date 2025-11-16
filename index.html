@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Vishwam</title>
-  <!-- manifest.json will be found in the 'public' directory by Vite -->
   <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#0A0A0A">
   <script src="https://cdn.tailwindcss.com"></script>
@@ -30,13 +29,11 @@
 <script type="importmap">
 {
   "imports": {
-    "react/": "https://aistudiocdn.com/react@^19.2.0/",
     "react": "https://aistudiocdn.com/react@^19.2.0",
     "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
-    "@vitejs/plugin-react": "https://aistudiocdn.com/@vitejs/plugin-react@^5.1.1",
-    "url": "https://aistudiocdn.com/url@^0.11.4",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
     "vite": "https://aistudiocdn.com/vite@^7.2.2",
-    "path": "https://aistudiocdn.com/path@^0.12.7"
+    "@vitejs/plugin-react": "https://aistudiocdn.com/@vitejs/plugin-react@^5.1.1"
   }
 }
 </script>
@@ -45,14 +42,9 @@
   <noscript>You need to enable JavaScript to run this app.</noscript>
   <div id="root"></div>
   
-  <!-- These external scripts must load before our app -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.net.min.js"></script>
   
-  <!-- 
-    MODIFIED: This is now the standard Vite entry point.
-    Vite will automatically find and build /src/index.tsx.
-  -->
   <script type="module" src="/src/index.tsx"></script>
 </body>
 </html>
