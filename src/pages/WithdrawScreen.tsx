@@ -5,21 +5,16 @@ import { ActiveModal } from '../MainApp';
 interface ModalProps {
     onClose: () => void;
     openLinkBankModal: () => void;
-    setActiveModal: (modal: ActiveModal) => void;
+    onGoToKyc: () => void;
 }
 
-const WithdrawScreen: React.FC<ModalProps> = ({ onClose, openLinkBankModal, setActiveModal }) => {
+const WithdrawScreen: React.FC<ModalProps> = ({ onClose, openLinkBankModal, onGoToKyc }) => {
     const { kycStatus, linkedAccounts } = useAppContext();
 
     const isKycVerified = kycStatus === 'verified';
     const isInrAccountLinked = !!linkedAccounts.inr;
     const canWithdraw = isKycVerified && isInrAccountLinked;
     
-    const handleGoToKyc = () => {
-        onClose();
-        setActiveModal('kyc');
-    };
-
     const handleGoToLinkBank = () => {
         onClose();
         openLinkBankModal();
@@ -73,12 +68,12 @@ const WithdrawScreen: React.FC<ModalProps> = ({ onClose, openLinkBankModal, setA
                 ) : (
                     <div className="text-center py-4">
                          <h3 className="font-bold text-lg mb-2 text-gray-900 dark:text-white">Complete Your Setup</h3>
-                         <p className="text-sm text-gray-500 dark:text-neutral-400 mb-6">To withdraw funds, please complete the following steps from your profile.</p>
+                         <p className="text-sm text-gray-500 dark:text-neutral-400 mb-6">To withdraw funds, please complete the following steps.</p>
                          <div className="space-y-3">
                             {!isKycVerified && (
                                 <div className="bg-gray-100 dark:bg-slate-800 p-3 rounded-lg flex justify-between items-center">
                                     <span>Verify your Identity (KYC)</span>
-                                    <button onClick={handleGoToKyc} className="text-sm font-bold text-violet-600 dark:text-violet-400">Start</button>
+                                    <button onClick={onGoToKyc} className="text-sm font-bold text-violet-600 dark:text-violet-400">Start</button>
                                 </div>
                             )}
                             {!isInrAccountLinked && (

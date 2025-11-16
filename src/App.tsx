@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import LoginScreen from './pages/LoginScreen';
 import OTPScreen from './pages/OTPScreen';
 import SelectResidencyScreen from './pages/SelectResidencyScreen';
@@ -9,11 +9,9 @@ import { ThemeProvider } from './context/ThemeContext';
 import { AppProvider, useAppContext } from './context/AppContext';
 import BackgroundAnimation from './components/BackgroundAnimation';
 
-type AuthStep = 'login' | 'otp' | 'residency' | 'kycStart' | 'kycForm' | 'loggedIn';
-
 const AppContent: React.FC = () => {
-  const [authStep, setAuthStep] = useState<AuthStep>('login');
-  const { startKyc } = useAppContext();
+  // Auth state is now managed in context
+  const { authStep, setAuthStep, startKyc } = useAppContext();
 
   const handleEmailSignIn = () => {
     setAuthStep('otp');
@@ -23,9 +21,9 @@ const AppContent: React.FC = () => {
     setAuthStep('residency');
   };
 
+  // KYC flow is no longer linear. This is triggered from *within* the app.
   const handleKycSuccess = () => {
-    startKyc();
-    setAuthStep('loggedIn');
+    startKyc(); // This function will set kycStatus and setAuthStep('loggedIn')
   };
 
   const handleLogout = () => {
@@ -39,11 +37,15 @@ const AppContent: React.FC = () => {
       case 'otp':
         return <OTPScreen onSuccess={handleOtpSuccess} />;
       case 'residency':
-        return <SelectResidencyScreen onSuccess={() => setAuthStep('kycStart')} />;
+        // On success, go straight to the app
+        return <SelectResidencyScreen onSuccess={() => setAuthStep('loggedIn')} />;
+      
+      // KYC screens are now part of the auth flow, but triggered from inside MainApp
       case 'kycStart':
         return <KycStartScreen onSuccess={() => setAuthStep('kycForm')} />;
       case 'kycForm':
         return <KycFormScreen onSuccess={handleKycSuccess} />;
+      
       case 'loggedIn':
         return <MainApp onLogout={handleLogout} />;
       default:

@@ -4,16 +4,42 @@ import { useAppContext } from '../context/AppContext';
 interface ModalProps {
     onClose: () => void;
     openLinkBankModal: () => void;
+    onGoToKyc: () => void;
 }
 
-const AddMoneyScreen: React.FC<ModalProps> = ({ onClose, openLinkBankModal }) => {
-    const { linkedAccounts } = useAppContext();
+const AddMoneyScreen: React.FC<ModalProps> = ({ onClose, openLinkBankModal, onGoToKyc }) => {
+    const { linkedAccounts, kycStatus } = useAppContext();
     const isUsAccountLinked = !!linkedAccounts.us;
 
     const handleGoToLinkBank = () => {
         onClose();
         openLinkBankModal();
     };
+
+    // If KYC is not verified, show the prompt first.
+    if (kycStatus !== 'verified') {
+        return (
+            <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-end justify-center animate-fade-in">
+                <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-t-2xl p-6 shadow-xl animate-slide-up">
+                    <div className="flex justify-between items-center mb-4">
+                        <h2 className="text-xl font-bold text-gray-900 dark:text-white">Verification Required</h2>
+                        <button onClick={onClose} className="text-gray-500 dark:text-neutral-400 hover:bg-gray-100 dark:hover:bg-neutral-800 rounded-full p-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                        </button>
+                    </div>
+                    <div className="text-center py-4">
+                         <h3 className="font-bold text-lg mb-2 text-gray-900 dark:text-white">Complete Your Setup</h3>
+                         <p className="text-sm text-gray-500 dark:text-neutral-400 mb-6">To add money, please verify your identity (KYC) first.</p>
+                         <button onClick={onGoToKyc} className="w-full bg-violet-600 hover:bg-violet-700 text-white font-bold py-3 px-4 rounded-lg transition-transform transform active:scale-95">
+                            Start KYC
+                         </button>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    // --- Normal Flow (KYC Verified) ---
 
     return (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-end justify-center">
@@ -78,6 +104,13 @@ const AddMoneyScreen: React.FC<ModalProps> = ({ onClose, openLinkBankModal }) =>
                 }
                 .animate-slide-up {
                     animation: slide-up 0.3s ease-out forwards;
+                }
+                @keyframes fade-in {
+                    from { opacity: 0; }
+                    to { opacity: 1; }
+                }
+                .animate-fade-in {
+                    animation: fade-in 0.3s ease-out forwards;
                 }
             `}</style>
         </div>

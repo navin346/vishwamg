@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import BottomNav from './components/BottomNav';
-import HomeScreen from './pages/HomeScreen';
 import ProfileScreen from './pages/ProfileScreen';
-import SendMoneyScreen from './pages/SendMoneyScreen';
+import PayScreen from './pages/PayScreen';
 import AddMoneyScreen from './pages/AddMoneyScreen';
 import WithdrawScreen from './pages/WithdrawScreen';
 import KycScreen from './pages/KycScreen';
@@ -15,12 +14,11 @@ import ScanQRModal from './pages/ScanQRModal';
 import BillsScreen from './pages/BillsScreen';
 import PayBillModal from './pages/PayBillModal';
 import { TransactionSummary } from './data';
-import { useTheme } from './context/ThemeContext';
 import { useAppContext } from './context/AppContext';
 import GlobalPayScreen from './pages/GlobalPayScreen';
 
 export type ActivePage = 'spends' | 'bills' | 'profile';
-export type ActiveModal = 'send' | 'add_money' | 'withdraw' | 'kyc' | 'link_bank' | 'manage_categories' | 'transaction_detail' | 'scan_qr' | 'pay_bill' | null;
+export type ActiveModal = 'pay' | 'add_money' | 'withdraw' | 'kyc' | 'link_bank' | 'manage_categories' | 'transaction_detail' | 'scan_qr' | 'pay_bill' | null;
 export type BankAccountType = 'us' | 'inr';
 
 interface MainAppProps {
@@ -39,23 +37,10 @@ const MainApp: React.FC<MainAppProps> = ({ onLogout }) => {
   const [selectedTransaction, setSelectedTransaction] = useState<TransactionSummary | null>(null);
   const [selectedBiller, setSelectedBiller] = useState<SelectedBiller | null>(null);
   const [installPrompt, setInstallPrompt] = useState<any>(null);
-  const { theme } = useTheme();
-  const { userMode } = useAppContext();
+  const { userMode, setAuthStep } = useAppContext();
 
-  useEffect(() => {
-    const body = document.body;
-    if (theme === 'dark') {
-      body.classList.add('dark');
-      body.classList.remove('light');
-      body.classList.add('bg-black');
-      body.classList.remove('bg-gray-50');
-    } else {
-      body.classList.add('light');
-      body.classList.remove('dark');
-      body.classList.add('bg-gray-50');
-      body.classList.remove('bg-black');
-    }
-  }, [theme]);
+  // FIX: Removed the conflicting useEffect that set body classes.
+  // The ThemeContext now handles this 100% correctly on the <html> element.
 
   useEffect(() => {
     const handler = (e: Event) => {
@@ -84,18 +69,27 @@ const MainApp: React.FC<MainAppProps> = ({ onLogout }) => {
 
   const renderContent = () => {
     switch (activePage) {
-      // The original 'home' screen is now split between 'spends' and 'profile' functionality.
-      // 'spends' is now the landing page.
+      // 'spends' is now the new "Home"
       case 'spends':
-        return <SpendsScreen onTransactionClick={handleOpenTransactionDetail} />;
+        return <SpendsScreen 
+                  onTransactionClick={handleOpenTransactionDetail} 
+                  setActiveModal={setActiveModal}
+                />;
       case 'bills':
         return userMode === 'INDIA' 
           ? <BillsScreen onPayBiller={handleOpenPayBillModal} />
           : <GlobalPayScreen />;
       case 'profile':
-        return <ProfileScreen setActiveModal={setActiveModal} openLinkBankModal={handleOpenLinkBankModal} installPrompt={installPrompt} />;
+        return <ProfileScreen 
+                  setActiveModal={setActiveModal} 
+                  openLinkBankModal={handleOpenLinkBankModal} 
+                  installPrompt={installPrompt} 
+                />;
       default:
-        return <SpendsScreen onTransactionClick={handleOpenTransactionDetail} />;
+        return <SpendsScreen 
+                  onTransactionClick={handleOpenTransactionDetail} 
+                  setActiveModal={setActiveModal}
+                />;
     }
   };
 
@@ -105,14 +99,23 @@ const MainApp: React.FC<MainAppProps> = ({ onLogout }) => {
         setSelectedTransaction(null);
         setSelectedBiller(null);
     };
+    
+    // This is the new "just-in-time" KYC trigger
+    const handleGoToKyc = () => {
+      handleClose(); // Close the current modal if any
+      setAuthStep('kycStart'); // Trigger the KYC flow
+    };
+
     switch (activeModal) {
-      case 'send':
-        return <SendMoneyScreen onClose={handleClose} />;
+      case 'pay':
+        return <PayScreen onClose={handleClose} onGoToKyc={handleGoToKyc} />;
       case 'add_money':
-        return <AddMoneyScreen onClose={handleClose} openLinkBankModal={() => handleOpenLinkBankModal('us')} />;
+        return <AddMoneyScreen onClose={handleClose} openLinkBankModal={() => handleOpenLinkBankModal('us')} onGoToKyc={handleGoToKyc} />;
       case 'withdraw':
-        return <WithdrawScreen onClose={handleClose} openLinkBankModal={() => handleOpenLinkBankModal('inr')} setActiveModal={setActiveModal} />;
+        return <WithdrawScreen onClose={handleClose} openLinkBankModal={() => handleOpenLinkBankModal('inr')} onGoToKyc={handleGoToKyc} />;
       case 'kyc':
+          // This modal is now deprecated, but we leave the case
+          // in case Profile button still calls it.
           return <KycScreen onClose={handleClose} />;
       case 'link_bank':
           return <LinkBankAccountScreen onClose={handleClose} type={bankAccountType} />;
@@ -131,15 +134,19 @@ const MainApp: React.FC<MainAppProps> = ({ onLogout }) => {
 
   return (
     <>
-      <div className="relative mx-auto flex min-h-screen max-w-md flex-col border-x border-gray-200/50 dark:border-slate-800/50 bg-white/80 dark:bg-black/80 backdrop-blur-2xl">
+      {/* FIX: Background is now slightly transparent to let the animation show through. */}
+      <div className="relative mx-auto flex min-h-screen max-w-md flex-col border-x border-gray-200/50 dark:border-slate-800/50 bg-gray-50/95 dark:bg-black/95 backdrop-blur-2xl">
         <Header onLogout={onLogout} />
         <main className="flex-grow overflow-y-auto pb-20">
           {renderContent()}
         </main>
         {renderModal()}
         
-        {/* FAB for QR Scanner */}
-        <div className="absolute bottom-8 right-1/2 z-20 translate-x-1/2">
+        {/* FIX: FAB for QR Scanner.
+          Position changed from bottom-8 to bottom-20 (5rem)
+          to clear the nav bar.
+        */}
+        <div className="absolute bottom-20 right-1/2 z-20 translate-x-1/2">
              <button
                 onClick={() => setActiveModal('scan_qr')}
                 className="w-16 h-16 rounded-full bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-violet-500/50 transform transition-transform active:scale-90"

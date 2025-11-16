@@ -1,13 +1,25 @@
 import React from 'react';
+import { useAppContext } from '../context/AppContext';
 
 interface KycStartScreenProps {
   onSuccess: () => void;
 }
 
 const KycStartScreen: React.FC<KycStartScreenProps> = ({ onSuccess }) => {
+  const { setAuthStep } = useAppContext();
+
   return (
     <div className="min-h-screen bg-black text-white flex flex-col items-center justify-between p-6">
         <div className="w-full max-w-sm text-left mt-24">
+             {/* Add a close button to cancel KYC and go back to app */}
+             <button 
+                onClick={() => setAuthStep('loggedIn')} 
+                className="absolute top-4 right-4 text-neutral-500 hover:text-white p-2 rounded-full"
+                aria-label="Close KYC"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+             </button>
+
              <h1 className="text-3xl font-bold mb-2">Verify your identity</h1>
              <p className="text-neutral-400 mb-12">It will only take 2 minutes</p>
 
@@ -35,7 +47,7 @@ const KycStartScreen: React.FC<KycStartScreenProps> = ({ onSuccess }) => {
 
         <div className="w-full max-w-sm">
              <button
-                onClick={onSuccess}
+                onClick={onSuccess} // This will just go to kycForm
                 className="w-full bg-white text-black font-bold py-3 px-4 rounded-lg transition-colors"
               >
                 Continue

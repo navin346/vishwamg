@@ -1,4 +1,5 @@
 import React from 'react';
+import { useAppContext } from '../context/AppContext';
 
 interface KycFormScreenProps {
   onSuccess: () => void;
@@ -55,10 +56,23 @@ const CheckboxGroup: React.FC<{ legend: string, options: string[] }> = ({ legend
 
 
 const KycFormScreen: React.FC<KycFormScreenProps> = ({ onSuccess }) => {
+  // We get startKyc and setAuthStep from the context now
+  const { startKyc, setAuthStep } = useAppContext();
+
+  const handleContinue = () => {
+    // This now correctly calls the context function,
+    // which handles setting status and returning to the app.
+    startKyc();
+  }
+
   return (
     <div className="min-h-screen bg-black text-white flex flex-col">
         <header className="p-4 flex items-center sticky top-0 bg-black/80 backdrop-blur-sm z-10">
-            <h1 className="text-lg font-bold mx-auto">Additional information</h1>
+            {/* Back button to return to KYC start */}
+            <button onClick={() => setAuthStep('kycStart')} className="text-white p-2 rounded-full hover:bg-neutral-700" aria-label="Go back">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+            </button>
+            <h1 className="text-lg font-bold mx-auto pr-8">Additional information</h1>
         </header>
 
         <main className="flex-grow overflow-y-auto p-4 space-y-6">
@@ -103,7 +117,7 @@ const KycFormScreen: React.FC<KycFormScreenProps> = ({ onSuccess }) => {
         
         <footer className="p-4 sticky bottom-0 bg-black/80 backdrop-blur-sm">
              <button
-                onClick={onSuccess}
+                onClick={handleContinue}
                 className="w-full bg-white text-black font-bold py-3 px-4 rounded-lg transition-colors"
               >
                 Continue

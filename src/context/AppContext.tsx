@@ -6,6 +6,7 @@ import inrTransactions from '../data/mock-transactions-inr.json';
 // Define the possible user modes
 export type UserMode = 'INTERNATIONAL' | 'INDIA';
 export type KycStatus = 'unverified' | 'pending' | 'verified';
+export type AuthStep = 'login' | 'otp' | 'residency' | 'kycStart' | 'kycForm' | 'loggedIn';
 
 interface IbanDetails {
   iban: string;
@@ -37,6 +38,8 @@ interface AppContextType {
   addCategory: (name: string) => void;
   editCategory: (oldName: string, newName: string) => void;
   deleteCategory: (name: string) => void;
+  authStep: AuthStep;
+  setAuthStep: (step: AuthStep) => void;
 }
 
 // Create the context with a default value
@@ -56,6 +59,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [kycStatus, setKycStatus] = useState<KycStatus>('unverified');
   const [ibanDetails, setIbanDetails] = useState<IbanDetails | null>(null);
   const [linkedAccounts, setLinkedAccounts] = useState<{ us: BankAccount | null, inr: BankAccount | null }>({ us: null, inr: null });
+  const [authStep, setAuthStep] = useState<AuthStep>('login');
   
   const [internationalCategories, setInternationalCategories] = useState<string[]>(getInitialCategories(usdTransactions.transactions));
   const [indiaCategories, setIndiaCategories] = useState<string[]>(getInitialCategories(inrTransactions.transactions));
@@ -71,6 +75,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
   const startKyc = useCallback(() => {
     setKycStatus('pending');
+    // After KYC is submitted, send user back to the app
+    setAuthStep('loggedIn'); 
     setTimeout(() => setKycStatus('verified'), 3000);
   }, []);
   
@@ -121,7 +127,9 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       categories,
       addCategory,
       editCategory,
-      deleteCategory
+      deleteCategory,
+      authStep,
+      setAuthStep
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
