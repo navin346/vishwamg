@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
+import { UserMode } from '@/src/context/AppContext';
 
 interface SelectResidencyScreenProps {
-  onSuccess: () => void;
+  onSuccess: (mode: UserMode) => void;
 }
 
 const RadioOption: React.FC<{
@@ -37,6 +38,14 @@ const RadioOption: React.FC<{
 const SelectResidencyScreen: React.FC<SelectResidencyScreenProps> = ({ onSuccess }) => {
   const [residency, setResidency] = useState<string | null>(null);
 
+  const handleContinue = () => {
+    if (residency) {
+      // Map the selection to the UserMode type
+      const userMode: UserMode = residency === 'us' ? 'INTERNATIONAL' : 'INDIA';
+      onSuccess(userMode);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-black text-white flex flex-col items-center justify-between p-6">
       <div className="w-full max-w-sm text-center mt-16">
@@ -49,15 +58,11 @@ const SelectResidencyScreen: React.FC<SelectResidencyScreenProps> = ({ onSuccess
         
         <div className="space-y-4 mt-8">
           <RadioOption
-            label="All countries except USA"
+            label="India"
             value="other"
             selectedValue={residency}
             onSelect={setResidency}
-            icon={
-              <div className="w-8 h-8 rounded-full bg-neutral-700 flex items-center justify-center">
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9V3m-9 9h18" /></svg>
-              </div>
-            }
+            icon={<div className="w-8 h-8 rounded-full bg-neutral-700 flex items-center justify-center text-xl">🇮🇳</div>}
           />
            <RadioOption
             label="United States of America"
@@ -74,7 +79,7 @@ const SelectResidencyScreen: React.FC<SelectResidencyScreenProps> = ({ onSuccess
             By selecting agree and continue I agree that I have read the <a href="#" className="underline">Privacy Notice</a> and I agree to the processing of my personal data, as described in <a href="#" className="underline">Consent</a>.
          </p>
          <button
-            onClick={onSuccess}
+            onClick={handleContinue}
             disabled={!residency}
             className="w-full bg-white disabled:bg-neutral-700 text-black disabled:text-neutral-500 font-bold py-3 px-4 rounded-lg transition-colors"
           >

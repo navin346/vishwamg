@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, ReactNode, useCallback, useEffect } from 'react';
-import { auth, db } from '@/src/firebase';
+import { auth, db, authenticate } from '@/src/firebase';
 import { User, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut as firebaseSignOut } from 'firebase/auth';
 import { doc, getDoc, setDoc, updateDoc, onSnapshot, collection, writeBatch, Timestamp } from 'firebase/firestore';
 
@@ -20,12 +20,12 @@ const initialCategories = ["Food", "Travel", "Shopping", "Entertainment", "Bills
 // --- TYPES ---
 export type UserMode = 'INTERNATIONAL' | 'INDIA';
 export type KycStatus = 'unverified' | 'pending' | 'verified';
-export type AuthFlow = 'loggedIn' | 'kycStart' | 'kycForm';
+export type AuthFlow = 'loggedIn' | 'kycStart' | 'kycForm' | 'selectResidency';
 
 interface IbanDetails { iban: string; bic: string; }
 interface BankAccount { bankName: string; accountNumber: string; routingNumber: string; }
 interface UserData {
-  userMode: UserMode;
+  userMode: UserMode | null;
   balance: string;
   kycStatus: KycStatus;
   ibanDetails: IbanDetails | null;
@@ -45,6 +45,7 @@ interface AppContextType extends UserData {
   createIbanAccount: () => Promise<void>;
   linkAccount: (type: 'us' | 'inr', details: BankAccount) => Promise<void>;
   setUserMode: (mode: UserMode) => Promise<void>;
+  setUserResidency: (mode: UserMode) => Promise<void>;
   addCategory: (name: string) => Promise<void>;
   editCategory: (oldName: string, newName: string) => Promise<void>;
   deleteCategory: (name: string) => Promise<void>;
@@ -57,7 +58,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState<UserData>({
-    userMode: 'INTERNATIONAL',
+    userMode: null,
     balance: '0.00',
     kycStatus: 'unverified',
     ibanDetails: null,
@@ -69,9 +70,18 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   // Listen for Firebase Auth state changes
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-      setLoading(false);
+        setUser(currentUser);
+         if (!currentUser) {
+            setLoading(false); // If no user, stop loading
+        }
     });
+
+    // Trigger platform authentication. onAuthStateChanged will pick up the result.
+    authenticate().catch(error => {
+        console.error("Initial authentication failed", error);
+        setLoading(false); // Stop loading on auth error
+    });
+
     return () => unsubscribe();
   }, []);
 
@@ -82,24 +92,38 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       const userDocRef = doc(db, 'users', user.uid);
       unsubscribe = onSnapshot(userDocRef, (docSnap) => {
         if (docSnap.exists()) {
-          const data = docSnap.data() as UserData;
-          setUserData(data);
+          const data = docSnap.data() as Partial<UserData>;
+          // Force residency selection if it hasn't been set
+          if (!data.userMode) {
+            setAuthFlow('selectResidency');
+          } else if (authFlow === 'selectResidency' && data.userMode) {
+            // If mode was just set, return to the main app view
+            setAuthFlow('loggedIn');
+          }
+          
+          setUserData(prev => ({ ...prev, ...data }));
           // Set balance based on user mode
           if (data.userMode === 'INDIA') {
               setUserData(prev => ({...prev, balance: '25,000.50'})); // Mock INR balance
+          } else if (data.userMode === 'INTERNATIONAL') {
+              setUserData(prev => ({...prev, balance: '1,000.00'})); // Mock USD balance
           }
+        } else {
+            console.warn(`User document for ${user.uid} not found. This may happen briefly during signup.`);
         }
+        setLoading(false); // Data loaded (or not found), stop loading.
       });
     } else {
         // Reset to default state when logged out
         setUserData({
-            userMode: 'INTERNATIONAL',
+            userMode: null,
             balance: '0.00',
             kycStatus: 'unverified',
             ibanDetails: null,
             linkedAccounts: { us: null, inr: null },
             categories: initialCategories,
         });
+        setAuthFlow('loggedIn');
     }
     return () => unsubscribe && unsubscribe();
   }, [user]);
@@ -110,11 +134,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
     const newUser = userCredential.user;
     
-    // Create user document in Firestore
+    // Create user document in Firestore, WITHOUT userMode
     const userDocRef = doc(db, 'users', newUser.uid);
-    const initialUserData: UserData = {
-        userMode: 'INTERNATIONAL',
-        balance: '1,000.00', // Starting balance
+    const initialUserData = {
+        balance: '0.00', // Starting balance
         kycStatus: 'unverified',
         ibanDetails: null,
         linkedAccounts: { us: null, inr: null },
@@ -163,6 +186,11 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     await updateUserDoc({ userMode: mode, balance: mode === 'INTERNATIONAL' ? '1,000.00' : '25,000.50' });
   };
 
+  const setUserResidency = async (mode: UserMode) => {
+    await updateUserDoc({ userMode: mode });
+    setAuthFlow('loggedIn');
+  };
+
   const addCategory = async (name: string) => {
     if (name && !userData.categories.includes(name)) {
         await updateUserDoc({ categories: [...userData.categories, name] });
@@ -194,6 +222,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     createIbanAccount,
     linkAccount,
     setUserMode,
+    setUserResidency,
     addCategory,
     editCategory,
     deleteCategory,

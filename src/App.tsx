@@ -10,11 +10,8 @@ import { AppProvider, useAppContext } from '@/src/context/AppContext';
 import BackgroundAnimation from '@/src/components/BackgroundAnimation';
 
 const AppContent: React.FC = () => {
-  const { user, loading, authFlow, setAuthFlow, signOut, startKyc } = useAppContext();
+  const { user, loading, authFlow, setAuthFlow, signOut, startKyc, userMode, setUserResidency } = useAppContext();
 
-  // This state now controls the JIT KYC flow inside the logged-in app
-  // It is separate from the main user authentication state.
-  
   if (loading) {
     return (
       <div className="min-h-screen bg-white dark:bg-black flex items-center justify-center">
@@ -27,13 +24,17 @@ const AppContent: React.FC = () => {
   if (!user) {
     return <LoginScreen />;
   }
+
+  // Force residency selection if user exists but their userMode is not set
+  if (authFlow === 'selectResidency' || !userMode) {
+      return <SelectResidencyScreen onSuccess={setUserResidency} />;
+  }
   
-  // If user is logged in, show the app or the KYC flow if triggered
+  // If user is logged in, show the app or the JIT KYC flow if triggered
   switch (authFlow) {
       case 'kycStart':
         return <KycStartScreen onSuccess={() => setAuthFlow('kycForm')} />;
       case 'kycForm':
-        // onSuccess here is now simplified; it just calls the async context function
         return <KycFormScreen onSuccess={startKyc} />;
       default:
         // The main, logged-in application experience

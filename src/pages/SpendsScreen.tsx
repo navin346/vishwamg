@@ -44,13 +44,17 @@ const SpendsScreen: React.FC<SpendsScreenProps> = ({ onTransactionClick, setActi
                 
                 const querySnapshot = await getDocs(q);
                 const fetchedTransactions = querySnapshot.docs.map(doc => {
-                    const data = doc.data();
+                    // FIX: Cast data to `any` to resolve property access and spread operator errors.
+                    const data = doc.data() as any;
                     // Convert Firestore Timestamp to a readable string date if needed
                     const date = (data.timestamp as Timestamp).toDate().toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                    // Also convert timestamp to a string for display, fixing a latent bug.
+                    const time = (data.timestamp as Timestamp).toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                     return {
                         ...data,
                         id: doc.id,
-                        date: date
+                        date: date,
+                        timestamp: time,
                     } as TransactionSummary;
                 });
                 setTransactions(fetchedTransactions);
