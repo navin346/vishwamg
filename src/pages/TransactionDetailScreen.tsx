@@ -1,6 +1,6 @@
 import React from 'react';
-import { TransactionSummary } from '../data';
-import { useAppContext } from '../context/AppContext';
+import { TransactionSummary } from '@/src/data';
+import { useAppContext } from '@/src/context/AppContext';
 
 interface ModalProps {
     onClose: () => void;

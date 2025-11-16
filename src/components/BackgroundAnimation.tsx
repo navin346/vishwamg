@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useTheme } from '../context/ThemeContext';
+import { useTheme } from '@/src/context/ThemeContext';
 
 const BackgroundAnimation: React.FC = () => {
   const [vantaEffect, setVantaEffect] = useState<any>(null);

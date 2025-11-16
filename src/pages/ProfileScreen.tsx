@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { useAppContext, UserMode } from '../context/AppContext';
-import { ActiveModal, BankAccountType } from '../MainApp';
+import { useAppContext } from '@/src/context/AppContext';
+import { ActiveModal, BankAccountType } from '@/src/MainApp';
 
 interface ProfileScreenProps {
     setActiveModal: (modal: ActiveModal) => void;
@@ -9,7 +9,7 @@ interface ProfileScreenProps {
 }
 
 const ProfileScreen: React.FC<ProfileScreenProps> = ({ setActiveModal, openLinkBankModal, installPrompt }) => {
-    const { userMode, setUserMode, kycStatus, ibanDetails, createIbanAccount, linkedAccounts } = useAppContext();
+    const { userMode, setUserMode, kycStatus, ibanDetails, createIbanAccount, linkedAccounts, setAuthStep } = useAppContext();
     const isInternational = userMode === 'INTERNATIONAL';
     const [isCreatingIban, setIsCreatingIban] = useState(false);
 
@@ -72,7 +72,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ setActiveModal, openLinkB
                     {kycStatus === 'verified' && "Your account is fully verified. You have access to all features."}
                 </p>
                 {kycStatus === 'unverified' && (
-                    <button onClick={() => setActiveModal('kyc')} className="w-full bg-violet-600 hover:bg-violet-700 text-white font-bold py-2 px-4 rounded-lg transition-colors text-sm">
+                    <button onClick={() => setAuthStep('kycStart')} className="w-full bg-violet-600 hover:bg-violet-700 text-white font-bold py-2 px-4 rounded-lg transition-colors text-sm">
                         Start KYC
                     </button>
                 )}

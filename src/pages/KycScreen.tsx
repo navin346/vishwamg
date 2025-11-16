@@ -1,135 +1,179 @@
 import React, { useState } from 'react';
-import { useAppContext } from '../context/AppContext';
+import { useAppContext } from '@/src/context/AppContext';
+import { Upload, CheckCircle, ArrowLeft, Loader2 } from 'lucide-react';
 
-interface ModalProps {
-    onClose: () => void;
+// This is the type definition required by the provided component.
+// Since this component is not actively wired, this is for type correctness.
+export type ActiveScreen = 'Home' | 'Profile' | 'KYC';
+
+// Props for the KYC Screen
+interface KycScreenProps {
+  onSuccess: () => void;
+  onBack: () => void;
 }
 
+/**
+ * KycScreen (Legacy)
+ * A full component for handling user KYC verification (India-specific).
+ * This file replaces the previously incomplete one to fix build errors.
+ * NOTE: This component is not currently wired into the main app flow,
+ * which uses the JIT KYC screens (KycStartScreen, KycFormScreen).
+ */
+const KycScreen: React.FC<KycScreenProps> = ({ onSuccess, onBack }) => {
+  const [step, setStep] = useState(1); // 1: Form, 2: Upload, 3: Success
+  const [fullName, setFullName] = useState('');
+  const [panNumber, setPanNumber] = useState('');
+  const [panFile, setPanFile] = useState<File | null>(null);
+  const [addressFile, setAddressFile] = useState<File | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-// Helper components for each step
-const Step1 = () => (
-    <div className="p-6 space-y-4">
-        <h3 className="font-bold text-lg text-gray-900 dark:text-white">Personal Details</h3>
-        <p className="text-sm text-gray-500 dark:text-neutral-400">Please enter your information exactly as it appears on your official documents.</p>
-        <div>
-            <label htmlFor="fullName" className="text-xs font-medium text-gray-700 dark:text-neutral-300">Full Name</label>
-            <input id="fullName" type="text" placeholder="J. Doe" className="w-full mt-1 px-3 py-2 bg-gray-100 dark:bg-neutral-800 border border-gray-300 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-violet-500 text-gray-900 dark:text-white" />
-        </div>
-        <div>
-            <label htmlFor="dob" className="text-xs font-medium text-gray-700 dark:text-neutral-300">Date of Birth</label>
-            <input id="dob" type="date" className="w-full mt-1 px-3 py-2 bg-gray-100 dark:bg-neutral-800 border border-gray-300 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-violet-500 text-gray-900 dark:text-white" />
-        </div>
-        <div>
-            <label htmlFor="address" className="text-xs font-medium text-gray-700 dark:text-neutral-300">Residential Address</label>
-            <input id="address" type="text" placeholder="123 Main St, Anytown, USA" className="w-full mt-1 px-3 py-2 bg-gray-100 dark:bg-neutral-800 border border-gray-300 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-violet-500 text-gray-900 dark:text-white" />
-        </div>
-    </div>
-);
-
-const Step2 = () => (
-     <div className="p-6">
-        <h3 className="font-bold text-lg text-gray-900 dark:text-white mb-2">Upload Government ID</h3>
-        <p className="text-sm text-gray-500 dark:text-neutral-400 mb-6">Please upload a clear photo of your passport or driver's license.</p>
-        <div className="w-full aspect-video bg-gray-100 dark:bg-slate-800 rounded-lg border-2 border-dashed border-gray-300 dark:border-slate-600 flex flex-col items-center justify-center text-gray-500 dark:text-slate-400">
-             <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-            <p className="font-semibold">Tap to open camera</p>
-            <p className="text-xs">or browse files</p>
-        </div>
-    </div>
-);
-
-
-const Step3 = () => (
-    <div className="p-6 text-center">
-        <h3 className="font-bold text-lg text-gray-900 dark:text-white mb-2">Liveness Check</h3>
-        <p className="text-sm text-gray-500 dark:text-neutral-400 mb-6">Please position your face within the frame and follow the on-screen instructions.</p>
-        <div className="w-48 h-48 mx-auto bg-gray-200 dark:bg-slate-800 rounded-full border-4 border-gray-300 dark:border-slate-600 flex items-center justify-center mb-6">
-             <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-gray-400 dark:text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
-        </div>
-        <p className="font-semibold text-violet-500">Look straight ahead</p>
-    </div>
-);
-
-
-const KycScreen: React.FC<ModalProps> = ({ onClose }) => {
-    const { startKyc } = useAppContext();
-    const [step, setStep] = useState(1);
-
-    const totalSteps = 3;
-
-    const handleNext = () => {
-        if (step < totalSteps) {
-            setStep(s => s + 1);
-        } else {
-            // Final step
-            startKyc();
-            onClose();
-        }
-    };
-
-    const handleBack = () => {
-        if (step > 1) {
-            setStep(s => s - 1);
-        }
-    };
-    
-    const renderStepContent = () => {
-        switch (step) {
-            case 1: return <Step1 />;
-            case 2: return <Step2 />;
-            case 3: return <Step3 />;
-            default: return null;
-        }
+  const handlePanFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setPanFile(e.target.files[0]);
     }
+  };
 
-    return (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-end justify-center">
-            <div className="w-full max-w-md h-[90vh] bg-white dark:bg-slate-900 rounded-t-2xl shadow-xl flex flex-col animate-slide-up">
-                <div className="p-4 border-b border-gray-200 dark:border-slate-800 flex items-center">
-                    {step > 1 && (
-                         <button onClick={handleBack} className="text-gray-500 dark:text-neutral-400 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800">
-                             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
-                         </button>
-                    )}
-                    <h2 className="text-lg font-bold text-gray-900 dark:text-white mx-auto">Identity Verification</h2>
-                     <button onClick={onClose} className="text-gray-500 dark:text-neutral-400 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
-                    </button>
-                </div>
-                
-                {/* Progress Bar */}
-                <div className="p-4">
-                    <div className="w-full bg-gray-200 dark:bg-slate-700 rounded-full h-1.5">
-                        <div className="bg-violet-600 h-1.5 rounded-full" style={{ width: `${(step / totalSteps) * 100}%`, transition: 'width 0.3s ease-in-out' }}></div>
-                    </div>
-                </div>
+  const handleAddressFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setAddressFile(e.target.files[0]);
+    }
+  };
 
-                {/* Step Content */}
-                <div className="flex-grow overflow-y-auto">
-                    {renderStepContent()}
-                </div>
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (step === 1) {
+      // Validate form
+      if (fullName && panNumber) {
+        setStep(2);
+      }
+    } else if (step === 2) {
+      // Validate file uploads
+      if (panFile && addressFile) {
+        setIsLoading(true);
+        // Simulate API call
+        setTimeout(() => {
+          // In a real app, call a context function like completeKyc(...)
+          console.log("KYC Data Submitted:", { fullName, panNumber, panFile, addressFile });
+          setIsLoading(false);
+          setStep(3);
+        }, 2000);
+      }
+    }
+  };
 
-                {/* Action Button */}
-                <div className="p-4 border-t border-gray-200 dark:border-slate-800">
-                    <button
-                        onClick={handleNext}
-                        className="w-full bg-violet-600 hover:bg-violet-700 text-white font-bold py-3 px-4 rounded-lg transition-transform transform active:scale-95"
-                    >
-                        {step === totalSteps ? 'Finish Verification' : 'Continue'}
-                    </button>
-                </div>
+  const renderStep = () => {
+    switch (step) {
+      case 1:
+        return (
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label htmlFor="fullName" className="block text-sm font-medium text-gray-700">Full Name (as per PAN)</label>
+              <input
+                type="text"
+                id="fullName"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Jane Doe"
+                required
+              />
             </div>
-            <style>{`
-                @keyframes slide-up {
-                    from { transform: translateY(100%); }
-                    to { transform: translateY(0); }
-                }
-                .animate-slide-up {
-                    animation: slide-up 0.3s ease-out forwards;
-                }
-            `}</style>
-        </div>
-    );
+            <div>
+              <label htmlFor="panNumber" className="block text-sm font-medium text-gray-700">PAN Number</label>
+              <input
+                type="text"
+                id="panNumber"
+                value={panNumber}
+                onChange={(e) => setPanNumber(e.target.value.toUpperCase())}
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                placeholder="ABCDE1234F"
+                maxLength={10}
+                minLength={10}
+                required
+              />
+            </div>
+            <button
+              type="submit"
+              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            >
+              Next
+            </button>
+          </form>
+        );
+      case 2:
+        return (
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="space-y-4">
+              <label className="block text-sm font-medium text-gray-700">Upload PAN Card</label>
+              <div className="flex items-center space-x-4">
+                <input type="file" id="panFile" onChange={handlePanFileChange} accept="image/*,.pdf" className="hidden" />
+                <label htmlFor="panFile" className="cursor-pointer flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                  <Upload size={18} className="mr-2" />
+                  Choose File
+                </label>
+                {panFile && <span className="text-sm text-gray-600 truncate max-w-xs">{panFile.name}</span>}
+              </div>
+            </div>
+            <div className="space-y-4">
+              <label className="block text-sm font-medium text-gray-700">Upload Address Proof (Aadhaar)</label>
+              <div className="flex items-center space-x-4">
+                <input type="file" id="addressFile" onChange={handleAddressFileChange} accept="image/*,.pdf" className="hidden" />
+                <label htmlFor="addressFile" className="cursor-pointer flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                  <Upload size={18} className="mr-2" />
+                  Choose File
+                </label>
+                {addressFile && <span className="text-sm text-gray-600 truncate max-w-xs">{addressFile.name}</span>}
+              </div>
+            </div>
+            <button
+              type="submit"
+              disabled={!panFile || !addressFile || isLoading}
+              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-gray-400 disabled:cursor-not-allowed"
+            >
+              {isLoading ? <Loader2 className="animate-spin" /> : 'Submit for Verification'}
+            </button>
+          </form>
+        );
+      case 3:
+        return (
+          <div className="text-center space-y-4">
+            <CheckCircle size={64} className="mx-auto text-green-500" />
+            <h2 className="text-2xl font-semibold">Verification Submitted!</h2>
+            <p className="text-gray-600">
+              Your documents have been submitted successfully. Verification usually takes 24-48 hours. We will notify you once it's complete.
+            </p>
+            <button
+              onClick={onSuccess}
+              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            >
+              Back to Home
+            </button>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div className="p-8 max-w-md mx-auto bg-gray-50 min-h-screen">
+      <header className="relative flex items-center justify-center mb-6">
+        {step < 3 && (
+          <button
+            onClick={() => step === 1 ? onBack() : setStep(step - 1)}
+            className="absolute left-0 p-2 text-gray-600 hover:text-gray-900"
+          >
+            <ArrowLeft size={22} />
+          </button>
+        )}
+        <h1 className="text-2xl font-bold text-gray-800">KYC Verification</h1>
+      </header>
+      
+      <div className="bg-white p-6 rounded-lg shadow-md">
+        {renderStep()}
+      </div>
+    </div>
+  );
 };
 
 export default KycScreen;

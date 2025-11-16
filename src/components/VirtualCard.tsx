@@ -1,5 +1,5 @@
 import React from 'react';
-import { InternationalCardDetails } from '../data';
+import { InternationalCardDetails } from '@/src/data';
 
 interface VirtualCardProps {
   card: InternationalCardDetails;

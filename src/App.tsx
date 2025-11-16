@@ -1,13 +1,13 @@
 import React from 'react';
-import LoginScreen from './pages/LoginScreen';
-import OTPScreen from './pages/OTPScreen';
-import SelectResidencyScreen from './pages/SelectResidencyScreen';
-import KycStartScreen from './pages/KycStartScreen';
-import KycFormScreen from './pages/KycFormScreen';
-import MainApp from './MainApp';
-import { ThemeProvider } from './context/ThemeContext';
-import { AppProvider, useAppContext } from './context/AppContext';
-import BackgroundAnimation from './components/BackgroundAnimation';
+import LoginScreen from '@/src/pages/LoginScreen';
+import OTPScreen from '@/src/pages/OTPScreen';
+import SelectResidencyScreen from '@/src/pages/SelectResidencyScreen';
+import KycStartScreen from '@/src/pages/KycStartScreen';
+import KycFormScreen from '@/src/pages/KycFormScreen';
+import MainApp from '@/src/MainApp';
+import { ThemeProvider } from '@/src/context/ThemeContext';
+import { AppProvider, useAppContext } from '@/src/context/AppContext';
+import BackgroundAnimation from '@/src/components/BackgroundAnimation';
 
 const AppContent: React.FC = () => {
   // Auth state is now managed in context

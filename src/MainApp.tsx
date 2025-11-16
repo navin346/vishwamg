@@ -1,24 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import Header from './components/Header';
-import BottomNav from './components/BottomNav';
-import ProfileScreen from './pages/ProfileScreen';
-import PayScreen from './pages/PayScreen';
-import AddMoneyScreen from './pages/AddMoneyScreen';
-import WithdrawScreen from './pages/WithdrawScreen';
-import KycScreen from './pages/KycScreen';
-import SpendsScreen from './pages/SpendsScreen';
-import LinkBankAccountScreen from './pages/LinkBankAccountScreen';
-import ManageCategoriesScreen from './pages/ManageCategoriesScreen';
-import TransactionDetailScreen from './pages/TransactionDetailScreen';
-import ScanQRModal from './pages/ScanQRModal';
-import BillsScreen from './pages/BillsScreen';
-import PayBillModal from './pages/PayBillModal';
-import { TransactionSummary } from './data';
-import { useAppContext } from './context/AppContext';
-import GlobalPayScreen from './pages/GlobalPayScreen';
+import Header from '@/src/components/Header';
+import BottomNav from '@/src/components/BottomNav';
+import ProfileScreen from '@/src/pages/ProfileScreen';
+import PayScreen from '@/src/pages/PayScreen';
+import AddMoneyScreen from '@/src/pages/AddMoneyScreen';
+import WithdrawScreen from '@/src/pages/WithdrawScreen';
+import SpendsScreen from '@/src/pages/SpendsScreen';
+import LinkBankAccountScreen from '@/src/pages/LinkBankAccountScreen';
+import ManageCategoriesScreen from '@/src/pages/ManageCategoriesScreen';
+import TransactionDetailScreen from '@/src/pages/TransactionDetailScreen';
+import ScanQRModal from '@/src/pages/ScanQRModal';
+import BillsScreen from '@/src/pages/BillsScreen';
+import PayBillModal from '@/src/pages/PayBillModal';
+import { TransactionSummary } from '@/src/data';
+import { useAppContext } from '@/src/context/AppContext';
+import GlobalPayScreen from '@/src/pages/GlobalPayScreen';
 
 export type ActivePage = 'spends' | 'bills' | 'profile';
-export type ActiveModal = 'pay' | 'add_money' | 'withdraw' | 'kyc' | 'link_bank' | 'manage_categories' | 'transaction_detail' | 'scan_qr' | 'pay_bill' | null;
+export type ActiveModal = 'pay' | 'add_money' | 'withdraw' | 'link_bank' | 'manage_categories' | 'transaction_detail' | 'scan_qr' | 'pay_bill' | null;
 export type BankAccountType = 'us' | 'inr';
 
 interface MainAppProps {
@@ -113,10 +112,6 @@ const MainApp: React.FC<MainAppProps> = ({ onLogout }) => {
         return <AddMoneyScreen onClose={handleClose} openLinkBankModal={() => handleOpenLinkBankModal('us')} onGoToKyc={handleGoToKyc} />;
       case 'withdraw':
         return <WithdrawScreen onClose={handleClose} openLinkBankModal={() => handleOpenLinkBankModal('inr')} onGoToKyc={handleGoToKyc} />;
-      case 'kyc':
-          // This modal is now deprecated, but we leave the case
-          // in case Profile button still calls it.
-          return <KycScreen onClose={handleClose} />;
       case 'link_bank':
           return <LinkBankAccountScreen onClose={handleClose} type={bankAccountType} />;
       case 'manage_categories':

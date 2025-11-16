@@ -1,6 +1,6 @@
 import React from 'react';
-import { useAppContext } from '../context/AppContext';
-import { ActiveModal } from '../MainApp';
+import { useAppContext } from '@/src/context/AppContext';
+import { ActiveModal } from '@/src/MainApp';
 
 interface ModalProps {
     onClose: () => void;

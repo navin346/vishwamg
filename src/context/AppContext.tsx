@@ -1,7 +1,7 @@
 import React, { createContext, useState, useContext, ReactNode, useCallback } from 'react';
-import mockData from '../data/mock-data.json';
-import usdTransactions from '../data/mock-transactions-usd.json';
-import inrTransactions from '../data/mock-transactions-inr.json';
+import mockData from '@/src/data/mock-data.json';
+import usdTransactions from '@/src/data/mock-transactions-usd.json';
+import inrTransactions from '@/src/data/mock-transactions-inr.json';
 
 // Define the possible user modes
 export type UserMode = 'INTERNATIONAL' | 'INDIA';

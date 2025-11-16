@@ -1,13 +1,13 @@
 import React, { useState, useMemo } from 'react';
-import { useAppContext } from '../context/AppContext';
-import mockTransactionsUsd from '../data/mock-transactions-usd.json';
-import mockTransactionsInr from '../data/mock-transactions-inr.json';
-import PieChart from '../components/charts/PieChart';
-import BarChart from '../components/charts/BarChart';
-import { TransactionSummary } from '../data';
-import mockData from '../data/mock-data.json';
-import VirtualCard from '../components/VirtualCard';
-import { ActiveModal } from '../MainApp';
+import { useAppContext } from '@/src/context/AppContext';
+import mockTransactionsUsd from '@/src/data/mock-transactions-usd.json';
+import mockTransactionsInr from '@/src/data/mock-transactions-inr.json';
+import PieChart from '@/src/components/charts/PieChart';
+import BarChart from '@/src/components/charts/BarChart';
+import { TransactionSummary } from '@/src/data';
+import mockData from '@/src/data/mock-data.json';
+import VirtualCard from '@/src/components/VirtualCard';
+import { ActiveModal } from '@/src/MainApp';
 
 type Timeframe = 'week' | 'month' | 'all';
 

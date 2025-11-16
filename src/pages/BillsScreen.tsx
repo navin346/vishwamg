@@ -1,6 +1,6 @@
 import React from 'react';
-import mockBillers from '../data/mock-billers.json';
-import ServiceIcon from '../components/ServiceIcon';
+import mockBillers from '@/src/data/mock-billers.json';
+import ServiceIcon from '@/src/components/ServiceIcon';
 
 interface BillsScreenProps {
     onPayBiller: (billerName: string, amount: number) => void;

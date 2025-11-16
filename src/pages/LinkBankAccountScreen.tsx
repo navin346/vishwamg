@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { useAppContext } from '../context/AppContext';
-import { BankAccountType } from '../MainApp';
+import { useAppContext } from '@/src/context/AppContext';
+import { BankAccountType } from '@/src/MainApp';
 
 interface ModalProps {
     onClose: () => void;
