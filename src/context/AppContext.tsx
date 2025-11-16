@@ -103,12 +103,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
           }
           
           setUserData(prev => ({ ...prev, ...data }));
-          // Set balance based on user mode
-          if (data.userMode === 'INDIA') {
-              setUserData(prev => ({...prev, balance: '25,000.50'})); // Mock INR balance
-          } else if (data.userMode === 'INTERNATIONAL') {
-              setUserData(prev => ({...prev, balance: '1,000.00'})); // Mock USD balance
-          }
+
         } else {
             console.warn(`User document for ${user.uid} not found. This may happen briefly during signup.`);
         }
@@ -208,16 +203,20 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     const currentBalance = parseFloat(currentData.balance.replace(/,/g, ''));
     const newBalance = currentBalance + amount;
 
+    // Format the balance with commas for consistency
+    const formattedBalance = newBalance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
     // 1. Update Balance in the user document
-    batch.update(userDocRef, { balance: newBalance.toFixed(2) });
+    batch.update(userDocRef, { balance: formattedBalance });
 
     // 2. Create a new transaction document
     const transactionRef = doc(collection(db, 'users', user.uid, 'transactions'));
+    const currency = userData.userMode === 'INDIA' ? 'INR' : 'USD';
     batch.set(transactionRef, {
         merchant: "Deposit",
         category: "Income",
         amount: amount,
-        currency: 'USD',
+        currency: currency,
         method: 'Bank Transfer',
         timestamp: Timestamp.now()
     });

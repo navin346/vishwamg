@@ -104,7 +104,8 @@ const MainApp: React.FC<MainAppProps> = ({ onLogout }) => {
       case 'pay':
         return <PayScreen onClose={handleClose} onGoToKyc={handleGoToKyc} />;
       case 'add_money':
-        return <AddMoneyScreen onClose={handleClose} openLinkBankModal={() => handleOpenLinkBankModal('us')} onGoToKyc={handleGoToKyc} />;
+        const addMoneyLinkType: BankAccountType = userMode === 'INTERNATIONAL' ? 'us' : 'inr';
+        return <AddMoneyScreen onClose={handleClose} openLinkBankModal={() => handleOpenLinkBankModal(addMoneyLinkType)} onGoToKyc={handleGoToKyc} />;
       case 'withdraw':
         return <WithdrawScreen onClose={handleClose} openLinkBankModal={() => handleOpenLinkBankModal('inr')} onGoToKyc={handleGoToKyc} />;
       case 'link_bank':
