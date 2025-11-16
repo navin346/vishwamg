@@ -46,6 +46,7 @@ interface AppContextType extends UserData {
   linkAccount: (type: 'us' | 'inr', details: BankAccount) => Promise<void>;
   setUserMode: (mode: UserMode) => Promise<void>;
   setUserResidency: (mode: UserMode) => Promise<void>;
+  addMoney: (amount: number) => Promise<void>;
   addCategory: (name: string) => Promise<void>;
   editCategory: (oldName: string, newName: string) => Promise<void>;
   deleteCategory: (name: string) => Promise<void>;
@@ -190,6 +191,39 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     await updateUserDoc({ userMode: mode });
     setAuthFlow('loggedIn');
   };
+  
+  const addMoney = async (amount: number) => {
+    if (!user) throw new Error("No user is signed in.");
+    if (amount <= 0) throw new Error("Amount must be positive.");
+
+    const userDocRef = doc(db, 'users', user.uid);
+    const batch = writeBatch(db);
+
+    // Get the latest user document to ensure the balance is up-to-date
+    const userDocSnap = await getDoc(userDocRef);
+    if (!userDocSnap.exists()) {
+        throw new Error("User document does not exist.");
+    }
+    const currentData = userDocSnap.data();
+    const currentBalance = parseFloat(currentData.balance.replace(/,/g, ''));
+    const newBalance = currentBalance + amount;
+
+    // 1. Update Balance in the user document
+    batch.update(userDocRef, { balance: newBalance.toFixed(2) });
+
+    // 2. Create a new transaction document
+    const transactionRef = doc(collection(db, 'users', user.uid, 'transactions'));
+    batch.set(transactionRef, {
+        merchant: "Deposit",
+        category: "Income",
+        amount: amount,
+        currency: 'USD',
+        method: 'Bank Transfer',
+        timestamp: Timestamp.now()
+    });
+
+    await batch.commit();
+  };
 
   const addCategory = async (name: string) => {
     if (name && !userData.categories.includes(name)) {
@@ -223,6 +257,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     linkAccount,
     setUserMode,
     setUserResidency,
+    addMoney,
     addCategory,
     editCategory,
     deleteCategory,

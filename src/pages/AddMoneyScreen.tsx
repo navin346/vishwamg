@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useAppContext } from '@/src/context/AppContext';
 
 interface ModalProps {
@@ -8,12 +8,33 @@ interface ModalProps {
 }
 
 const AddMoneyScreen: React.FC<ModalProps> = ({ onClose, openLinkBankModal, onGoToKyc }) => {
-    const { linkedAccounts, kycStatus } = useAppContext();
+    const { linkedAccounts, kycStatus, addMoney } = useAppContext();
     const isUsAccountLinked = !!linkedAccounts.us;
+    const [amount, setAmount] = useState('');
+    const [loading, setLoading] = useState(false);
 
     const handleGoToLinkBank = () => {
         onClose();
         openLinkBankModal();
+    };
+    
+    const handleAddMoney = async () => {
+        const parsedAmount = parseFloat(amount);
+        if (isNaN(parsedAmount) || parsedAmount <= 0) {
+            alert("Please enter a valid amount.");
+            return;
+        }
+
+        setLoading(true);
+        try {
+            await addMoney(parsedAmount);
+            onClose(); // Close modal on success
+        } catch (error) {
+            console.error("Failed to add money:", error);
+            alert("There was an error adding funds. Please try again.");
+        } finally {
+            setLoading(false);
+        }
     };
 
     // If KYC is not verified, show the prompt first.
@@ -65,6 +86,8 @@ const AddMoneyScreen: React.FC<ModalProps> = ({ onClose, openLinkBankModal, onGo
                                         id="amount"
                                         type="number"
                                         placeholder="1,000.00"
+                                        value={amount}
+                                        onChange={(e) => setAmount(e.target.value)}
                                         className="w-full pl-8 pr-4 py-3 bg-gray-100 dark:bg-neutral-800 border border-gray-300 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500 text-gray-900 dark:text-white"
                                     />
                                 </div>
@@ -78,10 +101,11 @@ const AddMoneyScreen: React.FC<ModalProps> = ({ onClose, openLinkBankModal, onGo
                             </div>
                         </div>
                         <button
-                            onClick={onClose}
-                            className="w-full mt-6 bg-violet-600 hover:bg-violet-700 text-white font-bold py-3 px-4 rounded-lg transition-transform transform active:scale-95"
+                            onClick={handleAddMoney}
+                            disabled={loading}
+                            className="w-full mt-6 bg-violet-600 hover:bg-violet-700 text-white font-bold py-3 px-4 rounded-lg transition-transform transform active:scale-95 disabled:bg-violet-400 disabled:cursor-not-allowed"
                         >
-                            Add Money
+                            {loading ? 'Processing...' : 'Add Money'}
                         </button>
                     </>
                 ) : (
