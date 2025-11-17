@@ -26,12 +26,16 @@ interface IbanDetails { iban: string; bic: string; }
 interface BankAccount { bankName: string; accountNumber: string; routingNumber: string; }
 interface UserData {
   userMode: UserMode | null;
-  balance: string;
+  balance: string; // This will be the computed balance based on userMode
+  usd_balance: string;
+  inr_balance: string;
   kycStatus: KycStatus;
   ibanDetails: IbanDetails | null;
   linkedAccounts: { us: BankAccount | null; inr: BankAccount | null; };
   categories: string[];
 }
+interface RawUserData extends Omit<UserData, 'balance'> {}
+
 
 interface AppContextType extends UserData {
   user: User | null;
@@ -61,6 +65,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [userData, setUserData] = useState<UserData>({
     userMode: null,
     balance: '0.00',
+    usd_balance: '0.00',
+    inr_balance: '0.00',
     kycStatus: 'unverified',
     ibanDetails: null,
     linkedAccounts: { us: null, inr: null },
@@ -93,7 +99,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       const userDocRef = doc(db, 'users', user.uid);
       unsubscribe = onSnapshot(userDocRef, (docSnap) => {
         if (docSnap.exists()) {
-          const data = docSnap.data() as Partial<UserData>;
+          const data = docSnap.data() as Partial<RawUserData>;
+
           // Force residency selection if it hasn't been set
           if (!data.userMode) {
             setAuthFlow('selectResidency');
@@ -101,8 +108,19 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
             // If mode was just set, return to the main app view
             setAuthFlow('loggedIn');
           }
+
+          // Compute the displayed balance based on the current mode
+          const computedBalance = data.userMode === 'INDIA' 
+              ? (data.inr_balance ?? '0.00') 
+              : (data.usd_balance ?? '0.00');
           
-          setUserData(prev => ({ ...prev, ...data }));
+          setUserData(prev => ({
+              ...prev,
+              ...data,
+              balance: computedBalance,
+              usd_balance: data.usd_balance ?? '0.00',
+              inr_balance: data.inr_balance ?? '0.00'
+            }));
 
         } else {
             console.warn(`User document for ${user.uid} not found. This may happen briefly during signup.`);
@@ -114,6 +132,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         setUserData({
             userMode: null,
             balance: '0.00',
+            usd_balance: '0.00',
+            inr_balance: '0.00',
             kycStatus: 'unverified',
             ibanDetails: null,
             linkedAccounts: { us: null, inr: null },
@@ -122,7 +142,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         setAuthFlow('loggedIn');
     }
     return () => unsubscribe && unsubscribe();
-  }, [user]);
+  }, [user, authFlow]); // Re-run if authFlow changes from selectResidency
 
   // --- ASYNC ACTIONS ---
   
@@ -130,10 +150,11 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
     const newUser = userCredential.user;
     
-    // Create user document in Firestore, WITHOUT userMode
+    // Create user document in Firestore, with initial balances but WITHOUT userMode
     const userDocRef = doc(db, 'users', newUser.uid);
     const initialUserData = {
-        balance: '0.00', // Starting balance
+        usd_balance: '1000.00',
+        inr_balance: '25000.50',
         kycStatus: 'unverified',
         ibanDetails: null,
         linkedAccounts: { us: null, inr: null },
@@ -157,7 +178,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     await firebaseSignOut(auth);
   };
   
-  const updateUserDoc = async (data: Partial<UserData>) => {
+  const updateUserDoc = async (data: Partial<RawUserData>) => {
       if (!user) throw new Error("No user is signed in.");
       const userDocRef = doc(db, 'users', user.uid);
       await updateDoc(userDocRef, data);
@@ -178,8 +199,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     await updateUserDoc({ linkedAccounts: { ...userData.linkedAccounts, [type]: details } });
   };
   
+  // CRITICAL FIX: This function now ONLY changes the mode.
+  // The onSnapshot listener is responsible for updating the balance in the UI.
   const setUserMode = async (mode: UserMode) => {
-    await updateUserDoc({ userMode: mode, balance: mode === 'INTERNATIONAL' ? '1,000.00' : '25,000.50' });
+    await updateUserDoc({ userMode: mode });
   };
 
   const setUserResidency = async (mode: UserMode) => {
@@ -192,6 +215,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     if (amount <= 0) throw new Error("Amount must be positive.");
     
     const userDocRef = doc(db, 'users', user.uid);
+    const isIndiaMode = userData.userMode === 'INDIA';
+    const balanceFieldToUpdate = isIndiaMode ? 'inr_balance' : 'usd_balance';
 
     await runTransaction(db, async (transaction) => {
         const userDocSnap = await transaction.get(userDocRef);
@@ -200,17 +225,17 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         }
         
         const currentData = userDocSnap.data();
-        const currentBalance = parseFloat(currentData.balance.replace(/,/g, ''));
+        const currentBalance = parseFloat((currentData[balanceFieldToUpdate] ?? '0').replace(/,/g, ''));
         const newBalance = currentBalance + amount;
 
         const formattedBalance = newBalance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     
-        // 1. Update Balance in the user document
-        transaction.update(userDocRef, { balance: formattedBalance });
+        // 1. Update the correct balance in the user document
+        transaction.update(userDocRef, { [balanceFieldToUpdate]: formattedBalance });
     
         // 2. Create a new transaction document
         const transactionRef = doc(collection(db, 'users', user.uid, 'transactions'));
-        const currency = currentData.userMode === 'INDIA' ? 'INR' : 'USD'; 
+        const currency = isIndiaMode ? 'INR' : 'USD'; 
         transaction.set(transactionRef, {
             merchant: "Deposit",
             category: "Income",

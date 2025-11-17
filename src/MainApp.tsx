@@ -124,27 +124,30 @@ const MainApp: React.FC<MainAppProps> = ({ onLogout }) => {
   }
 
   return (
-    <>
-      <div className="relative mx-auto flex min-h-screen max-w-md flex-col border-x border-gray-200/50 dark:border-slate-800/50 bg-gray-50/90 dark:bg-black/90 backdrop-blur-2xl">
-        <Header onLogout={onLogout} />
-        <main className="flex-grow overflow-y-auto pb-24">
-          {renderContent()}
-        </main>
-        {renderModal()}
-        
-        <div className="absolute bottom-[5.5rem] right-1/2 z-20 translate-x-1/2">
+    <div className="relative mx-auto flex h-screen max-w-md flex-col border-x border-gray-200/50 bg-gray-50/90 dark:border-slate-800/50 dark:bg-black/90 backdrop-blur-2xl">
+      <Header onLogout={onLogout} />
+      
+      {/* Scrollable content area */}
+      <main className="flex-1 overflow-y-auto pb-32"> {/* Added padding-bottom to avoid overlap */}
+        {renderContent()}
+      </main>
+
+      {/* Fixed bottom container for QR button and Nav */}
+      <div className="absolute bottom-0 left-0 right-0">
+        <div className="relative flex justify-center">
              <button
                 onClick={() => setActiveModal('scan_qr')}
-                className="w-16 h-16 rounded-full bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-violet-500/50 transform transition-transform active:scale-90"
+                className="absolute -top-8 w-16 h-16 rounded-full bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-violet-500/50 transform transition-transform active:scale-90 z-40"
                 aria-label="Scan QR code"
             >
                  <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 4h4v4H4V4z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path><path d="M16 4h4v4h-4V4z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path><path d="M4 16h4v4H4v-4z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path><path d="M16 16h4v4h-4v-4z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path><path d="M10 12H4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path><path d="M20 12h-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path></svg>
             </button>
         </div>
-
         <BottomNav activePage={activePage} setActivePage={setActivePage} />
       </div>
-    </>
+
+      {renderModal()}
+    </div>
   );
 }
 

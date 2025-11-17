@@ -35,7 +35,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ setActiveModal, openLinkB
             <h1 className="text-3xl font-bold">Profile & Settings</h1>
 
             {/* User Info Card */}
-            <div className="bg-white/80 dark:bg-neutral-900/80 rounded-xl p-4 flex items-center space-x-4">
+            <div className="bg-white/70 dark:bg-neutral-900/70 backdrop-blur-sm rounded-xl p-4 flex items-center space-x-4">
                 <div className="w-16 h-16 rounded-full bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center font-bold text-white text-2xl">
                     J
                 </div>
@@ -46,7 +46,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ setActiveModal, openLinkB
             </div>
 
             {/* KYC Status */}
-            <div className="bg-white/80 dark:bg-neutral-900/80 rounded-xl p-4">
+            <div className="bg-white/70 dark:bg-neutral-900/70 backdrop-blur-sm rounded-xl p-4">
                 <div className="flex justify-between items-center mb-2">
                     <h3 className="font-bold">Identity Verification</h3>
                     {getKycStatusPill()}
@@ -65,7 +65,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ setActiveModal, openLinkB
             
             {/* International-specific Info */}
             {isInternational && (
-                <div className="bg-white/80 dark:bg-neutral-900/80 rounded-xl p-4">
+                <div className="bg-white/70 dark:bg-neutral-900/70 backdrop-blur-sm rounded-xl p-4">
                     <h3 className="font-bold mb-2">Your IBAN Account</h3>
                     {ibanDetails ? (
                          <div className="bg-gray-100 dark:bg-neutral-800 rounded-lg p-3 font-mono text-sm">
@@ -87,7 +87,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ setActiveModal, openLinkB
             
             {/* India-specific Cards */}
             {!isInternational && (
-                 <div className="bg-white/80 dark:bg-neutral-900/80 rounded-xl p-4 space-y-3">
+                 <div className="bg-white/70 dark:bg-neutral-900/70 backdrop-blur-sm rounded-xl p-4 space-y-3">
                     <h3 className="font-bold text-base mb-1">Linked Cards</h3>
                      <div className="flex items-center justify-between">
                         <div>
@@ -103,7 +103,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ setActiveModal, openLinkB
 
 
             {/* Linked Accounts */}
-            <div className="bg-white/80 dark:bg-neutral-900/80 rounded-xl p-4 space-y-3">
+            <div className="bg-white/70 dark:bg-neutral-900/70 backdrop-blur-sm rounded-xl p-4 space-y-3">
                 <h3 className="font-bold text-base mb-1">Linked Bank Accounts</h3>
                 {isInternational && (
                     <LinkedAccountItem 
@@ -122,14 +122,14 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ setActiveModal, openLinkB
             </div>
             
             {/* App Settings */}
-            <div className="bg-white/80 dark:bg-neutral-900/80 rounded-xl p-4">
+            <div className="bg-white/70 dark:bg-neutral-900/70 backdrop-blur-sm rounded-xl p-4">
                 <h3 className="font-bold text-base mb-3">App Settings</h3>
-                <button onClick={() => setActiveModal('manage_categories')} className="w-full flex justify-between items-center text-left p-2 -mx-2 rounded-lg hover:bg-gray-100 dark:hover:bg-neutral-800 transition-colors">
+                <button onClick={() => setActiveModal('manage_categories')} className="w-full flex justify-between items-center text-left p-2 -mx-2 rounded-lg hover:bg-gray-100/80 dark:hover:bg-neutral-800/80 transition-colors">
                     <span>Manage Spending Categories</span>
                     <svg className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
                 </button>
                  {installPrompt && (
-                    <button onClick={() => installPrompt.prompt()} className="w-full flex justify-between items-center text-left p-2 -mx-2 rounded-lg hover:bg-gray-100 dark:hover:bg-neutral-800 transition-colors mt-2">
+                    <button onClick={() => installPrompt.prompt()} className="w-full flex justify-between items-center text-left p-2 -mx-2 rounded-lg hover:bg-gray-100/80 dark:hover:bg-neutral-800/80 transition-colors mt-2">
                         <span>Install Vishwam App</span>
                         <svg className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                     </button>

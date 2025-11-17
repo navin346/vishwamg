@@ -102,7 +102,7 @@ const SpendsScreen: React.FC<SpendsScreenProps> = ({ onTransactionClick, setActi
         }
     };
     
-    if (!userMode) {
+    if (loading) {
         return (
             <div className="flex justify-center items-center h-64">
                 <svg className="animate-spin h-8 w-8 text-violet-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -143,7 +143,7 @@ const SpendsScreen: React.FC<SpendsScreenProps> = ({ onTransactionClick, setActi
             </div>
 
             {/* Timeframe Selector */}
-            <div className="flex w-full bg-gray-100/80 dark:bg-neutral-800/80 rounded-lg p-1 text-sm">
+            <div className="flex w-full bg-gray-100/70 dark:bg-neutral-800/70 rounded-lg p-1 text-sm">
                 <TimeframeButton label="This Week" timeframe="week" active={timeframe} setActive={setTimeframe} />
                 <TimeframeButton label="This Month" timeframe="month" active={timeframe} setActive={setTimeframe} />
                 <TimeframeButton label="All Time" timeframe="all" active={timeframe} setActive={setTimeframe} />
@@ -157,11 +157,11 @@ const SpendsScreen: React.FC<SpendsScreenProps> = ({ onTransactionClick, setActi
             
             {/* Charts */}
             <div className="space-y-6">
-                <div className="bg-white/80 dark:bg-neutral-900/80 p-4 rounded-xl shadow-sm">
+                <div className="bg-white/70 dark:bg-neutral-900/70 backdrop-blur-sm p-4 rounded-xl shadow-sm">
                     <h3 className="font-bold mb-4 text-gray-900 dark:text-white">By Category</h3>
                     <PieChart data={categoryData} currency={currency} />
                 </div>
-                 <div className="bg-white/80 dark:bg-neutral-900/80 p-4 rounded-xl shadow-sm">
+                 <div className="bg-white/70 dark:bg-neutral-900/70 backdrop-blur-sm p-4 rounded-xl shadow-sm">
                     <h3 className="font-bold mb-4 text-gray-900 dark:text-white">Daily Spend</h3>
                      <BarChart data={barChartData} currency={currency} />
                 </div>
@@ -173,7 +173,7 @@ const SpendsScreen: React.FC<SpendsScreenProps> = ({ onTransactionClick, setActi
                 {loading ? <p className="text-sm text-gray-500">Loading transactions...</p> : (
                 <div className="space-y-2">
                     {transactions.length > 0 ? transactions.map(tx => (
-                        <button key={tx.id} onClick={() => onTransactionClick(tx)} className="w-full text-left bg-white/50 dark:bg-neutral-900/50 p-3 rounded-lg flex items-center justify-between hover:bg-gray-100 dark:hover:bg-neutral-800 transition-colors cursor-pointer">
+                        <button key={tx.id} onClick={() => onTransactionClick(tx)} className="w-full text-left bg-white/70 dark:bg-neutral-900/70 backdrop-blur-sm p-3 rounded-lg flex items-center justify-between hover:bg-gray-100/80 dark:hover:bg-neutral-800/80 transition-colors cursor-pointer">
                             <div>
                                 <p className="font-semibold text-gray-900 dark:text-white">{tx.merchant}</p>
                                 <p className="text-xs text-gray-500 dark:text-neutral-400">{tx.category} • {tx.date}</p>
@@ -207,7 +207,7 @@ const TimeframeButton: React.FC<{label: string, timeframe: Timeframe, active: Ti
 
 const QuickAction: React.FC<{ icon: React.ReactNode; label: string, onClick?: () => void }> = ({ icon, label, onClick }) => (
     <button onClick={onClick} className="flex flex-col items-center group p-2">
-        <div className="w-14 h-14 bg-gray-100/80 dark:bg-neutral-800/80 backdrop-blur-sm rounded-2xl flex items-center justify-center text-2xl mb-2 group-hover:bg-gray-200 dark:group-hover:bg-neutral-700 transition-all transform group-active:scale-90">
+        <div className="w-14 h-14 bg-gray-100/70 dark:bg-neutral-800/70 backdrop-blur-sm rounded-2xl flex items-center justify-center text-2xl mb-2 group-hover:bg-gray-200/80 dark:group-hover:bg-neutral-700/80 transition-all transform group-active:scale-90">
             {icon}
         </div>
         <span className="text-xs font-medium text-gray-600 dark:text-neutral-300">{label}</span>
