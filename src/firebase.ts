@@ -1,61 +1,80 @@
-// FIX: Declare global variables provided by the execution environment to prevent TypeScript errors.
+// FIX: Add a triple-slash directive to make Vite's `import.meta.env` types available.
+/// <reference types="vite/client" />
+
+// Declare global variables provided by the execution environment to prevent TypeScript errors.
 declare global {
   var __firebase_config: string | undefined;
   var __initial_auth_token: string | undefined;
 }
 
-import { initializeApp } from "firebase/app";
+import { initializeApp, FirebaseOptions } from "firebase/app";
 import { 
   getAuth, 
   signInAnonymously, 
   signInWithCustomToken, 
-  onAuthStateChanged,
   setPersistence,
   inMemoryPersistence
 } from "firebase/auth";
-import { getFirestore, setLogLevel } from "firebase/firestore";
+import { getFirestore } from "firebase/firestore";
 
-// --- THIS IS THE CORRECT CONFIGURATION ---
+let firebaseConfig: FirebaseOptions;
 
-// 1. Get the config object from the global __firebase_config variable.
-// This is provided by the Canvas environment.
-const firebaseConfig = JSON.parse(
-  typeof __firebase_config !== 'undefined' 
-    ? __firebase_config 
-    : '{}'
-);
+// This setup allows the app to work in both Canvas (with global vars)
+// and on Vercel (with Vite environment variables).
+if (typeof __firebase_config !== 'undefined' && __firebase_config && __firebase_config !== '{}') {
+  // We are in the Canvas environment
+  try {
+    firebaseConfig = JSON.parse(__firebase_config);
+  } catch (e) {
+    console.error("Failed to parse __firebase_config", e);
+    // Fallback to Vercel/local env vars if parsing fails
+    firebaseConfig = {
+      apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+      authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+      projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+      storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+      messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+      appId: import.meta.env.VITE_FIREBASE_APP_ID,
+    };
+  }
+} else {
+  // We are likely in a Vercel/local dev environment
+  // Vite exposes env variables via `import.meta.env`
+  firebaseConfig = {
+    apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+    appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  };
+}
 
-// 2. Initialize Firebase
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-// 3. Initialize and export services
+// Initialize and export services
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 
-// Enable Firestore debug logging
-// setLogLevel('debug');
-
 /**
- * 4. Authenticates the user.
- * This function handles the specific auth flow required by Canvas.
+ * Authenticates the user.
+ * This function handles the specific auth flow required by Canvas
+ * and provides a fallback for other environments.
  */
 export const authenticate = async () => {
-  // Use in-memory persistence
   await setPersistence(auth, inMemoryPersistence);
 
   return new Promise((resolve, reject) => {
-    // Check if a custom token is provided
     if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
       console.log("Authenticating with custom token...");
       signInWithCustomToken(auth, __initial_auth_token)
         .then(resolve)
         .catch((err) => {
           console.error("Custom token sign-in failed, trying anonymous:", err);
-          // Fallback to anonymous
           signInAnonymously(auth).then(resolve).catch(reject);
         });
     } else {
-      // If no token, sign in anonymously
       console.log("No custom token, authenticating anonymously...");
       signInAnonymously(auth).then(resolve).catch(reject);
     }
