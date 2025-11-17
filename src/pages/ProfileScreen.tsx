@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAppContext } from '@/src/context/AppContext';
 import { ActiveModal, BankAccountType } from '@/src/MainApp';
+import { Camera } from 'lucide-react';
 
 interface ProfileScreenProps {
     setActiveModal: (modal: ActiveModal) => void;
@@ -36,9 +37,12 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ setActiveModal, openLinkB
 
             {/* User Info Card */}
             <div className="bg-white/70 dark:bg-neutral-900/70 backdrop-blur-sm rounded-xl p-4 flex items-center space-x-4">
-                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center font-bold text-white text-2xl">
-                    J
-                </div>
+                <button className="relative group w-16 h-16 rounded-full bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center font-bold text-white text-2xl flex-shrink-0">
+                    <span className="group-hover:opacity-0 transition-opacity duration-200">J</span>
+                    <div className="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                        <Camera size={24} />
+                    </div>
+                </button>
                 <div>
                     <p className="font-bold text-lg">J. Doe</p>
                     <p className="text-sm text-gray-500 dark:text-neutral-400">+1 (555) 123-4567</p>

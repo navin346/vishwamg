@@ -1,7 +1,6 @@
 import React from 'react';
 import { useAppContext } from '@/src/context/AppContext';
-
-type ActivePage = 'spends' | 'bills' | 'profile';
+import { ActivePage } from '@/src/MainApp';
 
 interface BottomNavProps {
   activePage: ActivePage;
@@ -46,11 +45,16 @@ const BottomNav: React.FC<BottomNavProps> = ({ activePage, setActivePage }) => {
   );
 
   return (
-    <nav className="absolute bottom-0 left-0 right-0 bg-white/80 dark:bg-black/80 backdrop-blur-sm border-t border-gray-200 dark:border-neutral-800 flex justify-around h-16 z-30">
-      <NavItem label="Spends" page="spends" activePage={activePage} setActivePage={setActivePage}>
+    <nav className="absolute bottom-0 left-0 right-0 bg-white/80 dark:bg-black/80 backdrop-blur-sm border-t border-gray-200 dark:border-neutral-800 flex justify-around items-center h-16 z-30">
+      <NavItem label="Home" page="home" activePage={activePage} setActivePage={setActivePage}>
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
+      </NavItem>
+      <NavItem label="Analytics" page="analytics" activePage={activePage} setActivePage={setActivePage}>
         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" /><path strokeLinecap="round" strokeLinejoin="round" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" /></svg>
       </NavItem>
-       <NavItem label={billsLabel} page="bills" activePage={activePage} setActivePage={setActivePage}>
+      {/* Spacer for the central QR button */}
+      <div className="w-16" aria-hidden="true" />
+      <NavItem label={billsLabel} page="bills" activePage={activePage} setActivePage={setActivePage}>
         {billsIcon}
       </NavItem>
       <NavItem label="Profile" page="profile" activePage={activePage} setActivePage={setActivePage}>

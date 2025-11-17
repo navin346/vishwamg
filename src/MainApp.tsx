@@ -5,7 +5,8 @@ import ProfileScreen from '@/src/pages/ProfileScreen';
 import PayScreen from '@/src/pages/PayScreen';
 import AddMoneyScreen from '@/src/pages/AddMoneyScreen';
 import WithdrawScreen from '@/src/pages/WithdrawScreen';
-import SpendsScreen from '@/src/pages/SpendsScreen';
+import HomeScreen from '@/src/pages/HomeScreen';
+import AnalyticsScreen from '@/src/pages/AnalyticsScreen';
 import LinkBankAccountScreen from '@/src/pages/LinkBankAccountScreen';
 import ManageCategoriesScreen from '@/src/pages/ManageCategoriesScreen';
 import TransactionDetailScreen from '@/src/pages/TransactionDetailScreen';
@@ -16,7 +17,7 @@ import { TransactionSummary } from '@/src/data';
 import { useAppContext } from '@/src/context/AppContext';
 import GlobalPayScreen from '@/src/pages/GlobalPayScreen';
 
-export type ActivePage = 'spends' | 'bills' | 'profile';
+export type ActivePage = 'home' | 'analytics' | 'bills' | 'profile';
 export type ActiveModal = 'pay' | 'add_money' | 'withdraw' | 'link_bank' | 'manage_categories' | 'transaction_detail' | 'scan_qr' | 'pay_bill' | null;
 export type BankAccountType = 'us' | 'inr';
 
@@ -30,7 +31,7 @@ interface SelectedBiller {
 
 
 const MainApp: React.FC<MainAppProps> = ({ onLogout }) => {
-  const [activePage, setActivePage] = useState<ActivePage>('spends');
+  const [activePage, setActivePage] = useState<ActivePage>('home');
   const [activeModal, setActiveModal] = useState<ActiveModal>(null);
   const [bankAccountType, setBankAccountType] = useState<BankAccountType>('us');
   const [selectedTransaction, setSelectedTransaction] = useState<TransactionSummary | null>(null);
@@ -65,10 +66,14 @@ const MainApp: React.FC<MainAppProps> = ({ onLogout }) => {
 
   const renderContent = () => {
     switch (activePage) {
-      case 'spends':
-        return <SpendsScreen 
+      case 'home':
+        return <HomeScreen 
                   onTransactionClick={handleOpenTransactionDetail} 
                   setActiveModal={setActiveModal}
+                />;
+      case 'analytics':
+        return <AnalyticsScreen 
+                  onTransactionClick={handleOpenTransactionDetail} 
                 />;
       case 'bills':
         return userMode === 'INDIA' 
@@ -81,7 +86,7 @@ const MainApp: React.FC<MainAppProps> = ({ onLogout }) => {
                   installPrompt={installPrompt} 
                 />;
       default:
-        return <SpendsScreen 
+        return <HomeScreen 
                   onTransactionClick={handleOpenTransactionDetail} 
                   setActiveModal={setActiveModal}
                 />;
@@ -97,7 +102,7 @@ const MainApp: React.FC<MainAppProps> = ({ onLogout }) => {
     
     const handleGoToKyc = () => {
       handleClose(); 
-      setAuthFlow('kycStart'); // Trigger the KYC flow using the new context function
+      setAuthFlow('kycStart');
     };
 
     switch (activeModal) {
