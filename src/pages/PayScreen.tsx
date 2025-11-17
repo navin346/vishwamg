@@ -14,7 +14,8 @@ const mockContacts = [
 ];
 
 const PayScreen: React.FC<ModalProps> = ({ onClose, onGoToKyc }) => {
-    const { kycStatus } = useAppContext();
+    const { kycStatus, userMode } = useAppContext();
+    const isIndiaMode = userMode === 'INDIA';
     const [view, setView] = useState<'contacts' | 'input'>('contacts');
     const [selectedContact, setSelectedContact] = useState<{ name: string; phone: string } | null>(null);
 
@@ -58,13 +59,13 @@ const PayScreen: React.FC<ModalProps> = ({ onClose, onGoToKyc }) => {
             
             <div className="space-y-4">
                 <div>
-                    <label htmlFor="amount" className="text-sm font-medium text-gray-700 dark:text-neutral-300">Amount (USDC)</label>
+                    <label htmlFor="amount" className="text-sm font-medium text-gray-700 dark:text-neutral-300">Amount ({isIndiaMode ? 'INR' : 'USDC'})</label>
                     <div className="relative mt-1">
-                            <span className="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-500">$</span>
+                            <span className="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-500">{isIndiaMode ? '₹' : '$'}</span>
                             <input
                             id="amount"
                             type="number"
-                            placeholder="100.00"
+                            placeholder={isIndiaMode ? "500.00" : "100.00"}
                             className="w-full pl-8 pr-4 py-3 bg-gray-100 dark:bg-neutral-800 border border-gray-300 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500 text-gray-900 dark:text-white"
                         />
                     </div>
@@ -91,7 +92,7 @@ const PayScreen: React.FC<ModalProps> = ({ onClose, onGoToKyc }) => {
 
     const ContactsView = () => (
         <div>
-            <input type="search" placeholder="Search contacts..." className="w-full px-4 py-2 mb-4 bg-gray-100 dark:bg-neutral-800 border border-gray-300 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500 text-gray-900 dark:text-white" />
+            <input type="search" placeholder={isIndiaMode ? "Search by UPI ID or Phone..." : "Search contacts..."} className="w-full px-4 py-2 mb-4 bg-gray-100 dark:bg-neutral-800 border border-gray-300 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500 text-gray-900 dark:text-white" />
             <div className="space-y-2 max-h-64 overflow-y-auto">
                 {mockContacts.map(contact => (
                     <button key={contact.phone} onClick={() => handleSelectContact(contact)} className="w-full text-left p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors">
@@ -115,7 +116,7 @@ const PayScreen: React.FC<ModalProps> = ({ onClose, onGoToKyc }) => {
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
                              </button>
                         )}
-                        <h2 className="text-xl font-bold text-gray-900 dark:text-white">{view === 'contacts' ? 'Pay To' : 'Pay Contact'}</h2>
+                        <h2 className="text-xl font-bold text-gray-900 dark:text-white">{view === 'contacts' ? (isIndiaMode ? 'Pay with UPI' : 'Pay To') : (isIndiaMode ? 'Confirm UPI Payment' : 'Pay Contact')}</h2>
                     </div>
                     <button onClick={onClose} className="text-gray-500 dark:text-neutral-400 hover:bg-gray-100 dark:hover:bg-neutral-800 rounded-full p-1">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>

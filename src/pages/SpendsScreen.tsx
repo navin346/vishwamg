@@ -35,7 +35,8 @@ const SpendsScreen: React.FC<SpendsScreenProps> = ({ onTransactionClick, setActi
 
     useEffect(() => {
         const fetchTransactions = async () => {
-            if (!user) return;
+            if (!user || !userMode) return; // <-- Guard against running before userMode is set
+            
             setLoading(true);
             try {
                 const currencyToFetch = isInternational ? 'USD' : 'INR';
@@ -44,11 +45,8 @@ const SpendsScreen: React.FC<SpendsScreenProps> = ({ onTransactionClick, setActi
                 
                 const querySnapshot = await getDocs(q);
                 const fetchedTransactions = querySnapshot.docs.map(doc => {
-                    // FIX: Cast data to `any` to resolve property access and spread operator errors.
                     const data = doc.data() as any;
-                    // Convert Firestore Timestamp to a readable string date if needed
                     const date = (data.timestamp as Timestamp).toDate().toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-                    // Also convert timestamp to a string for display, fixing a latent bug.
                     const time = (data.timestamp as Timestamp).toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                     return {
                         ...data,
@@ -66,7 +64,7 @@ const SpendsScreen: React.FC<SpendsScreenProps> = ({ onTransactionClick, setActi
         };
 
         fetchTransactions();
-    }, [user, userMode]);
+    }, [user, userMode]); // <-- Add userMode to dependency array
 
 
     const filteredTransactions = useMemo(() => {
@@ -84,11 +82,13 @@ const SpendsScreen: React.FC<SpendsScreenProps> = ({ onTransactionClick, setActi
         
         const categoryMap = new Map<string, number>();
         filteredTransactions.forEach(tx => {
-            categoryMap.set(tx.category, (categoryMap.get(tx.category) || 0) + tx.amount);
+            if (tx.category.toLowerCase() !== 'income') { // Exclude income from spending charts
+                categoryMap.set(tx.category, (categoryMap.get(tx.category) || 0) + tx.amount);
+            }
         });
         const pieData = Array.from(categoryMap.entries()).map(([label, value]) => ({ label, value }));
 
-        const barData = filteredTransactions.map(tx => ({ label: tx.date, value: tx.amount })).reverse();
+        const barData = filteredTransactions.filter(tx => tx.category.toLowerCase() !== 'income').map(tx => ({ label: tx.date, value: tx.amount })).reverse();
 
         return { totalSpent: total, categoryData: pieData, barChartData: barData };
 
@@ -101,6 +101,17 @@ const SpendsScreen: React.FC<SpendsScreenProps> = ({ onTransactionClick, setActi
             setActiveModal(modal);
         }
     };
+    
+    if (!userMode) {
+        return (
+            <div className="flex justify-center items-center h-64">
+                <svg className="animate-spin h-8 w-8 text-violet-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+            </div>
+        )
+    }
 
 
     return (
@@ -132,7 +143,7 @@ const SpendsScreen: React.FC<SpendsScreenProps> = ({ onTransactionClick, setActi
             </div>
 
             {/* Timeframe Selector */}
-            <div className="flex w-full bg-gray-100 dark:bg-neutral-800 rounded-lg p-1 text-sm">
+            <div className="flex w-full bg-gray-100/80 dark:bg-neutral-800/80 rounded-lg p-1 text-sm">
                 <TimeframeButton label="This Week" timeframe="week" active={timeframe} setActive={setTimeframe} />
                 <TimeframeButton label="This Month" timeframe="month" active={timeframe} setActive={setTimeframe} />
                 <TimeframeButton label="All Time" timeframe="all" active={timeframe} setActive={setTimeframe} />
@@ -146,11 +157,11 @@ const SpendsScreen: React.FC<SpendsScreenProps> = ({ onTransactionClick, setActi
             
             {/* Charts */}
             <div className="space-y-6">
-                <div className="bg-white dark:bg-neutral-900 p-4 rounded-xl shadow-sm">
+                <div className="bg-white/80 dark:bg-neutral-900/80 p-4 rounded-xl shadow-sm">
                     <h3 className="font-bold mb-4 text-gray-900 dark:text-white">By Category</h3>
                     <PieChart data={categoryData} currency={currency} />
                 </div>
-                 <div className="bg-white dark:bg-neutral-900 p-4 rounded-xl shadow-sm">
+                 <div className="bg-white/80 dark:bg-neutral-900/80 p-4 rounded-xl shadow-sm">
                     <h3 className="font-bold mb-4 text-gray-900 dark:text-white">Daily Spend</h3>
                      <BarChart data={barChartData} currency={currency} />
                 </div>
@@ -161,14 +172,14 @@ const SpendsScreen: React.FC<SpendsScreenProps> = ({ onTransactionClick, setActi
                 <h3 className="font-bold text-lg mb-2 text-gray-900 dark:text-white">Transactions</h3>
                 {loading ? <p className="text-sm text-gray-500">Loading transactions...</p> : (
                 <div className="space-y-2">
-                    {filteredTransactions.length > 0 ? filteredTransactions.map(tx => (
-                        <button key={tx.id} onClick={() => onTransactionClick(tx)} className="w-full text-left bg-white dark:bg-neutral-900/50 p-3 rounded-lg flex items-center justify-between hover:bg-gray-100 dark:hover:bg-neutral-800 transition-colors cursor-pointer">
+                    {transactions.length > 0 ? transactions.map(tx => (
+                        <button key={tx.id} onClick={() => onTransactionClick(tx)} className="w-full text-left bg-white/50 dark:bg-neutral-900/50 p-3 rounded-lg flex items-center justify-between hover:bg-gray-100 dark:hover:bg-neutral-800 transition-colors cursor-pointer">
                             <div>
                                 <p className="font-semibold text-gray-900 dark:text-white">{tx.merchant}</p>
                                 <p className="text-xs text-gray-500 dark:text-neutral-400">{tx.category} • {tx.date}</p>
                             </div>
-                            <p className="font-semibold text-sm text-gray-900 dark:text-white">
-                                {currency}{tx.amount.toFixed(2)}
+                            <p className={`font-semibold text-sm ${tx.category === 'Income' ? 'text-green-600 dark:text-green-400' : 'text-gray-900 dark:text-white'}`}>
+                                {tx.category === 'Income' ? '+' : ''}{currency}{tx.amount.toFixed(2)}
                             </p>
                         </button>
                     )) : <p className="text-sm text-center py-4 text-gray-500">No transactions for this period.</p>}
@@ -187,7 +198,7 @@ const TimeframeButton: React.FC<{label: string, timeframe: Timeframe, active: Ti
     return (
         <button 
             onClick={() => setActive(timeframe)}
-            className={`w-1/3 py-1.5 rounded-md font-semibold transition-colors ${isActive ? 'bg-white dark:bg-neutral-700 text-gray-900 dark:text-white' : 'text-gray-500'}`}
+            className={`w-1/3 py-1.5 rounded-md font-semibold transition-colors ${isActive ? 'bg-white dark:bg-neutral-700 text-gray-900 dark:text-white shadow-sm' : 'text-gray-500'}`}
         >
             {label}
         </button>

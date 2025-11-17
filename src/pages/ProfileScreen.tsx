@@ -9,7 +9,7 @@ interface ProfileScreenProps {
 }
 
 const ProfileScreen: React.FC<ProfileScreenProps> = ({ setActiveModal, openLinkBankModal, installPrompt }) => {
-    const { userMode, setUserMode, kycStatus, ibanDetails, createIbanAccount, linkedAccounts, setAuthFlow } = useAppContext();
+    const { userMode, kycStatus, ibanDetails, createIbanAccount, linkedAccounts, setAuthFlow } = useAppContext();
     const isInternational = userMode === 'INTERNATIONAL';
     const [isCreatingIban, setIsCreatingIban] = useState(false);
 
@@ -35,7 +35,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ setActiveModal, openLinkB
             <h1 className="text-3xl font-bold">Profile & Settings</h1>
 
             {/* User Info Card */}
-            <div className="bg-white dark:bg-neutral-900 rounded-xl p-4 flex items-center space-x-4">
+            <div className="bg-white/80 dark:bg-neutral-900/80 rounded-xl p-4 flex items-center space-x-4">
                 <div className="w-16 h-16 rounded-full bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center font-bold text-white text-2xl">
                     J
                 </div>
@@ -45,22 +45,8 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ setActiveModal, openLinkB
                 </div>
             </div>
 
-             {/* Mode Toggle */}
-            <div className="bg-white dark:bg-neutral-900 rounded-xl p-4">
-                 <h3 className="font-bold text-base mb-3">Account Mode</h3>
-                 <div className="relative flex items-center p-1 rounded-full bg-gray-200 dark:bg-neutral-800 w-full h-10">
-                    <div className={`absolute top-1 left-1 w-[calc(50%-4px)] h-8 rounded-full transition-all duration-300 ease-in-out ${userMode === 'INTERNATIONAL' ? 'translate-x-0 bg-violet-600' : 'translate-x-full bg-green-600'}`} />
-                    <button onClick={() => setUserMode('INTERNATIONAL')} className="relative z-10 w-1/2 text-center text-sm font-bold py-1 rounded-full text-white">
-                        International
-                    </button>
-                    <button onClick={() => setUserMode('INDIA')} className="relative z-10 w-1/2 text-center text-sm font-bold py-1 rounded-full text-white">
-                        India
-                    </button>
-                </div>
-            </div>
-
             {/* KYC Status */}
-            <div className="bg-white dark:bg-neutral-900 rounded-xl p-4">
+            <div className="bg-white/80 dark:bg-neutral-900/80 rounded-xl p-4">
                 <div className="flex justify-between items-center mb-2">
                     <h3 className="font-bold">Identity Verification</h3>
                     {getKycStatusPill()}
@@ -79,7 +65,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ setActiveModal, openLinkB
             
             {/* International-specific Info */}
             {isInternational && (
-                <div className="bg-white dark:bg-neutral-900 rounded-xl p-4">
+                <div className="bg-white/80 dark:bg-neutral-900/80 rounded-xl p-4">
                     <h3 className="font-bold mb-2">Your IBAN Account</h3>
                     {ibanDetails ? (
                          <div className="bg-gray-100 dark:bg-neutral-800 rounded-lg p-3 font-mono text-sm">
@@ -98,10 +84,27 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ setActiveModal, openLinkB
                     )}
                 </div>
             )}
+            
+            {/* India-specific Cards */}
+            {!isInternational && (
+                 <div className="bg-white/80 dark:bg-neutral-900/80 rounded-xl p-4 space-y-3">
+                    <h3 className="font-bold text-base mb-1">Linked Cards</h3>
+                     <div className="flex items-center justify-between">
+                        <div>
+                            <p className="font-semibold text-sm">Debit & Credit Cards</p>
+                            <p className="text-xs text-gray-500 dark:text-neutral-400">No cards linked</p>
+                        </div>
+                        <button disabled className="text-sm font-bold px-3 py-1 rounded-md bg-gray-200 dark:bg-neutral-700/50 text-gray-800/50 dark:text-white/50 cursor-not-allowed">
+                            Add
+                        </button>
+                    </div>
+                </div>
+            )}
+
 
             {/* Linked Accounts */}
-            <div className="bg-white dark:bg-neutral-900 rounded-xl p-4 space-y-3">
-                <h3 className="font-bold text-base mb-1">Linked Accounts</h3>
+            <div className="bg-white/80 dark:bg-neutral-900/80 rounded-xl p-4 space-y-3">
+                <h3 className="font-bold text-base mb-1">Linked Bank Accounts</h3>
                 {isInternational && (
                     <LinkedAccountItem 
                         title="US Bank Account" 
@@ -119,7 +122,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ setActiveModal, openLinkB
             </div>
             
             {/* App Settings */}
-            <div className="bg-white dark:bg-neutral-900 rounded-xl p-4">
+            <div className="bg-white/80 dark:bg-neutral-900/80 rounded-xl p-4">
                 <h3 className="font-bold text-base mb-3">App Settings</h3>
                 <button onClick={() => setActiveModal('manage_categories')} className="w-full flex justify-between items-center text-left p-2 -mx-2 rounded-lg hover:bg-gray-100 dark:hover:bg-neutral-800 transition-colors">
                     <span>Manage Spending Categories</span>

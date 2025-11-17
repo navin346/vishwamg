@@ -125,14 +125,14 @@ const MainApp: React.FC<MainAppProps> = ({ onLogout }) => {
 
   return (
     <>
-      <div className="relative mx-auto flex min-h-screen max-w-md flex-col border-x border-gray-200/50 dark:border-slate-800/50 bg-gray-50/95 dark:bg-black/95 backdrop-blur-2xl">
+      <div className="relative mx-auto flex min-h-screen max-w-md flex-col border-x border-gray-200/50 dark:border-slate-800/50 bg-gray-50/90 dark:bg-black/90 backdrop-blur-2xl">
         <Header onLogout={onLogout} />
-        <main className="flex-grow overflow-y-auto pb-20">
+        <main className="flex-grow overflow-y-auto pb-24">
           {renderContent()}
         </main>
         {renderModal()}
         
-        <div className="absolute bottom-20 right-1/2 z-20 translate-x-1/2">
+        <div className="absolute bottom-[5.5rem] right-1/2 z-20 translate-x-1/2">
              <button
                 onClick={() => setActiveModal('scan_qr')}
                 className="w-16 h-16 rounded-full bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-violet-500/50 transform transition-transform active:scale-90"

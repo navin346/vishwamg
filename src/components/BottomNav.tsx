@@ -46,7 +46,7 @@ const BottomNav: React.FC<BottomNavProps> = ({ activePage, setActivePage }) => {
   );
 
   return (
-    <nav className="absolute bottom-0 left-0 right-0 bg-white/80 dark:bg-black/80 backdrop-blur-sm border-t border-gray-200 dark:border-neutral-800 flex justify-around h-16 z-10">
+    <nav className="absolute bottom-0 left-0 right-0 bg-white/80 dark:bg-black/80 backdrop-blur-sm border-t border-gray-200 dark:border-neutral-800 flex justify-around h-16 z-30">
       <NavItem label="Spends" page="spends" activePage={activePage} setActivePage={setActivePage}>
         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" /><path strokeLinecap="round" strokeLinejoin="round" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" /></svg>
       </NavItem>
