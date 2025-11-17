@@ -1,10 +1,24 @@
-// FIX: Add a triple-slash directive to make Vite's `import.meta.env` types available.
-/// <reference types="vite/client" />
-
+// FIX: Manually define types for Vite's `import.meta.env` to resolve TypeScript errors
+// because the triple-slash directive `/// <reference types="vite/client" />` was causing a
+// "Cannot find type definition file for 'vite/client'" error in this environment.
+interface ImportMetaEnv {
+    readonly VITE_FIREBASE_API_KEY: string;
+    readonly VITE_FIREBASE_AUTH_DOMAIN: string;
+    readonly VITE_FIREBASE_PROJECT_ID: string;
+    readonly VITE_FIREBASE_STORAGE_BUCKET: string;
+    readonly VITE_FIREBASE_MESSAGING_SENDER_ID: string;
+    readonly VITE_FIREBASE_APP_ID: string;
+}
+  
 // Declare global variables provided by the execution environment to prevent TypeScript errors.
 declare global {
   var __firebase_config: string | undefined;
   var __initial_auth_token: string | undefined;
+  // FIX: Augment the global ImportMeta interface to include Vite's `env` property.
+  // This resolves errors where TypeScript doesn't recognize `import.meta.env`.
+  interface ImportMeta {
+    readonly env: ImportMetaEnv;
+  }
 }
 
 import { initializeApp, FirebaseOptions } from "firebase/app";

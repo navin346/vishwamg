@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
-// import { register } from './service-worker-registration.js';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
@@ -14,6 +13,3 @@ root.render(
     <App />
   </React.StrictMode>
 );
-
-// Do not call register()
-// register();
