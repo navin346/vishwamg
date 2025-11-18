@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAppContext } from '@/src/context/AppContext';
 import { ActiveModal, BankAccountType } from '@/src/MainApp';
-import { Camera, User, ChevronRight, Settings, CreditCard, Landmark, LogOut } from 'lucide-react';
+import { User, ChevronRight, Settings, CreditCard, Landmark, LogOut, ShieldCheck, FileText } from 'lucide-react';
 
 interface ProfileScreenProps {
     setActiveModal: (modal: ActiveModal) => void;
@@ -21,99 +21,101 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ setActiveModal, openLinkB
     }
 
     const SectionHeader: React.FC<{ title: string }> = ({ title }) => (
-        <h3 className="text-xs font-bold text-zinc-500 uppercase tracking-wider mb-2 px-1 mt-6">{title}</h3>
+        <h3 className="text-xs font-bold text-gray-500 dark:text-neutral-500 uppercase tracking-wider mb-2 px-4 mt-8">{title}</h3>
     );
 
-    const MenuItem: React.FC<{ icon: React.ReactNode, title: string, subtitle?: string, onClick?: () => void, rightElement?: React.ReactNode }> = ({ icon, title, subtitle, onClick, rightElement }) => (
-        <button onClick={onClick} className="w-full bg-white dark:bg-zinc-900 p-4 flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800 last:border-0 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors text-left first:rounded-t-2xl last:rounded-b-2xl">
+    const MenuGroup: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+        <div className="bg-white dark:bg-neutral-900 rounded-2xl overflow-hidden border border-gray-200 dark:border-neutral-800 mx-4">
+            {children}
+        </div>
+    );
+
+    const MenuItem: React.FC<{ icon: React.ReactNode, title: string, subtitle?: string, onClick?: () => void, rightElement?: React.ReactNode, isDestructive?: boolean }> = ({ icon, title, subtitle, onClick, rightElement, isDestructive }) => (
+        <button onClick={onClick} className="w-full p-4 flex items-center justify-between border-b border-gray-100 dark:border-neutral-800 last:border-0 hover:bg-gray-50 dark:hover:bg-neutral-800 transition-colors text-left">
             <div className="flex items-center gap-3">
-                <div className="text-zinc-500 dark:text-zinc-400">{icon}</div>
+                <div className={`${isDestructive ? 'text-red-500' : 'text-gray-500 dark:text-neutral-400'}`}>{icon}</div>
                 <div>
-                    <p className="font-semibold text-zinc-900 dark:text-white text-sm">{title}</p>
-                    {subtitle && <p className="text-xs text-zinc-500">{subtitle}</p>}
+                    <p className={`font-semibold text-sm ${isDestructive ? 'text-red-500' : 'text-gray-900 dark:text-white'}`}>{title}</p>
+                    {subtitle && <p className="text-xs text-gray-500 dark:text-neutral-500">{subtitle}</p>}
                 </div>
             </div>
-            {rightElement || <ChevronRight size={16} className="text-zinc-400" />}
+            {rightElement || <ChevronRight size={16} className="text-gray-400 dark:text-neutral-600" />}
         </button>
     );
 
     return (
-        <div className="p-5 pb-24 bg-zinc-50 dark:bg-zinc-950 min-h-full">
-            <h1 className="text-3xl font-bold text-zinc-900 dark:text-white mb-6">Profile</h1>
+        <div className="pb-24 min-h-full bg-gray-50 dark:bg-black pt-4">
+            <div className="px-4 mb-6">
+                <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-1">Profile</h1>
+                <p className="text-gray-500 dark:text-neutral-400">Manage your account and settings</p>
+            </div>
 
-            {/* User Card */}
-            <div className="bg-white dark:bg-zinc-900 rounded-2xl p-4 flex items-center gap-4 shadow-sm border border-zinc-200 dark:border-zinc-800">
-                <div className="w-16 h-16 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center">
-                    <User size={32} className="text-zinc-400" />
+            {/* Identity Card */}
+            <div className="mx-4 bg-white dark:bg-neutral-900 rounded-3xl p-4 flex items-center gap-4 shadow-sm border border-gray-200 dark:border-neutral-800 mb-6">
+                <div className="w-16 h-16 rounded-full bg-gray-100 dark:bg-neutral-800 flex items-center justify-center">
+                    <User size={32} className="text-gray-400" />
                 </div>
-                <div>
-                    <h2 className="text-lg font-bold text-zinc-900 dark:text-white">J. Doe</h2>
-                    <p className="text-sm text-zinc-500">+1 (555) 123-4567</p>
-                    <div className="mt-2 flex items-center gap-2">
-                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase ${kycStatus === 'verified' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-amber-100 text-amber-700'}`}>
-                            {kycStatus}
-                        </span>
-                        {kycStatus !== 'verified' && <button onClick={() => setAuthFlow('kycStart')} className="text-xs font-bold text-indigo-600 dark:text-indigo-400 underline">Verify Now</button>}
-                    </div>
+                <div className="flex-1">
+                    <h2 className="text-lg font-bold text-gray-900 dark:text-white">J. Doe</h2>
+                    <p className="text-sm text-gray-500">+1 (555) 123-4567</p>
+                </div>
+                <div className="flex flex-col items-end gap-1">
+                    <span className={`text-[10px] font-bold px-2 py-1 rounded-full uppercase ${kycStatus === 'verified' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-amber-100 text-amber-700'}`}>
+                        {kycStatus}
+                    </span>
+                     {kycStatus !== 'verified' && <button onClick={() => setAuthFlow('kycStart')} className="text-xs font-bold text-indigo-600 dark:text-indigo-400">Verify</button>}
                 </div>
             </div>
 
-            {/* International IBAN */}
-            {isInternational && (
-                <>
-                    <SectionHeader title="Banking" />
-                    <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 overflow-hidden">
-                         {ibanDetails ? (
-                            <div className="p-4">
-                                <div className="flex justify-between items-center mb-2">
-                                    <span className="text-sm font-bold text-zinc-900 dark:text-white">Your US Account</span>
-                                    <span className="text-xs bg-zinc-100 dark:bg-zinc-800 px-2 py-1 rounded text-zinc-600 dark:text-zinc-400">Checking</span>
-                                </div>
-                                <div className="space-y-1 font-mono text-xs text-zinc-500">
-                                    <div className="flex justify-between"><span>IBAN</span> <span className="text-zinc-900 dark:text-white">{ibanDetails.iban}</span></div>
-                                    <div className="flex justify-between"><span>BIC</span> <span className="text-zinc-900 dark:text-white">{ibanDetails.bic}</span></div>
-                                </div>
-                            </div>
-                        ) : (
-                            <div className="p-4 text-center">
-                                <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-3">Get your own US bank account details.</p>
-                                <button onClick={handleCreateIban} disabled={isCreatingIban} className="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold px-4 py-2 rounded-lg w-full transition-colors">
-                                    {isCreatingIban ? 'Creating...' : 'Create Account'}
-                                </button>
-                            </div>
-                        )}
-                    </div>
-                </>
-            )}
-
-            <SectionHeader title="Linked Accounts" />
-            <div className="rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800">
+            {/* Banking Section */}
+            <SectionHeader title="Banking & Payments" />
+            <MenuGroup>
                 {isInternational && (
-                    <MenuItem 
-                        icon={<Landmark size={20} />}
-                        title="US Bank Account"
-                        subtitle={linkedAccounts.us ? linkedAccounts.us.bankName : "Not linked"}
-                        onClick={() => openLinkBankModal('us')}
-                        rightElement={<span className="text-xs font-bold text-indigo-600 dark:text-indigo-400">{linkedAccounts.us ? 'Manage' : 'Add'}</span>}
-                    />
+                    <>
+                        {ibanDetails ? (
+                             <MenuItem 
+                                icon={<Landmark size={20} />}
+                                title="US Checking Account"
+                                subtitle={`IBAN: ${ibanDetails.iban.slice(0, 8)}...`}
+                                onClick={() => {}}
+                                rightElement={<span className="text-xs font-bold text-gray-400">Details</span>}
+                            />
+                        ) : (
+                             <MenuItem 
+                                icon={<Landmark size={20} />}
+                                title="Create US Account"
+                                subtitle="Get local banking details"
+                                onClick={handleCreateIban}
+                                rightElement={isCreatingIban ? <span className="text-xs">...</span> : <span className="text-xs font-bold text-indigo-500">Create</span>}
+                            />
+                        )}
+                    </>
                 )}
                 <MenuItem 
-                    icon={<Landmark size={20} />}
-                    title="Indian Bank Account"
-                    subtitle={linkedAccounts.inr ? linkedAccounts.inr.bankName : "Not linked"}
-                    onClick={() => openLinkBankModal('inr')}
-                    rightElement={<span className="text-xs font-bold text-indigo-600 dark:text-indigo-400">{linkedAccounts.inr ? 'Manage' : 'Add'}</span>}
+                    icon={<CreditCard size={20} />}
+                    title="Linked Bank Accounts"
+                    subtitle={linkedAccounts.inr ? linkedAccounts.inr.bankName : (linkedAccounts.us ? linkedAccounts.us.bankName : "Manage linked accounts")}
+                    onClick={() => openLinkBankModal(isInternational ? 'us' : 'inr')}
+                    rightElement={<span className="text-xs font-bold text-indigo-600 dark:text-indigo-400">{linkedAccounts.inr || linkedAccounts.us ? 'Manage' : 'Link'}</span>}
                 />
-            </div>
+            </MenuGroup>
 
-            <SectionHeader title="Settings" />
-            <div className="rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800">
+            {/* Preferences */}
+            <SectionHeader title="Preferences" />
+            <MenuGroup>
                 <MenuItem icon={<Settings size={20} />} title="Spending Categories" onClick={() => setActiveModal('manage_categories')} />
+                <MenuItem icon={<ShieldCheck size={20} />} title="Security & Privacy" onClick={() => {}} />
+                <MenuItem icon={<FileText size={20} />} title="Statements" onClick={() => {}} />
+            </MenuGroup>
+
+            {/* App */}
+            <SectionHeader title="App" />
+            <MenuGroup>
                 {installPrompt && <MenuItem icon={<CreditCard size={20} />} title="Install App" onClick={() => installPrompt.prompt()} />}
-                <MenuItem icon={<LogOut size={20} />} title="Sign Out" onClick={() => window.location.reload()} />
-            </div>
+                <MenuItem isDestructive icon={<LogOut size={20} />} title="Sign Out" onClick={() => window.location.reload()} />
+            </MenuGroup>
             
-             <p className="text-center text-xs text-zinc-400 mt-8">Version 1.0.2 • Built with Gemini 3.0</p>
+             <p className="text-center text-xs text-gray-400 dark:text-neutral-600 mt-8 mb-4">Vishwam v1.2.0</p>
         </div>
     );
 };

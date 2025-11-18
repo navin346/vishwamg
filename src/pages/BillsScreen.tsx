@@ -1,9 +1,11 @@
 import React from 'react';
 import mockBillers from '@/src/data/mock-billers.json';
 import ServiceIcon from '@/src/components/ServiceIcon';
+import { ArrowLeft } from 'lucide-react';
 
 interface BillsScreenProps {
     onPayBiller: (billerName: string, amount: number) => void;
+    onBack?: () => void;
 }
 
 const CategoryIcon: React.FC<{ name: string }> = ({ name }) => {
@@ -20,7 +22,6 @@ const CategoryIcon: React.FC<{ name: string }> = ({ name }) => {
     return icon;
 };
 
-// Define colors for the grid
 const COLORS = [
     "bg-gradient-to-br from-cyan-500 to-blue-500",
     "bg-gradient-to-br from-green-500 to-emerald-500",
@@ -30,28 +31,35 @@ const COLORS = [
     "bg-gradient-to-br from-teal-500 to-cyan-500",
 ];
 
-const BillsScreen: React.FC<BillsScreenProps> = ({ onPayBiller }) => {
+const BillsScreen: React.FC<BillsScreenProps> = ({ onPayBiller, onBack }) => {
     
-    // We will just show the first biller for the demo
     const handleBillerClick = (billerName: string) => {
-        // Hardcoded mock amount for the demo
         onPayBiller(billerName, 500);
     };
 
     return (
-        <div className="p-4 space-y-4">
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Bill Payments</h1>
-            <p className="text-gray-600 dark:text-neutral-400">
-                Pay for all your services in one place, powered by BBPS.
-            </p>
-            <div className="grid grid-cols-4 gap-x-2 gap-y-6 pt-4">
+        <div className="p-5 space-y-6 min-h-full bg-gray-50 dark:bg-black">
+            <div className="flex items-center gap-3">
+                {onBack && (
+                    <button onClick={onBack} className="p-2 rounded-full bg-gray-200 dark:bg-neutral-800 text-gray-600 dark:text-white">
+                        <ArrowLeft size={20} />
+                    </button>
+                )}
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Bill Payments</h1>
+            </div>
+
+            <div className="bg-gradient-to-br from-blue-600 to-indigo-600 rounded-3xl p-6 text-white shadow-lg">
+                <h2 className="text-xl font-bold">Bharat BillPay</h2>
+                <p className="text-blue-100 text-sm mt-1 opacity-90">Safe, secure and instant payments for all your utilities.</p>
+            </div>
+            
+            <div className="grid grid-cols-4 gap-x-2 gap-y-6 pt-2">
                 {mockBillers.categories.map((category, index) => (
                     <ServiceIcon
                         key={category.name}
                         label={category.name}
                         icon={<CategoryIcon name={category.name} />}
                         color={COLORS[index % COLORS.length]}
-                        // For the demo, just pay the first biller in the category
                         onClick={() => handleBillerClick(category.billers[0].name)}
                     />
                 ))}
