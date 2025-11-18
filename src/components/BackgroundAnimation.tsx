@@ -10,6 +10,7 @@ const BackgroundAnimation: React.FC = () => {
     const loadEffect = () => {
       if ((window as any).VANTA && vantaRef.current && !vantaEffect) {
         try {
+            // Initialize with default settings
             const effect = (window as any).VANTA.NET({
               el: vantaRef.current,
               mouseControls: true,
@@ -19,9 +20,12 @@ const BackgroundAnimation: React.FC = () => {
               minWidth: 200.00,
               scale: 1.00,
               scaleMobile: 1.00,
-              points: 14.00,
-              maxDistance: 24.00,
-              spacing: 18.00,
+              // Initial generic colors, will be overwritten by the effect below
+              color: 0x6366f1,
+              backgroundColor: 0xf0f4f8,
+              points: 15.00,
+              maxDistance: 23.00,
+              spacing: 17.00,
               showDots: true
             });
             setVantaEffect(effect);
@@ -31,24 +35,28 @@ const BackgroundAnimation: React.FC = () => {
       }
     };
 
-    // Small delay to ensure scripts are loaded
-    const timeout = setTimeout(loadEffect, 100);
+    const timeout = setTimeout(loadEffect, 50);
     return () => {
         clearTimeout(timeout);
         if (vantaEffect) vantaEffect.destroy();
     };
-  }, []); // Run once on mount
+  }, []);
 
-  // Dynamic Theme Updates
+  // Dynamic Theme Updates - Making visuals more compelling
   useEffect(() => {
     if (vantaEffect) {
         const isDark = theme === 'dark';
         vantaEffect.setOptions({
-            color: isDark ? 0x8b5cf6 : 0x6366f1, // Violet-500 vs Indigo-500
-            backgroundColor: isDark ? 0x050505 : 0xf0f4f8, // Almost Black vs Light Blue-Grey
-            points: isDark ? 12.00 : 14.00,
-            maxDistance: isDark ? 24.00 : 22.00,
-            backgroundAlpha: 1 // Ensure full opacity for the canvas itself
+            // Compelling colors: Vivid Violet vs Deep Indigo
+            color: isDark ? 0x7c3aed : 0x4f46e5, 
+            // Background: Deep Void Black vs Crisp Off-White
+            backgroundColor: isDark ? 0x050505 : 0xf8fafc, 
+            // Make points slightly denser
+            points: isDark ? 13.00 : 14.00,
+            // Increase max distance for more connections in dark mode
+            maxDistance: isDark ? 25.00 : 22.00,
+            spacing: isDark ? 16.00 : 18.00,
+            backgroundAlpha: 1
         });
     }
   }, [theme, vantaEffect]);
@@ -63,6 +71,7 @@ const BackgroundAnimation: React.FC = () => {
             width: '100vw', 
             height: '100vh', 
             zIndex: -1,
+            transition: 'background-color 0.5s ease' // Smooth transition for the canvas container
         }} 
     />
   );

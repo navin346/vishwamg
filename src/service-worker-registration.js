@@ -1,3 +1,3 @@
-// This file has been deprecated and removed.
+// Service worker registration disabled.
 export function register() {}
 export function unregister() {}
