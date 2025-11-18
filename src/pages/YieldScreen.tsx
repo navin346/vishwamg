@@ -1,36 +1,35 @@
 import React from 'react';
-import { ArrowLeft, Info, TrendingUp } from 'lucide-react';
+import { ArrowLeft, Info, Plus, TrendingUp, ShieldCheck } from 'lucide-react';
 import { useAppContext } from '@/src/context/AppContext';
 
 interface YieldScreenProps {
     onBack?: () => void;
 }
 
-const VaultItem: React.FC<{ name: string, protocol: string, apy: string, tvl: string, risk: 'Low' | 'Med' | 'High' }> = ({ name, protocol, apy, tvl, risk }) => (
-    <div className="bg-white/80 dark:bg-neutral-900/80 backdrop-blur-md border border-gray-200 dark:border-neutral-800 rounded-2xl p-4 hover:border-indigo-500 dark:hover:border-indigo-500 transition-colors cursor-pointer group">
-        <div className="flex justify-between items-start mb-3">
-            <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-neutral-800 flex items-center justify-center font-bold text-indigo-600 dark:text-indigo-400 text-xs">
-                    {protocol.substring(0,2).toUpperCase()}
-                </div>
-                <div>
-                    <h3 className="font-bold text-gray-900 dark:text-white text-sm group-hover:text-indigo-500 transition-colors">{name}</h3>
-                    <p className="text-xs text-gray-500">{protocol}</p>
-                </div>
+const VaultItem: React.FC<{ name: string, apy: string, balance?: string, color: string }> = ({ name, apy, balance, color }) => (
+    <div className="bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-800 rounded-2xl p-5 flex items-center justify-between hover:border-gray-300 dark:hover:border-neutral-700 transition-all group">
+        <div className="flex items-center gap-4">
+            <div className={`w-12 h-12 rounded-full ${color} bg-opacity-20 flex items-center justify-center text-lg font-bold shadow-sm`}>
+                {name[0]}
             </div>
-            <div className="text-right">
-                <span className="text-emerald-600 dark:text-emerald-400 font-bold text-lg">{apy}</span>
-                <p className="text-[10px] text-gray-400 uppercase font-bold">APY</p>
+            <div>
+                <h3 className="font-bold text-gray-900 dark:text-white">{name}</h3>
+                <p className="text-xs font-medium text-green-600 dark:text-green-400 flex items-center gap-1">
+                    <TrendingUp size={12} /> {apy} APY
+                </p>
             </div>
         </div>
-        <div className="flex justify-between items-center pt-3 border-t border-gray-100 dark:border-neutral-800">
-            <div className="flex gap-3 text-xs">
-                <div className="text-gray-500">Min <span className="text-gray-900 dark:text-gray-300 font-medium">{tvl}</span></div>
-                <div className="text-gray-500">Risk <span className={`font-medium ${risk === 'Low' ? 'text-emerald-500' : risk === 'Med' ? 'text-amber-500' : 'text-red-500'}`}>{risk}</span></div>
-            </div>
-            <button className="bg-gray-900 dark:bg-white text-white dark:text-black text-xs font-bold px-3 py-1.5 rounded-lg">
-                Invest
-            </button>
+        <div className="text-right">
+            {balance ? (
+                <>
+                    <p className="font-bold text-gray-900 dark:text-white">{balance}</p>
+                    <p className="text-xs text-gray-500">Balance</p>
+                </>
+            ) : (
+                <button className="bg-black dark:bg-white text-white dark:text-black text-xs font-bold px-4 py-2 rounded-full">
+                    Start
+                </button>
+            )}
         </div>
     </div>
 )
@@ -39,52 +38,54 @@ const YieldScreen: React.FC<YieldScreenProps> = ({ onBack }) => {
     const { userMode } = useAppContext();
     const isInternational = userMode === 'INTERNATIONAL';
     const currencySymbol = isInternational ? '$' : '₹';
-    const title = isInternational ? 'Earn USD' : 'Earn INR';
+    const title = isInternational ? 'Smart Vaults' : 'Growth Pots';
 
     return (
-        <div className="p-5 space-y-6 pb-24 min-h-full">
+        <div className="p-5 space-y-8 pb-24 min-h-full">
             <div className="flex items-center gap-3">
                 {onBack && (
-                    <button onClick={onBack} className="p-2 rounded-full bg-gray-200 dark:bg-neutral-800 text-gray-600 dark:text-white">
+                    <button onClick={onBack} className="p-2 rounded-full bg-gray-100 dark:bg-neutral-800 text-gray-600 dark:text-white">
                         <ArrowLeft size={20} />
                     </button>
                 )}
                 <div className="flex-1">
-                    <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{title}</h1>
-                </div>
-                <button className="text-indigo-600 dark:text-indigo-400">
-                    <Info size={20} />
-                </button>
-            </div>
-
-            <div className="bg-gradient-to-r from-emerald-500 to-teal-600 rounded-3xl p-6 text-white shadow-lg relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-white opacity-10 rounded-full blur-2xl -mr-10 -mt-10"></div>
-                <p className="text-emerald-100 text-xs font-medium uppercase tracking-wider">Current Portfolio</p>
-                <h2 className="text-4xl font-bold mt-1 tracking-tight">{currencySymbol}0.00</h2>
-                <div className="mt-4 flex gap-2">
-                    <span className="bg-black/20 backdrop-blur-md px-3 py-1 rounded-lg text-xs font-medium flex items-center gap-1">
-                        <TrendingUp size={12} /> Start Investing
-                    </span>
+                    <h1 className="text-3xl font-bold text-gray-900 dark:text-white tracking-tight">{title}</h1>
                 </div>
             </div>
 
-            <div className="space-y-3">
-                <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider px-1">
-                    {isInternational ? "DeFi Vaults" : "Funds & Bonds"}
-                </h3>
+            {/* Total Balance Card */}
+            <div className="bg-black dark:bg-white rounded-[2rem] p-8 text-white dark:text-black shadow-2xl relative overflow-hidden">
+                <div className="relative z-10">
+                    <p className="text-sm font-medium opacity-60 uppercase tracking-widest mb-2">Total Earnings</p>
+                    <h2 className="text-5xl font-bold tracking-tighter">{currencySymbol}124.50</h2>
+                    <div className="mt-6 flex items-center gap-2 text-sm font-medium opacity-80">
+                        <ShieldCheck size={16} />
+                        <span>Assets 100% Backed & Audited</span>
+                    </div>
+                </div>
+                {/* Decorative circle */}
+                <div className="absolute -right-10 -top-10 w-40 h-40 rounded-full border-[20px] border-white/10 dark:border-black/10"></div>
+            </div>
+
+            <div className="space-y-4">
+                <div className="flex justify-between items-center px-1">
+                    <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider">Available Vaults</h3>
+                    <button className="text-black dark:text-white bg-gray-100 dark:bg-neutral-800 p-2 rounded-full">
+                        <Plus size={18} />
+                    </button>
+                </div>
                 
                 {isInternational ? (
                     <>
-                        <VaultItem name="USDC High Yield" protocol="Aave V3" apy="5.2%" tvl="$50" risk="Low" />
-                        <VaultItem name="ETH Staking" protocol="Lido" apy="3.8%" tvl="$100" risk="Low" />
-                        <VaultItem name="Liquidity Pool" protocol="Uniswap" apy="12.4%" tvl="$500" risk="High" />
+                        <VaultItem name="USDC Core" apy="5.2%" color="bg-blue-500 text-blue-500" />
+                        <VaultItem name="Ethereum" apy="3.8%" color="bg-purple-500 text-purple-500" balance="0.45 ETH" />
+                        <VaultItem name="Bitcoin" apy="1.5%" color="bg-orange-500 text-orange-500" />
                     </>
                 ) : (
                     <>
-                        <VaultItem name="Nifty 50 Index" protocol="Mutual Fund" apy="12.5%" tvl="₹500" risk="Med" />
-                        <VaultItem name="Sovereign Gold Bond" protocol="Govt India" apy="2.5%" tvl="₹1,000" risk="Low" />
-                        <VaultItem name="Liquid Fund" protocol="Aditya Birla" apy="6.8%" tvl="₹100" risk="Low" />
-                        <VaultItem name="P2P Lending" protocol="LiquiLoans" apy="10.0%" tvl="₹10,000" risk="Med" />
+                        <VaultItem name="Nifty 50" apy="12.5%" color="bg-blue-500 text-blue-500" />
+                        <VaultItem name="Digital Gold" apy="2.5%" color="bg-yellow-500 text-yellow-500" balance="1.2g" />
+                        <VaultItem name="Liquid Pot" apy="6.8%" color="bg-teal-500 text-teal-500" />
                     </>
                 )}
             </div>

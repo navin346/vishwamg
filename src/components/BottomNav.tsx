@@ -23,28 +23,23 @@ const NavItem: React.FC<{
   return (
     <button
       onClick={handleClick}
-      className={`flex flex-col items-center justify-center w-full transition-all duration-300 relative pt-2 pb-1 group ${isActive ? 'text-indigo-500 dark:text-white' : 'text-gray-400 dark:text-neutral-500 hover:text-gray-600 dark:hover:text-neutral-300'}`}
+      className={`flex flex-col items-center justify-center w-full transition-all duration-300 pt-4 pb-6 group ${isActive ? 'text-black dark:text-white' : 'text-gray-400 dark:text-neutral-600 hover:text-gray-600 dark:hover:text-neutral-400'}`}
     >
-      <div className={`transition-all duration-300 ${isActive ? '-translate-y-1' : 'group-hover:-translate-y-0.5'}`}>
+      <div className={`transition-transform duration-300 ${isActive ? 'scale-110' : 'group-hover:scale-105'}`}>
         {icon}
       </div>
-      <span className={`text-[10px] font-medium mt-1 transition-opacity duration-300 ${isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-100 absolute -bottom-3'}`}>{label}</span>
-      {isActive && <div className="absolute bottom-1 w-1 h-1 rounded-full bg-indigo-500 dark:bg-white" />}
+      <span className={`text-[10px] font-bold mt-1 transition-opacity duration-300 ${isActive ? 'opacity-100' : 'opacity-0'}`}>{label}</span>
     </button>
   );
 };
 
 const BottomNav: React.FC<BottomNavProps> = ({ activePage, setActivePage }) => {
   return (
-    <nav className="bg-white/80 dark:bg-black/80 backdrop-blur-xl border-t border-gray-200/50 dark:border-white/10 flex justify-between items-center h-[85px] pb-6 px-2 z-40 shadow-[0_-10px_40px_rgba(0,0,0,0.05)]">
-      <NavItem label="Home" page="home" activePage={activePage} setActivePage={setActivePage} icon={<Home size={24} strokeWidth={isActive => isActive ? 2.5 : 2} />} />
-      <NavItem label="Analytics" page="analytics" activePage={activePage} setActivePage={setActivePage} icon={<BarChart3 size={24} strokeWidth={isActive => isActive ? 2.5 : 2} />} />
-      
-      {/* Spacer for QR Button */}
-      <div className="w-24" />
-      
-      <NavItem label="Services" page="services" activePage={activePage} setActivePage={setActivePage} icon={<LayoutGrid size={24} strokeWidth={isActive => isActive ? 2.5 : 2} />} />
-      <NavItem label="Profile" page="profile" activePage={activePage} setActivePage={setActivePage} icon={<User size={24} strokeWidth={isActive => isActive ? 2.5 : 2} />} />
+    <nav className="bg-white/80 dark:bg-black/80 backdrop-blur-xl border-t border-gray-200 dark:border-white/10 flex justify-around items-center px-6 fixed bottom-0 left-0 right-0 z-40">
+      <NavItem label="Home" page="home" activePage={activePage} setActivePage={setActivePage} icon={<Home size={24} strokeWidth={activePage === 'home' ? 2.5 : 2} />} />
+      <NavItem label="Analytics" page="analytics" activePage={activePage} setActivePage={setActivePage} icon={<BarChart3 size={24} strokeWidth={activePage === 'analytics' ? 2.5 : 2} />} />
+      <NavItem label="Services" page="services" activePage={activePage} setActivePage={setActivePage} icon={<LayoutGrid size={24} strokeWidth={activePage === 'services' ? 2.5 : 2} />} />
+      <NavItem label="Profile" page="profile" activePage={activePage} setActivePage={setActivePage} icon={<User size={24} strokeWidth={activePage === 'profile' ? 2.5 : 2} />} />
     </nav>
   );
 };

@@ -7,49 +7,24 @@ const BackgroundMesh: React.FC = () => {
 
   return (
     <div className="fixed inset-0 z-[-1] overflow-hidden pointer-events-none">
-      <div className={`absolute inset-0 transition-colors duration-1000 ${isDark ? 'bg-black' : 'bg-gray-50'}`} />
+      {/* Base Background */}
+      <div className={`absolute inset-0 transition-colors duration-700 ${isDark ? 'bg-[#050505]' : 'bg-[#F2F4F6]'}`} />
       
-      {/* Blob 1 - Top Left */}
+      {/* Subtle Ambient Glows - Kast Style (No rainbow) */}
       <div 
-        className={`absolute top-[-10%] left-[-10%] w-[60vw] h-[60vw] rounded-full mix-blend-multiply filter blur-[80px] opacity-60 animate-blob ${
-          isDark ? 'bg-indigo-900/60' : 'bg-purple-300'
+        className={`absolute top-[-20%] left-[-10%] w-[80vw] h-[80vw] rounded-full mix-blend-screen filter blur-[120px] opacity-20 animate-pulse ${
+          isDark ? 'bg-zinc-800' : 'bg-white'
         }`} 
       />
       
-      {/* Blob 2 - Top Right */}
       <div 
-        className={`absolute top-[-10%] right-[-10%] w-[60vw] h-[60vw] rounded-full mix-blend-multiply filter blur-[80px] opacity-60 animate-blob animation-delay-2000 ${
-          isDark ? 'bg-blue-900/60' : 'bg-yellow-300'
-        }`} 
-      />
-      
-      {/* Blob 3 - Bottom Left */}
-      <div 
-        className={`absolute bottom-[-20%] left-[20%] w-[70vw] h-[70vw] rounded-full mix-blend-multiply filter blur-[80px] opacity-60 animate-blob animation-delay-4000 ${
-          isDark ? 'bg-purple-900/60' : 'bg-pink-300'
+        className={`absolute bottom-[-20%] right-[-10%] w-[80vw] h-[80vw] rounded-full mix-blend-screen filter blur-[100px] opacity-20 ${
+          isDark ? 'bg-slate-800' : 'bg-indigo-50'
         }`} 
       />
 
-      {/* Noise Overlay for texture */}
-      <div className="absolute inset-0 opacity-[0.03] bg-[url('https://grainy-gradients.vercel.app/noise.svg')] brightness-100 contrast-150"></div>
-      
-      <style>{`
-        @keyframes blob {
-          0% { transform: translate(0px, 0px) scale(1); }
-          33% { transform: translate(30px, -50px) scale(1.1); }
-          66% { transform: translate(-20px, 20px) scale(0.9); }
-          100% { transform: translate(0px, 0px) scale(1); }
-        }
-        .animate-blob {
-          animation: blob 10s infinite;
-        }
-        .animation-delay-2000 {
-          animation-delay: 2s;
-        }
-        .animation-delay-4000 {
-          animation-delay: 4s;
-        }
-      `}</style>
+      {/* Noise Overlay for Premium Texture */}
+      <div className="absolute inset-0 opacity-[0.04] bg-[url('https://grainy-gradients.vercel.app/noise.svg')] brightness-100 contrast-150"></div>
     </div>
   );
 };

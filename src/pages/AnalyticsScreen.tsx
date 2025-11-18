@@ -6,7 +6,7 @@ import PieChart from '@/src/components/charts/PieChart';
 import BarChart from '@/src/components/charts/BarChart';
 import { TransactionSummary } from '@/src/data';
 import { 
-    Search, ArrowUpDown, Calendar, Utensils, ShoppingBag, Car, Film, Receipt, Wallet, CreditCard, Filter, X, Check
+    Search, ArrowUpDown, Utensils, ShoppingBag, Car, Film, Receipt, Wallet, CreditCard, Filter
 } from 'lucide-react';
 
 type Timeframe = 'week' | 'month' | 'all';
@@ -27,15 +27,15 @@ const FALLBACK_TRANSACTIONS: TransactionSummary[] = [
 ];
 
 const CategoryIcon: React.FC<{ category: string }> = ({ category }) => {
-    const baseClass = "w-10 h-10 rounded-xl flex items-center justify-center shadow-sm transition-transform hover:scale-105";
+    const baseClass = "w-10 h-10 rounded-xl flex items-center justify-center shadow-sm transition-transform hover:scale-105 border border-transparent dark:border-white/5";
     switch (category.toLowerCase()) {
-        case 'food': return <div className={`${baseClass} bg-orange-100 text-orange-600 dark:bg-orange-500/20 dark:text-orange-400`}><Utensils size={20} /></div>;
-        case 'shopping': return <div className={`${baseClass} bg-blue-100 text-blue-600 dark:bg-blue-500/20 dark:text-blue-400`}><ShoppingBag size={20} /></div>;
-        case 'travel': return <div className={`${baseClass} bg-yellow-100 text-yellow-600 dark:bg-yellow-500/20 dark:text-yellow-400`}><Car size={20} /></div>;
-        case 'entertainment': return <div className={`${baseClass} bg-purple-100 text-purple-600 dark:bg-purple-500/20 dark:text-purple-400`}><Film size={20} /></div>;
-        case 'bills': return <div className={`${baseClass} bg-red-100 text-red-600 dark:bg-red-500/20 dark:text-red-400`}><Receipt size={20} /></div>;
-        case 'income': return <div className={`${baseClass} bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400`}><Wallet size={20} /></div>;
-        default: return <div className={`${baseClass} bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400`}><CreditCard size={20} /></div>;
+        case 'food': return <div className={`${baseClass} bg-orange-100 text-orange-600 dark:bg-orange-500/10 dark:text-orange-400`}><Utensils size={20} /></div>;
+        case 'shopping': return <div className={`${baseClass} bg-blue-100 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400`}><ShoppingBag size={20} /></div>;
+        case 'travel': return <div className={`${baseClass} bg-yellow-100 text-yellow-600 dark:bg-yellow-500/10 dark:text-yellow-400`}><Car size={20} /></div>;
+        case 'entertainment': return <div className={`${baseClass} bg-purple-100 text-purple-600 dark:bg-purple-500/10 dark:text-purple-400`}><Film size={20} /></div>;
+        case 'bills': return <div className={`${baseClass} bg-red-100 text-red-600 dark:bg-red-500/10 dark:text-red-400`}><Receipt size={20} /></div>;
+        case 'income': return <div className={`${baseClass} bg-emerald-100 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400`}><Wallet size={20} /></div>;
+        default: return <div className={`${baseClass} bg-gray-100 text-gray-600 dark:bg-white/10 dark:text-gray-400`}><CreditCard size={20} /></div>;
     }
 };
 
@@ -131,13 +131,13 @@ const AnalyticsScreen: React.FC<AnalyticsScreenProps> = ({ onTransactionClick })
     }, [filteredTransactions]);
 
     return (
-        <div className="flex flex-col h-full bg-zinc-50 dark:bg-zinc-950">
-            {/* Sticky Header */}
-            <div className="sticky top-0 z-20 bg-white/90 dark:bg-zinc-950/90 backdrop-blur-md border-b border-zinc-200 dark:border-zinc-800 p-4 space-y-4">
+        <div className="flex flex-col h-full bg-gray-50 dark:bg-black transition-colors duration-300">
+            {/* Sticky Header with Premium Glass Effect */}
+            <div className="sticky top-0 z-20 bg-white/80 dark:bg-black/80 backdrop-blur-xl border-b border-gray-200 dark:border-white/10 p-4 space-y-4 transition-colors duration-300">
                 <div className="flex justify-between items-center">
-                    <h1 className="text-2xl font-bold text-zinc-900 dark:text-white">Analytics</h1>
+                    <h1 className="text-2xl font-bold text-gray-900 dark:text-white tracking-tight">Analytics</h1>
                     <div className="flex gap-2">
-                         <button onClick={() => setIsFilterOpen(!isFilterOpen)} className={`p-2 rounded-full transition-colors ${isFilterOpen ? 'bg-indigo-100 text-indigo-600 dark:bg-indigo-900 dark:text-indigo-300' : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300'}`}>
+                         <button onClick={() => setIsFilterOpen(!isFilterOpen)} className={`p-2 rounded-full transition-all ${isFilterOpen ? 'bg-indigo-100 text-indigo-600 dark:bg-indigo-500/20 dark:text-indigo-400' : 'bg-gray-100 dark:bg-neutral-900 text-gray-600 dark:text-neutral-400 hover:bg-gray-200 dark:hover:bg-neutral-800'}`}>
                             <Filter size={20} />
                         </button>
                     </div>
@@ -149,7 +149,7 @@ const AnalyticsScreen: React.FC<AnalyticsScreenProps> = ({ onTransactionClick })
                              <button 
                                 key={cat}
                                 onClick={() => setSelectedCategoryFilter(prev => prev === cat ? null : cat)}
-                                className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap border ${selectedCategoryFilter === cat ? 'bg-zinc-900 text-white border-zinc-900 dark:bg-white dark:text-black' : 'bg-white text-zinc-600 border-zinc-200 dark:bg-zinc-900 dark:text-zinc-400 dark:border-zinc-700'}`}
+                                className={`px-4 py-1.5 rounded-full text-xs font-bold whitespace-nowrap border transition-all ${selectedCategoryFilter === cat ? 'bg-black text-white border-black dark:bg-white dark:text-black' : 'bg-white text-gray-600 border-gray-200 dark:bg-neutral-900 dark:text-neutral-400 dark:border-neutral-800'}`}
                              >
                                 {cat}
                              </button>
@@ -159,23 +159,23 @@ const AnalyticsScreen: React.FC<AnalyticsScreenProps> = ({ onTransactionClick })
 
                 <div className="flex gap-3">
                     <div className="relative flex-1">
-                        <Search className="absolute left-3 top-2.5 h-4 w-4 text-zinc-400" />
+                        <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400 dark:text-neutral-500" />
                         <input 
                             type="text" 
-                            placeholder="Search..." 
+                            placeholder="Search transactions..." 
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full pl-9 pr-3 py-2 bg-zinc-100 dark:bg-zinc-900 border-none rounded-xl text-sm text-zinc-900 dark:text-white focus:ring-2 focus:ring-indigo-500"
+                            className="w-full pl-9 pr-3 py-2 bg-gray-100 dark:bg-neutral-900 border-none rounded-xl text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-neutral-600 focus:ring-2 focus:ring-indigo-500 transition-colors"
                         />
                     </div>
-                    <button onClick={() => setSortOrder(prev => prev === 'desc' ? 'asc' : 'desc')} className="flex items-center justify-center px-3 py-2 bg-zinc-100 dark:bg-zinc-900 rounded-xl text-zinc-700 dark:text-zinc-300">
+                    <button onClick={() => setSortOrder(prev => prev === 'desc' ? 'asc' : 'desc')} className="flex items-center justify-center px-3 py-2 bg-gray-100 dark:bg-neutral-900 rounded-xl text-gray-600 dark:text-neutral-400 hover:text-black dark:hover:text-white transition-colors">
                          <ArrowUpDown size={16} className={`transition-transform ${sortOrder === 'asc' ? 'rotate-180' : ''}`} />
                     </button>
                 </div>
                 
-                <div className="flex bg-zinc-100 dark:bg-zinc-900 p-1 rounded-lg">
+                <div className="flex bg-gray-100 dark:bg-neutral-900 p-1 rounded-xl">
                     {(['week', 'month', 'all'] as const).map(t => (
-                        <button key={t} onClick={() => setTimeframe(t)} className={`flex-1 py-1.5 rounded-md text-xs font-medium transition-all ${timeframe === t ? 'bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white shadow-sm' : 'text-zinc-500 dark:text-zinc-500'}`}>
+                        <button key={t} onClick={() => setTimeframe(t)} className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all ${timeframe === t ? 'bg-white dark:bg-neutral-800 text-black dark:text-white shadow-sm' : 'text-gray-500 dark:text-neutral-500 hover:text-gray-900 dark:hover:text-neutral-300'}`}>
                             {t.charAt(0).toUpperCase() + t.slice(1)}
                         </button>
                     ))}
@@ -184,40 +184,40 @@ const AnalyticsScreen: React.FC<AnalyticsScreenProps> = ({ onTransactionClick })
 
             {/* Scrollable Content */}
             <div className="flex-1 p-4 space-y-6 overflow-y-auto pb-24">
-                {/* Charts */}
-                <div className="bg-white dark:bg-zinc-900 p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm">
-                    <div className="mb-6">
-                         <p className="text-xs font-bold text-zinc-500 uppercase tracking-wider">Total Spent</p>
-                         <p className="text-3xl font-black text-zinc-900 dark:text-white mt-1">{currency}{totalSpent.toLocaleString()}</p>
+                {/* Charts Card - Premium Dark Mode: #0A0A0A background with subtle border */}
+                <div className="bg-white dark:bg-[#0A0A0A] p-6 rounded-[2rem] border border-gray-100 dark:border-white/10 shadow-xl dark:shadow-none">
+                    <div className="mb-8">
+                         <p className="text-xs font-bold text-gray-400 dark:text-neutral-500 uppercase tracking-widest">Total Spent</p>
+                         <p className="text-4xl font-black text-gray-900 dark:text-white mt-1 tracking-tight">{currency}{totalSpent.toLocaleString()}</p>
                     </div>
                     <BarChart data={barChartData} currency={currency} />
                 </div>
 
-                <div className="bg-white dark:bg-zinc-900 p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm">
-                    <h3 className="text-sm font-bold text-zinc-900 dark:text-white mb-4">Breakdown</h3>
+                <div className="bg-white dark:bg-[#0A0A0A] p-6 rounded-[2rem] border border-gray-100 dark:border-white/10 shadow-xl dark:shadow-none">
+                    <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-6">Category Breakdown</h3>
                     <PieChart data={categoryData} currency={currency} />
                 </div>
 
                  {/* Transactions List */}
-                 <div className="space-y-2">
-                    <h3 className="text-sm font-bold text-zinc-500 uppercase tracking-wider px-1">History</h3>
+                 <div className="space-y-3">
+                    <h3 className="text-xs font-bold text-gray-500 dark:text-neutral-500 uppercase tracking-wider px-2">History</h3>
                     {filteredTransactions.length > 0 ? filteredTransactions.map((tx, i) => (
-                        <button key={tx.id + i} onClick={() => onTransactionClick(tx)} className="w-full bg-white dark:bg-zinc-900 p-3 rounded-xl flex items-center justify-between border border-zinc-200 dark:border-zinc-800 hover:border-indigo-500 dark:hover:border-indigo-500 transition-colors group">
-                            <div className="flex items-center gap-3">
+                        <button key={tx.id + i} onClick={() => onTransactionClick(tx)} className="w-full bg-white dark:bg-[#0A0A0A] p-4 rounded-2xl flex items-center justify-between border border-gray-100 dark:border-white/10 hover:scale-[1.02] active:scale-[0.98] transition-all group">
+                            <div className="flex items-center gap-4">
                                 <CategoryIcon category={tx.category} />
                                 <div className="text-left">
-                                    <p className="font-bold text-zinc-900 dark:text-white text-sm">{tx.merchant}</p>
-                                    <p className="text-xs text-zinc-500">{tx.date}</p>
+                                    <p className="font-bold text-gray-900 dark:text-white text-sm">{tx.merchant}</p>
+                                    <p className="text-xs text-gray-500 dark:text-neutral-500 mt-0.5">{tx.date}</p>
                                 </div>
                             </div>
                             <div className="text-right">
-                                <p className={`font-bold text-sm ${tx.category === 'Income' ? 'text-emerald-600' : 'text-zinc-900 dark:text-white'}`}>
+                                <p className={`font-bold text-sm ${tx.category === 'Income' ? 'text-emerald-600 dark:text-emerald-400' : 'text-gray-900 dark:text-white'}`}>
                                     {tx.category === 'Income' ? '+' : ''}{currency}{tx.amount.toFixed(2)}
                                 </p>
                             </div>
                         </button>
                     )) : (
-                         <div className="text-center py-10 text-zinc-500 text-sm">No transactions match your filters.</div>
+                         <div className="text-center py-10 text-gray-400 dark:text-neutral-600 text-sm">No transactions match your filters.</div>
                     )}
                 </div>
             </div>
