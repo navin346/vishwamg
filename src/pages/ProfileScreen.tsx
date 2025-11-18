@@ -83,7 +83,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ setActiveModal, openLinkB
                         ) : (
                              <MenuItem 
                                 icon={<Landmark size={20} />}
-                                title="Create US Account"
+                                title="Create IBAN / US Virtual Bank Account"
                                 subtitle="Get local banking details"
                                 onClick={handleCreateIban}
                                 rightElement={isCreatingIban ? <span className="text-xs">...</span> : <span className="text-xs font-bold text-indigo-500">Create</span>}
@@ -93,7 +93,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ setActiveModal, openLinkB
                 )}
                 <MenuItem 
                     icon={<CreditCard size={20} />}
-                    title="Linked Bank Accounts"
+                    title="Add/Remove Bank Accounts"
                     subtitle={linkedAccounts.inr ? linkedAccounts.inr.bankName : (linkedAccounts.us ? linkedAccounts.us.bankName : "Manage linked accounts")}
                     onClick={() => openLinkBankModal(isInternational ? 'us' : 'inr')}
                     rightElement={<span className="text-xs font-bold text-indigo-600 dark:text-indigo-400">{linkedAccounts.inr || linkedAccounts.us ? 'Manage' : 'Link'}</span>}
@@ -115,7 +115,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ setActiveModal, openLinkB
                 <MenuItem isDestructive icon={<LogOut size={20} />} title="Sign Out" onClick={() => window.location.reload()} />
             </MenuGroup>
             
-             <p className="text-center text-xs text-gray-400 dark:text-neutral-600 mt-8 mb-4">Vishwam v1.2.0</p>
+             <p className="text-center text-xs text-gray-400 dark:text-neutral-600 mt-8 mb-4">Vishwam v1.3.0</p>
         </div>
     );
 };

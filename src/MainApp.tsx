@@ -35,6 +35,8 @@ const MainApp: React.FC<MainAppProps> = ({ onLogout }) => {
   const [selectedTransaction, setSelectedTransaction] = useState<TransactionSummary | null>(null);
   const [selectedBiller, setSelectedBiller] = useState<SelectedBiller | null>(null);
   const [installPrompt, setInstallPrompt] = useState<any>(null);
+  const [servicesResetKey, setServicesResetKey] = useState(0); // Key to force reset ServicesHub
+
   const { userMode, setAuthFlow } = useAppContext();
 
   useEffect(() => {
@@ -62,6 +64,15 @@ const MainApp: React.FC<MainAppProps> = ({ onLogout }) => {
     setActiveModal('pay_bill');
   };
 
+  // Handle Nav Click with Reset Logic
+  const handleNavClick = (page: ActivePage) => {
+      if (page === 'services' && activePage === 'services') {
+          // User clicked Services while already on Services, trigger reset
+          setServicesResetKey(prev => prev + 1);
+      }
+      setActivePage(page);
+  };
+
   const renderContent = () => {
     switch (activePage) {
       case 'home':
@@ -74,7 +85,8 @@ const MainApp: React.FC<MainAppProps> = ({ onLogout }) => {
                   onTransactionClick={handleOpenTransactionDetail} 
                 />;
       case 'services':
-        return <ServicesHub onPayBiller={handleOpenPayBillModal} />;
+        // The key prop ensures the component remounts/resets when the key changes
+        return <ServicesHub key={servicesResetKey} onPayBiller={handleOpenPayBillModal} />;
       case 'profile':
         return <ProfileScreen 
                   setActiveModal={setActiveModal} 
@@ -134,7 +146,7 @@ const MainApp: React.FC<MainAppProps> = ({ onLogout }) => {
       </main>
 
       {/* Fixed Bottom Nav */}
-      <BottomNav activePage={activePage} setActivePage={setActivePage} onScanClick={() => setActiveModal('scan_qr')} />
+      <BottomNav activePage={activePage} setActivePage={handleNavClick} onScanClick={() => setActiveModal('scan_qr')} />
 
       {renderModal()}
     </div>

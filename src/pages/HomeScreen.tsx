@@ -77,7 +77,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onTransactionClick, setActiveMo
     return (
         <div className="p-5 space-y-8 pb-24">
             {/* Balance Header */}
-            <div className="relative overflow-hidden rounded-[2rem] bg-white/10 dark:bg-black/20 backdrop-blur-md border border-white/20 dark:border-white/10 p-6 text-black dark:text-white shadow-2xl">
+            <div className="relative overflow-hidden rounded-[2rem] bg-white/10 dark:bg-white/5 backdrop-blur-md border border-white/20 dark:border-white/10 p-6 shadow-2xl">
                  <div className="absolute top-0 right-0 w-40 h-40 bg-indigo-500 rounded-full blur-[60px] opacity-20 -mr-10 -mt-10"></div>
                  <div className="relative z-10">
                     <div className="flex justify-between items-start">
@@ -87,7 +87,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onTransactionClick, setActiveMo
                         </div>
                     </div>
                     <div className="flex items-baseline gap-1 mt-2">
-                        <h1 className="text-5xl font-bold tracking-tight">
+                        <h1 className="text-5xl font-bold tracking-tight text-gray-900 dark:text-white">
                             {currency}{balance}
                         </h1>
                         <span className="text-xl font-medium text-gray-500 dark:text-neutral-500">{isInternational ? 'USDC' : 'INR'}</span>
@@ -154,7 +154,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onTransactionClick, setActiveMo
                         <div className="w-14 h-14 rounded-full bg-gray-200 dark:bg-neutral-800 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform text-gray-500 dark:text-neutral-400">
                             <Plus className="w-6 h-6" />
                         </div>
-                        <span className="font-medium text-sm">Order Physical Card</span>
+                        <span className="font-medium text-sm text-gray-900 dark:text-gray-300">Order Physical Card</span>
                     </button>
                 )}
             </div>
@@ -180,7 +180,6 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onTransactionClick, setActiveMo
                             >
                                 <div className="flex items-center gap-4">
                                     <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-neutral-800 flex items-center justify-center text-gray-500 dark:text-neutral-400">
-                                        {/* Smart Icon mapping based on merchant would go here */}
                                         <CreditCard size={18} />
                                     </div>
                                     <div>
@@ -204,8 +203,12 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onTransactionClick, setActiveMo
 
 const ActionButton: React.FC<{ icon: React.ReactNode, label: string, onClick?: () => void, variant: 'primary' | 'secondary' }> = ({ icon, label, onClick, variant }) => {
     const baseClasses = "flex flex-col items-center justify-center rounded-[1.5rem] h-24 w-full transition-all transform active:scale-95 backdrop-blur-md";
+    
+    // Updated variants for high contrast in dark mode
+    // Primary (Send): Black button in light, White button in dark.
+    // Secondary (Deposit/Withdraw): Light gray in light, Dark gray in dark.
     const variantClasses = variant === 'primary' 
-        ? "bg-black/90 dark:bg-white/90 text-white dark:text-black shadow-xl shadow-indigo-500/20" 
+        ? "bg-black text-white dark:bg-white dark:text-black shadow-xl shadow-indigo-500/20" 
         : "bg-white/70 dark:bg-neutral-900/70 text-gray-900 dark:text-white border border-gray-200 dark:border-neutral-800 shadow-sm";
 
     return (

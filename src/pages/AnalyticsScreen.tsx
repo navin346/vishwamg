@@ -168,9 +168,6 @@ const AnalyticsScreen: React.FC<AnalyticsScreenProps> = ({ onTransactionClick })
                             className="w-full pl-9 pr-3 py-2 bg-gray-100 dark:bg-neutral-900 border-none rounded-xl text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-neutral-600 focus:ring-2 focus:ring-indigo-500 transition-colors"
                         />
                     </div>
-                    <button onClick={() => setSortOrder(prev => prev === 'desc' ? 'asc' : 'desc')} className="flex items-center justify-center px-3 py-2 bg-gray-100 dark:bg-neutral-900 rounded-xl text-gray-600 dark:text-neutral-400 hover:text-black dark:hover:text-white transition-colors">
-                         <ArrowUpDown size={16} className={`transition-transform ${sortOrder === 'asc' ? 'rotate-180' : ''}`} />
-                    </button>
                 </div>
                 
                 <div className="flex bg-gray-100 dark:bg-neutral-900 p-1 rounded-xl">
@@ -200,7 +197,13 @@ const AnalyticsScreen: React.FC<AnalyticsScreenProps> = ({ onTransactionClick })
 
                  {/* Transactions List */}
                  <div className="space-y-3">
-                    <h3 className="text-xs font-bold text-gray-500 dark:text-neutral-500 uppercase tracking-wider px-2">History</h3>
+                    <div className="flex justify-between items-center px-2">
+                        <h3 className="text-xs font-bold text-gray-500 dark:text-neutral-500 uppercase tracking-wider">History</h3>
+                        <button onClick={() => setSortOrder(prev => prev === 'desc' ? 'asc' : 'desc')} className="flex items-center gap-1 text-xs font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/20 px-2 py-1 rounded-lg">
+                             Sort <ArrowUpDown size={12} className={`transition-transform ${sortOrder === 'asc' ? 'rotate-180' : ''}`} />
+                        </button>
+                    </div>
+                    
                     {filteredTransactions.length > 0 ? filteredTransactions.map((tx, i) => (
                         <button key={tx.id + i} onClick={() => onTransactionClick(tx)} className="w-full bg-white dark:bg-[#0A0A0A] p-4 rounded-2xl flex items-center justify-between border border-gray-100 dark:border-white/10 hover:scale-[1.02] active:scale-[0.98] transition-all group">
                             <div className="flex items-center gap-4">

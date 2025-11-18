@@ -7,7 +7,7 @@ interface YieldScreenProps {
 }
 
 const VaultItem: React.FC<{ name: string, apy: string, balance?: string, color: string }> = ({ name, apy, balance, color }) => (
-    <div className="bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-800 rounded-2xl p-5 flex items-center justify-between hover:border-gray-300 dark:hover:border-neutral-700 transition-all group">
+    <div className="bg-white dark:bg-[#0A0A0A] border border-gray-200 dark:border-white/10 rounded-2xl p-5 flex items-center justify-between hover:border-gray-300 dark:hover:border-white/20 transition-all group">
         <div className="flex items-center gap-4">
             <div className={`w-12 h-12 rounded-full ${color} bg-opacity-20 flex items-center justify-center text-lg font-bold shadow-sm`}>
                 {name[0]}
@@ -23,7 +23,7 @@ const VaultItem: React.FC<{ name: string, apy: string, balance?: string, color: 
             {balance ? (
                 <>
                     <p className="font-bold text-gray-900 dark:text-white">{balance}</p>
-                    <p className="text-xs text-gray-500">Balance</p>
+                    <p className="text-xs text-gray-500 dark:text-neutral-500">Balance</p>
                 </>
             ) : (
                 <button className="bg-black dark:bg-white text-white dark:text-black text-xs font-bold px-4 py-2 rounded-full">
@@ -41,10 +41,10 @@ const YieldScreen: React.FC<YieldScreenProps> = ({ onBack }) => {
     const title = isInternational ? 'Smart Vaults' : 'Growth Pots';
 
     return (
-        <div className="p-5 space-y-8 pb-24 min-h-full">
+        <div className="p-5 space-y-8 pb-24 min-h-full bg-gray-50 dark:bg-black">
             <div className="flex items-center gap-3">
                 {onBack && (
-                    <button onClick={onBack} className="p-2 rounded-full bg-gray-100 dark:bg-neutral-800 text-gray-600 dark:text-white">
+                    <button onClick={onBack} className="p-2 rounded-full bg-gray-100 dark:bg-neutral-900 text-gray-600 dark:text-white">
                         <ArrowLeft size={20} />
                     </button>
                 )}
@@ -69,7 +69,7 @@ const YieldScreen: React.FC<YieldScreenProps> = ({ onBack }) => {
 
             <div className="space-y-4">
                 <div className="flex justify-between items-center px-1">
-                    <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider">Available Vaults</h3>
+                    <h3 className="text-sm font-bold text-gray-500 dark:text-neutral-500 uppercase tracking-wider">Available Vaults</h3>
                     <button className="text-black dark:text-white bg-gray-100 dark:bg-neutral-800 p-2 rounded-full">
                         <Plus size={18} />
                     </button>

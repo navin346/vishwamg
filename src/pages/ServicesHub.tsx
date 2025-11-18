@@ -32,15 +32,20 @@ const ServicesHub: React.FC<ServicesHubProps> = ({ onPayBiller }) => {
     }> = ({ title, subtitle, icon, color, onClick }) => (
         <button 
             onClick={onClick}
-            className="w-full relative overflow-hidden bg-white/80 dark:bg-neutral-900/80 backdrop-blur-md border border-gray-200 dark:border-neutral-800 rounded-3xl p-6 text-left group hover:border-gray-300 dark:hover:border-neutral-700 transition-all shadow-sm"
+            className="w-full relative overflow-hidden bg-white/90 dark:bg-[#0A0A0A]/90 backdrop-blur-md border border-gray-200 dark:border-white/10 rounded-3xl p-6 text-left group hover:border-gray-300 dark:hover:border-white/20 transition-all shadow-sm active:scale-[0.98]"
         >
-            <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${color} opacity-10 blur-2xl rounded-full -mr-10 -mt-10 group-hover:opacity-20 transition-opacity`} />
+            {/* Enhanced Gradient Background */}
+            <div className={`absolute inset-0 bg-gradient-to-br ${color} opacity-[0.08] dark:opacity-[0.15] group-hover:opacity-[0.12] dark:group-hover:opacity-[0.2] transition-opacity`} />
+            
+            {/* Glowing Orb */}
+            <div className={`absolute top-0 right-0 w-48 h-48 bg-gradient-to-br ${color} opacity-20 dark:opacity-30 blur-3xl rounded-full -mr-10 -mt-10 group-hover:scale-110 transition-transform duration-500`} />
+            
             <div className="relative z-10">
-                <div className={`w-12 h-12 rounded-2xl ${color} bg-opacity-10 dark:bg-opacity-20 flex items-center justify-center mb-4 text-gray-900 dark:text-white shadow-sm`}>
+                <div className={`w-14 h-14 rounded-2xl ${color} bg-opacity-20 dark:bg-opacity-30 flex items-center justify-center mb-4 text-gray-900 dark:text-white shadow-sm ring-1 ring-black/5 dark:ring-white/10`}>
                     {icon}
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white">{title}</h3>
-                <p className="text-sm text-gray-500 dark:text-neutral-400 mt-1">{subtitle}</p>
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white tracking-tight">{title}</h3>
+                <p className="text-sm text-gray-500 dark:text-neutral-400 mt-1 font-medium">{subtitle}</p>
             </div>
         </button>
     );
@@ -61,29 +66,29 @@ const ServicesHub: React.FC<ServicesHubProps> = ({ onPayBiller }) => {
         <div className="p-5 space-y-6 pb-24 min-h-full">
             <div className="space-y-2">
                 <h1 className="text-4xl font-bold text-gray-900 dark:text-white tracking-tight">Services</h1>
-                <p className="text-gray-600 dark:text-neutral-400 text-base">Explore the financial hub.</p>
+                <p className="text-gray-600 dark:text-neutral-400 text-base font-medium">Explore the financial hub.</p>
             </div>
 
             <div className="grid gap-4">
                  <MenuCard 
                     title={isInternational ? "Earn $" : "Earn ₹"}
                     subtitle={isInternational ? "Stablecoin Vaults & DeFi" : "Mutual Funds, Gold & P2P"} 
-                    icon={<TrendingUp size={24} />}
-                    color="from-emerald-500 to-teal-500"
+                    icon={<TrendingUp size={28} />}
+                    color="from-emerald-400 to-teal-500"
                     onClick={() => handleNav('yield')}
                 />
                 <MenuCard 
                     title={isInternational ? "Global Lifestyle" : "Bills & Recharge"} 
                     subtitle={isInternational ? "eSIM, Travel & Forex" : "Pay Utilities, DTH & more"} 
-                    icon={isInternational ? <Globe size={24} /> : <Zap size={24} />}
-                    color="from-indigo-500 to-purple-500"
+                    icon={isInternational ? <Globe size={28} /> : <Zap size={28} />}
+                    color="from-indigo-400 to-purple-500"
                     onClick={() => handleNav('bills_global')}
                 />
                  <MenuCard 
                     title="Credit Line" 
                     subtitle="Instant loans against your assets" 
-                    icon={<Landmark size={24} />}
-                    color="from-orange-500 to-amber-500"
+                    icon={<Landmark size={28} />}
+                    color="from-orange-400 to-amber-500"
                     onClick={() => handleNav('loans')}
                 />
             </div>
