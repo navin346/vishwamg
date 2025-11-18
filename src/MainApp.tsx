@@ -13,11 +13,12 @@ import TransactionDetailScreen from '@/src/pages/TransactionDetailScreen';
 import ScanQRModal from '@/src/pages/ScanQRModal';
 import BillsScreen from '@/src/pages/BillsScreen';
 import PayBillModal from '@/src/pages/PayBillModal';
+import GlobalPayScreen from '@/src/pages/GlobalPayScreen';
+import YieldScreen from '@/src/pages/YieldScreen';
 import { TransactionSummary } from '@/src/data';
 import { useAppContext } from '@/src/context/AppContext';
-import GlobalPayScreen from '@/src/pages/GlobalPayScreen';
 
-export type ActivePage = 'home' | 'analytics' | 'bills' | 'profile';
+export type ActivePage = 'home' | 'analytics' | 'yield' | 'bills' | 'profile';
 export type ActiveModal = 'pay' | 'add_money' | 'withdraw' | 'link_bank' | 'manage_categories' | 'transaction_detail' | 'scan_qr' | 'pay_bill' | null;
 export type BankAccountType = 'us' | 'inr';
 
@@ -75,6 +76,8 @@ const MainApp: React.FC<MainAppProps> = ({ onLogout }) => {
         return <AnalyticsScreen 
                   onTransactionClick={handleOpenTransactionDetail} 
                 />;
+      case 'yield':
+        return <YieldScreen />;
       case 'bills':
         return userMode === 'INDIA' 
           ? <BillsScreen onPayBiller={handleOpenPayBillModal} />
@@ -129,23 +132,24 @@ const MainApp: React.FC<MainAppProps> = ({ onLogout }) => {
   }
 
   return (
-    <div className="relative mx-auto flex h-screen max-w-md flex-col border-x border-white/20 dark:border-white/10 bg-white/40 dark:bg-black/40 backdrop-blur-xl shadow-2xl transition-colors duration-300">
+    <div className="relative mx-auto flex h-screen max-w-md flex-col border-x border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-2xl transition-colors duration-300 overflow-hidden font-sans">
       <Header onLogout={onLogout} />
       
       {/* Scrollable content area */}
-      <main className="flex-1 overflow-y-auto pb-32 scrollbar-hide">
+      <main className="flex-1 overflow-y-auto pb-32 scrollbar-hide bg-white dark:bg-zinc-950">
         {renderContent()}
       </main>
 
       {/* Fixed bottom container for QR button and Nav */}
-      <div className="absolute bottom-0 left-0 right-0">
-        <div className="relative flex justify-center">
+      <div className="absolute bottom-0 left-0 right-0 z-50">
+        <div className="relative flex justify-center pointer-events-none">
              <button
                 onClick={() => setActiveModal('scan_qr')}
-                className="absolute -top-8 w-16 h-16 rounded-full bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-white shadow-[0_0_20px_rgba(124,58,237,0.5)] transform transition-all active:scale-90 hover:scale-105 z-40 border-4 border-white/20 dark:border-black/20 backdrop-blur-sm"
+                className="pointer-events-auto absolute -top-8 w-16 h-16 rounded-full bg-white dark:bg-zinc-900 flex flex-col items-center justify-center text-indigo-600 dark:text-indigo-400 shadow-[0_8px_30px_rgba(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.4)] transform transition-all active:scale-90 hover:scale-105 border-[6px] border-white dark:border-zinc-950 z-50"
                 aria-label="Scan QR code"
             >
-                 <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 4h4v4H4V4z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path><path d="M16 4h4v4h-4V4z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path><path d="M4 16h4v4H4v-4z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path><path d="M16 16h4v4h-4v-4z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path><path d="M10 12H4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path><path d="M20 12h-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path></svg>
+                 <svg className="w-6 h-6 mb-0.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 4h4v4H4V4z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path><path d="M16 4h4v4h-4V4z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path><path d="M4 16h4v4H4v-4z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path><path d="M16 16h4v4h-4v-4z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path><path d="M10 12H4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path><path d="M20 12h-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></path></svg>
+                 <span className="text-[9px] font-bold uppercase tracking-wide">Pay</span>
             </button>
         </div>
         <BottomNav activePage={activePage} setActivePage={setActivePage} />

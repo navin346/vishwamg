@@ -6,20 +6,7 @@ import PieChart from '@/src/components/charts/PieChart';
 import BarChart from '@/src/components/charts/BarChart';
 import { TransactionSummary } from '@/src/data';
 import { 
-    Search, 
-    ArrowUpDown, 
-    Calendar, 
-    Utensils, 
-    ShoppingBag, 
-    Car, 
-    Film, 
-    Receipt, 
-    Wallet, 
-    CreditCard,
-    Coffee,
-    Smartphone,
-    Zap,
-    Filter
+    Search, ArrowUpDown, Calendar, Utensils, ShoppingBag, Car, Film, Receipt, Wallet, CreditCard, Filter, X, Check
 } from 'lucide-react';
 
 type Timeframe = 'week' | 'month' | 'all';
@@ -28,7 +15,7 @@ interface AnalyticsScreenProps {
     onTransactionClick: (transaction: TransactionSummary) => void;
 }
 
-// --- Mock Data for Visual Verification ---
+// Mock fallback data
 const FALLBACK_TRANSACTIONS: TransactionSummary[] = [
     { id: 'm1', merchant: 'Starbucks', category: 'Food', amount: 5.75, date: 'Oct 28', timestamp: '08:30 AM', method: 'Card' },
     { id: 'm2', merchant: 'Uber', category: 'Travel', amount: 12.50, date: 'Oct 28', timestamp: '09:15 AM', method: 'Card' },
@@ -41,7 +28,6 @@ const FALLBACK_TRANSACTIONS: TransactionSummary[] = [
 
 const CategoryIcon: React.FC<{ category: string }> = ({ category }) => {
     const baseClass = "w-10 h-10 rounded-xl flex items-center justify-center shadow-sm transition-transform hover:scale-105";
-    
     switch (category.toLowerCase()) {
         case 'food': return <div className={`${baseClass} bg-orange-100 text-orange-600 dark:bg-orange-500/20 dark:text-orange-400`}><Utensils size={20} /></div>;
         case 'shopping': return <div className={`${baseClass} bg-blue-100 text-blue-600 dark:bg-blue-500/20 dark:text-blue-400`}><ShoppingBag size={20} /></div>;
@@ -49,7 +35,7 @@ const CategoryIcon: React.FC<{ category: string }> = ({ category }) => {
         case 'entertainment': return <div className={`${baseClass} bg-purple-100 text-purple-600 dark:bg-purple-500/20 dark:text-purple-400`}><Film size={20} /></div>;
         case 'bills': return <div className={`${baseClass} bg-red-100 text-red-600 dark:bg-red-500/20 dark:text-red-400`}><Receipt size={20} /></div>;
         case 'income': return <div className={`${baseClass} bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400`}><Wallet size={20} /></div>;
-        default: return <div className={`${baseClass} bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400`}><CreditCard size={20} /></div>;
+        default: return <div className={`${baseClass} bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400`}><CreditCard size={20} /></div>;
     }
 };
 
@@ -60,6 +46,8 @@ const AnalyticsScreen: React.FC<AnalyticsScreenProps> = ({ onTransactionClick })
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const [sortOrder, setSortOrder] = useState<'desc' | 'asc'>('desc');
+    const [isFilterOpen, setIsFilterOpen] = useState(false);
+    const [selectedCategoryFilter, setSelectedCategoryFilter] = useState<string | null>(null);
 
     const isInternational = userMode === 'INTERNATIONAL';
     const currency = isInternational ? '$' : '₹';
@@ -67,7 +55,6 @@ const AnalyticsScreen: React.FC<AnalyticsScreenProps> = ({ onTransactionClick })
     useEffect(() => {
         const fetchTransactions = async () => {
             if (!user || !userMode) return;
-            
             setLoading(true);
             try {
                 const currencyToFetch = isInternational ? 'USD' : 'INR';
@@ -78,227 +65,164 @@ const AnalyticsScreen: React.FC<AnalyticsScreenProps> = ({ onTransactionClick })
                 let fetchedTransactions = querySnapshot.docs.map(doc => {
                     const data = doc.data() as any;
                     const jsDate = (data.timestamp as Timestamp).toDate();
-                    const date = jsDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-                    const time = jsDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                     return {
                         ...data,
                         id: doc.id,
-                        date: date,
-                        timestamp: time,
+                        date: jsDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+                        timestamp: jsDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                         rawTimestamp: jsDate
                     } as TransactionSummary & { rawTimestamp: Date };
                 });
 
-                // If no transactions found, use fallback for demo purposes
                 if (fetchedTransactions.length === 0) {
-                    // Map fallback to current date context if needed, or just use static
                     fetchedTransactions = FALLBACK_TRANSACTIONS.map(t => ({
                         ...t,
-                        amount: isInternational ? t.amount : t.amount * 84, // Approx conversion for demo
+                        amount: isInternational ? t.amount : t.amount * 84,
                         currency: isInternational ? 'USD' : 'INR',
-                        rawTimestamp: new Date() // Just a placeholder for sort
+                        rawTimestamp: new Date()
                     })) as any;
                 }
-
                 setTransactions(fetchedTransactions);
             } catch (error) {
-                console.error("Error fetching transactions: ", error);
-                // Load fallback on error
                 setTransactions(FALLBACK_TRANSACTIONS as any);
             } finally {
                 setLoading(false);
             }
         };
-
         fetchTransactions();
     }, [user, userMode]);
 
     const filteredTransactions = useMemo(() => {
         let filtered = [...transactions];
 
-        // 1. Timeframe Filter (Simplified for demo/fallback data)
-        if (timeframe !== 'all') {
-            // Logic would go here, skipping for demo to show data
-        }
-
-        // 2. Search Filter
+        // Search
         if (searchQuery) {
             const q = searchQuery.toLowerCase();
-            filtered = filtered.filter(tx => 
-                tx.merchant.toLowerCase().includes(q) || 
-                tx.category.toLowerCase().includes(q) ||
-                tx.amount.toString().includes(q)
-            );
+            filtered = filtered.filter(tx => tx.merchant.toLowerCase().includes(q) || tx.category.toLowerCase().includes(q));
+        }
+        // Category Filter
+        if (selectedCategoryFilter) {
+            filtered = filtered.filter(tx => tx.category === selectedCategoryFilter);
         }
 
-        // 3. Sort
+        // Sort
         filtered.sort((a, b) => {
-            // Use rawTimestamp if available, otherwise fallback to string comparison for demo
             const dateA = (a as any).rawTimestamp ? (a as any).rawTimestamp.getTime() : 0;
             const dateB = (b as any).rawTimestamp ? (b as any).rawTimestamp.getTime() : 0;
             return sortOrder === 'desc' ? dateB - dateA : dateA - dateB;
         });
 
         return filtered;
-    }, [timeframe, transactions, searchQuery, sortOrder]);
+    }, [transactions, searchQuery, sortOrder, selectedCategoryFilter]);
 
     const { totalSpent, categoryData, barChartData } = useMemo(() => {
         const spentTransactions = filteredTransactions.filter(tx => tx.category.toLowerCase() !== 'income');
         const total = spentTransactions.reduce((sum, tx) => sum + tx.amount, 0);
         
         const categoryMap = new Map<string, number>();
-        spentTransactions.forEach(tx => {
-            categoryMap.set(tx.category, (categoryMap.get(tx.category) || 0) + tx.amount);
-        });
+        spentTransactions.forEach(tx => categoryMap.set(tx.category, (categoryMap.get(tx.category) || 0) + tx.amount));
         const pieData = Array.from(categoryMap.entries()).map(([label, value]) => ({ label, value }));
 
         const dateMap = new Map<string, number>();
-        spentTransactions.forEach(tx => {
-            const dateKey = tx.date; 
-            dateMap.set(dateKey, (dateMap.get(dateKey) || 0) + tx.amount);
-        });
-        const barData = Array.from(dateMap.entries())
-            .map(([label, value]) => ({ label, value }))
-            .slice(0, 7)
-            .reverse();
+        spentTransactions.forEach(tx => dateMap.set(tx.date, (dateMap.get(tx.date) || 0) + tx.amount));
+        const barData = Array.from(dateMap.entries()).map(([label, value]) => ({ label, value })).slice(0, 7).reverse();
 
         return { totalSpent: total, categoryData: pieData, barChartData: barData };
-
     }, [filteredTransactions]);
 
     return (
-        <div className="p-4 space-y-6 min-h-full pb-32">
-            {/* Header Area */}
-            <div className="space-y-4">
+        <div className="flex flex-col h-full bg-zinc-50 dark:bg-zinc-950">
+            {/* Sticky Header */}
+            <div className="sticky top-0 z-20 bg-white/90 dark:bg-zinc-950/90 backdrop-blur-md border-b border-zinc-200 dark:border-zinc-800 p-4 space-y-4">
                 <div className="flex justify-between items-center">
-                    <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight">Analytics</h1>
+                    <h1 className="text-2xl font-bold text-zinc-900 dark:text-white">Analytics</h1>
                     <div className="flex gap-2">
-                        <button className="p-2 rounded-full bg-gray-100 dark:bg-white/10 text-gray-600 dark:text-white hover:bg-gray-200 dark:hover:bg-white/20 transition-colors">
-                            <Calendar size={20} />
-                        </button>
-                         <button className="p-2 rounded-full bg-gray-100 dark:bg-white/10 text-gray-600 dark:text-white hover:bg-gray-200 dark:hover:bg-white/20 transition-colors">
+                         <button onClick={() => setIsFilterOpen(!isFilterOpen)} className={`p-2 rounded-full transition-colors ${isFilterOpen ? 'bg-indigo-100 text-indigo-600 dark:bg-indigo-900 dark:text-indigo-300' : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300'}`}>
                             <Filter size={20} />
                         </button>
                     </div>
                 </div>
 
-                {/* Search and Sort Row */}
+                {isFilterOpen && (
+                    <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide animate-in slide-in-from-top-2 fade-in">
+                         {['Food', 'Travel', 'Shopping', 'Entertainment', 'Bills'].map(cat => (
+                             <button 
+                                key={cat}
+                                onClick={() => setSelectedCategoryFilter(prev => prev === cat ? null : cat)}
+                                className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap border ${selectedCategoryFilter === cat ? 'bg-zinc-900 text-white border-zinc-900 dark:bg-white dark:text-black' : 'bg-white text-zinc-600 border-zinc-200 dark:bg-zinc-900 dark:text-zinc-400 dark:border-zinc-700'}`}
+                             >
+                                {cat}
+                             </button>
+                         ))}
+                    </div>
+                )}
+
                 <div className="flex gap-3">
-                    <div className="relative flex-1 group">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <Search className="h-4 w-4 text-gray-400 group-focus-within:text-violet-500 transition-colors" />
-                        </div>
+                    <div className="relative flex-1">
+                        <Search className="absolute left-3 top-2.5 h-4 w-4 text-zinc-400" />
                         <input 
                             type="text" 
-                            placeholder="Search transactions..." 
+                            placeholder="Search..." 
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="block w-full pl-10 pr-3 py-2.5 border-none rounded-xl bg-white/80 dark:bg-white/5 text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-violet-500/50 shadow-sm backdrop-blur-sm transition-all"
+                            className="w-full pl-9 pr-3 py-2 bg-zinc-100 dark:bg-zinc-900 border-none rounded-xl text-sm text-zinc-900 dark:text-white focus:ring-2 focus:ring-indigo-500"
                         />
                     </div>
-                    <button 
-                        onClick={() => setSortOrder(prev => prev === 'desc' ? 'asc' : 'desc')}
-                        className="flex items-center justify-center px-4 py-2.5 border-none rounded-xl bg-white/80 dark:bg-white/5 text-sm font-medium text-gray-700 dark:text-white hover:bg-white dark:hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-violet-500/50 shadow-sm backdrop-blur-sm transition-all active:scale-95"
-                    >
-                        <ArrowUpDown size={16} className={`mr-2 transition-transform duration-300 ${sortOrder === 'asc' ? 'rotate-180' : ''}`} />
-                        {sortOrder === 'desc' ? 'Newest' : 'Oldest'}
+                    <button onClick={() => setSortOrder(prev => prev === 'desc' ? 'asc' : 'desc')} className="flex items-center justify-center px-3 py-2 bg-zinc-100 dark:bg-zinc-900 rounded-xl text-zinc-700 dark:text-zinc-300">
+                         <ArrowUpDown size={16} className={`transition-transform ${sortOrder === 'asc' ? 'rotate-180' : ''}`} />
                     </button>
+                </div>
+                
+                <div className="flex bg-zinc-100 dark:bg-zinc-900 p-1 rounded-lg">
+                    {(['week', 'month', 'all'] as const).map(t => (
+                        <button key={t} onClick={() => setTimeframe(t)} className={`flex-1 py-1.5 rounded-md text-xs font-medium transition-all ${timeframe === t ? 'bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white shadow-sm' : 'text-zinc-500 dark:text-zinc-500'}`}>
+                            {t.charAt(0).toUpperCase() + t.slice(1)}
+                        </button>
+                    ))}
                 </div>
             </div>
 
-            {/* Timeframe Selector */}
-            <div className="bg-gray-200/50 dark:bg-white/5 p-1 rounded-xl flex gap-1 backdrop-blur-sm">
-                <TimeframeButton label="Week" timeframe="week" active={timeframe} setActive={setTimeframe} />
-                <TimeframeButton label="Month" timeframe="month" active={timeframe} setActive={setTimeframe} />
-                <TimeframeButton label="All Time" timeframe="all" active={timeframe} setActive={setTimeframe} />
-            </div>
-
-            {/* Overview Cards */}
-            <div className="space-y-6">
-                {/* Daily Spend Chart */}
-                <div className="bg-white/60 dark:bg-neutral-900/60 backdrop-blur-xl border border-white/40 dark:border-white/5 p-6 rounded-3xl shadow-xl">
-                    <div className="flex justify-between items-end mb-6">
-                         <div>
-                            <p className="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Total Spent</p>
-                            <p className="text-3xl font-black text-gray-900 dark:text-white mt-1">{currency}{totalSpent.toLocaleString(undefined, {minimumFractionDigits: 2})}</p>
-                         </div>
+            {/* Scrollable Content */}
+            <div className="flex-1 p-4 space-y-6 overflow-y-auto pb-24">
+                {/* Charts */}
+                <div className="bg-white dark:bg-zinc-900 p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm">
+                    <div className="mb-6">
+                         <p className="text-xs font-bold text-zinc-500 uppercase tracking-wider">Total Spent</p>
+                         <p className="text-3xl font-black text-zinc-900 dark:text-white mt-1">{currency}{totalSpent.toLocaleString()}</p>
                     </div>
                     <BarChart data={barChartData} currency={currency} />
                 </div>
 
-                {/* Categories Chart */}
-                <div className="bg-white/60 dark:bg-neutral-900/60 backdrop-blur-xl border border-white/40 dark:border-white/5 p-6 rounded-3xl shadow-xl">
-                    <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-6">Spending Breakdown</h3>
+                <div className="bg-white dark:bg-zinc-900 p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm">
+                    <h3 className="text-sm font-bold text-zinc-900 dark:text-white mb-4">Breakdown</h3>
                     <PieChart data={categoryData} currency={currency} />
                 </div>
-            </div>
 
-             {/* Detailed Transactions List */}
-             <div>
-                <div className="flex items-center justify-between mb-4 px-2">
-                    <h3 className="font-bold text-xl text-gray-900 dark:text-white">History</h3>
-                    <span className="text-xs font-bold text-violet-600 dark:text-violet-400 bg-violet-100 dark:bg-violet-900/30 px-3 py-1 rounded-full">
-                        {filteredTransactions.length} Transactions
-                    </span>
-                </div>
-                
-                <div className="space-y-3">
-                    {filteredTransactions.length > 0 ? filteredTransactions.map((tx, index) => (
-                        <button 
-                            key={tx.id + index} // Index fallback for duplicate mocks
-                            onClick={() => onTransactionClick(tx)} 
-                            className="group w-full text-left bg-white/80 dark:bg-neutral-900/80 backdrop-blur-md p-4 rounded-2xl flex items-center justify-between hover:bg-white dark:hover:bg-neutral-800 shadow-sm hover:shadow-lg hover:scale-[1.02] transition-all duration-200 border border-transparent hover:border-violet-500/20"
-                        >
-                            <div className="flex items-center gap-4">
+                 {/* Transactions List */}
+                 <div className="space-y-2">
+                    <h3 className="text-sm font-bold text-zinc-500 uppercase tracking-wider px-1">History</h3>
+                    {filteredTransactions.length > 0 ? filteredTransactions.map((tx, i) => (
+                        <button key={tx.id + i} onClick={() => onTransactionClick(tx)} className="w-full bg-white dark:bg-zinc-900 p-3 rounded-xl flex items-center justify-between border border-zinc-200 dark:border-zinc-800 hover:border-indigo-500 dark:hover:border-indigo-500 transition-colors group">
+                            <div className="flex items-center gap-3">
                                 <CategoryIcon category={tx.category} />
-                                <div>
-                                    <p className="font-bold text-gray-900 dark:text-white text-base">{tx.merchant}</p>
-                                    <div className="flex items-center gap-2 mt-1">
-                                        <span className="text-xs font-medium text-gray-500 dark:text-gray-400 px-2 py-0.5 bg-gray-100 dark:bg-white/5 rounded-md">
-                                            {tx.category}
-                                        </span>
-                                        <span className="text-xs text-gray-400 dark:text-gray-500">
-                                            {tx.date} • {tx.timestamp}
-                                        </span>
-                                    </div>
+                                <div className="text-left">
+                                    <p className="font-bold text-zinc-900 dark:text-white text-sm">{tx.merchant}</p>
+                                    <p className="text-xs text-zinc-500">{tx.date}</p>
                                 </div>
                             </div>
                             <div className="text-right">
-                                <p className={`font-bold text-base ${tx.category === 'Income' ? 'text-emerald-600 dark:text-emerald-400' : 'text-gray-900 dark:text-white'}`}>
-                                    {tx.category === 'Income' ? '+' : ''}{currency}{typeof tx.amount === 'number' ? tx.amount.toFixed(2) : tx.amount}
+                                <p className={`font-bold text-sm ${tx.category === 'Income' ? 'text-emerald-600' : 'text-zinc-900 dark:text-white'}`}>
+                                    {tx.category === 'Income' ? '+' : ''}{currency}{tx.amount.toFixed(2)}
                                 </p>
-                                <p className="text-xs text-gray-400 dark:text-gray-600 mt-1 font-medium">{tx.method}</p>
                             </div>
                         </button>
                     )) : (
-                        <div className="flex flex-col items-center justify-center py-16 text-center bg-white/40 dark:bg-white/5 rounded-3xl border border-dashed border-gray-300 dark:border-gray-700">
-                            <div className="w-16 h-16 bg-gray-100 dark:bg-white/5 rounded-full flex items-center justify-center mb-4 text-gray-400">
-                                <Search size={32} />
-                            </div>
-                            <p className="text-gray-900 dark:text-white font-bold text-lg">No results found</p>
-                            <p className="text-gray-500 text-sm mt-1 max-w-[200px]">Try adjusting your search or filters to find what you're looking for.</p>
-                        </div>
+                         <div className="text-center py-10 text-zinc-500 text-sm">No transactions match your filters.</div>
                     )}
                 </div>
             </div>
         </div>
     );
 };
-
-const TimeframeButton: React.FC<{label: string, timeframe: Timeframe, active: Timeframe, setActive: (tf: Timeframe) => void}> = ({ label, timeframe, active, setActive}) => {
-    const isActive = timeframe === active;
-    return (
-        <button 
-            onClick={() => setActive(timeframe)}
-            className={`flex-1 py-2 rounded-lg font-semibold text-xs transition-all duration-300 ${
-                isActive 
-                ? 'bg-white dark:bg-neutral-800 text-violet-700 dark:text-white shadow-md transform scale-105' 
-                : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-white/50'
-            }`}
-        >
-            {label}
-        </button>
-    )
-}
 
 export default AnalyticsScreen;

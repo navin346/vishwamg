@@ -1,21 +1,19 @@
 import React from 'react';
 import LoginScreen from '@/src/pages/LoginScreen';
-import OTPScreen from '@/src/pages/OTPScreen';
 import SelectResidencyScreen from '@/src/pages/SelectResidencyScreen';
 import KycStartScreen from '@/src/pages/KycStartScreen';
 import KycFormScreen from '@/src/pages/KycFormScreen';
 import MainApp from '@/src/MainApp';
 import { ThemeProvider } from '@/src/context/ThemeContext';
 import { AppProvider, useAppContext } from '@/src/context/AppContext';
-import BackgroundAnimation from '@/src/components/BackgroundAnimation';
 
 const AppContent: React.FC = () => {
   const { user, loading, authFlow, setAuthFlow, signOut, startKyc, userMode, setUserResidency } = useAppContext();
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-white dark:bg-black flex items-center justify-center">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Loading...</h1>
+      <div className="min-h-screen bg-white dark:bg-zinc-950 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
       </div>
     );
   }
@@ -46,7 +44,6 @@ const App: React.FC = () => {
   return (
     <ThemeProvider>
       <AppProvider>
-        <BackgroundAnimation />
         <AppContent />
       </AppProvider>
     </ThemeProvider>

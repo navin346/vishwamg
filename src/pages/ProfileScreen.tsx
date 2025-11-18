@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAppContext } from '@/src/context/AppContext';
 import { ActiveModal, BankAccountType } from '@/src/MainApp';
-import { Camera } from 'lucide-react';
+import { Camera, User, ChevronRight, Settings, CreditCard, Landmark, LogOut } from 'lucide-react';
 
 interface ProfileScreenProps {
     setActiveModal: (modal: ActiveModal) => void;
@@ -20,140 +20,102 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ setActiveModal, openLinkB
         setIsCreatingIban(false);
     }
 
-    const getKycStatusPill = () => {
-        switch (kycStatus) {
-            case 'verified':
-                return <span className="text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300 px-2.5 py-0.5 rounded-full">Verified</span>;
-            case 'pending':
-                return <span className="text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300 px-2.5 py-0.5 rounded-full">Pending</span>;
-            default:
-                return <span className="text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300 px-2.5 py-0.5 rounded-full">Unverified</span>;
-        }
-    };
+    const SectionHeader: React.FC<{ title: string }> = ({ title }) => (
+        <h3 className="text-xs font-bold text-zinc-500 uppercase tracking-wider mb-2 px-1 mt-6">{title}</h3>
+    );
+
+    const MenuItem: React.FC<{ icon: React.ReactNode, title: string, subtitle?: string, onClick?: () => void, rightElement?: React.ReactNode }> = ({ icon, title, subtitle, onClick, rightElement }) => (
+        <button onClick={onClick} className="w-full bg-white dark:bg-zinc-900 p-4 flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800 last:border-0 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors text-left first:rounded-t-2xl last:rounded-b-2xl">
+            <div className="flex items-center gap-3">
+                <div className="text-zinc-500 dark:text-zinc-400">{icon}</div>
+                <div>
+                    <p className="font-semibold text-zinc-900 dark:text-white text-sm">{title}</p>
+                    {subtitle && <p className="text-xs text-zinc-500">{subtitle}</p>}
+                </div>
+            </div>
+            {rightElement || <ChevronRight size={16} className="text-zinc-400" />}
+        </button>
+    );
 
     return (
-        <div className="p-4 text-gray-900 dark:text-white space-y-6">
-            <h1 className="text-3xl font-bold">Profile & Settings</h1>
+        <div className="p-5 pb-24 bg-zinc-50 dark:bg-zinc-950 min-h-full">
+            <h1 className="text-3xl font-bold text-zinc-900 dark:text-white mb-6">Profile</h1>
 
-            {/* User Info Card */}
-            <div className="bg-white/70 dark:bg-neutral-900/70 backdrop-blur-sm rounded-xl p-4 flex items-center space-x-4">
-                <button className="relative group w-16 h-16 rounded-full bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center font-bold text-white text-2xl flex-shrink-0">
-                    <span className="group-hover:opacity-0 transition-opacity duration-200">J</span>
-                    <div className="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                        <Camera size={24} />
-                    </div>
-                </button>
+            {/* User Card */}
+            <div className="bg-white dark:bg-zinc-900 rounded-2xl p-4 flex items-center gap-4 shadow-sm border border-zinc-200 dark:border-zinc-800">
+                <div className="w-16 h-16 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center">
+                    <User size={32} className="text-zinc-400" />
+                </div>
                 <div>
-                    <p className="font-bold text-lg">J. Doe</p>
-                    <p className="text-sm text-gray-500 dark:text-neutral-400">+1 (555) 123-4567</p>
-                </div>
-            </div>
-
-            {/* KYC Status */}
-            <div className="bg-white/70 dark:bg-neutral-900/70 backdrop-blur-sm rounded-xl p-4">
-                <div className="flex justify-between items-center mb-2">
-                    <h3 className="font-bold">Identity Verification</h3>
-                    {getKycStatusPill()}
-                </div>
-                <p className="text-sm text-gray-500 dark:text-neutral-400 mb-4">
-                    {kycStatus === 'unverified' && "Complete verification to unlock all features, including the international virtual card."}
-                    {kycStatus === 'pending' && "Your documents are under review. This usually takes a few minutes."}
-                    {kycStatus === 'verified' && "Your account is fully verified. You have access to all features."}
-                </p>
-                {kycStatus === 'unverified' && (
-                    <button onClick={() => setAuthFlow('kycStart')} className="w-full bg-violet-600 hover:bg-violet-700 text-white font-bold py-2 px-4 rounded-lg transition-colors text-sm">
-                        Start KYC
-                    </button>
-                )}
-            </div>
-            
-            {/* International-specific Info */}
-            {isInternational && (
-                <div className="bg-white/70 dark:bg-neutral-900/70 backdrop-blur-sm rounded-xl p-4">
-                    <h3 className="font-bold mb-2">Your IBAN Account</h3>
-                    {ibanDetails ? (
-                         <div className="bg-gray-100 dark:bg-neutral-800 rounded-lg p-3 font-mono text-sm">
-                            <p className="text-gray-500 text-xs">IBAN</p>
-                            <p>{ibanDetails.iban}</p>
-                            <p className="text-gray-500 text-xs mt-2">BIC</p>
-                            <p>{ibanDetails.bic}</p>
-                        </div>
-                    ) : (
-                        <>
-                         <p className="text-sm text-gray-500 dark:text-neutral-400 mb-4">Activate your personal IBAN to receive bank transfers from around the world.</p>
-                         <button onClick={handleCreateIban} disabled={isCreatingIban} className="w-full bg-violet-600 hover:bg-violet-700 text-white font-bold py-2 px-4 rounded-lg transition-colors text-sm disabled:bg-violet-400 disabled:cursor-not-allowed">
-                            {isCreatingIban ? 'Activating...' : 'Create IBAN Account'}
-                         </button>
-                        </>
-                    )}
-                </div>
-            )}
-            
-            {/* India-specific Cards */}
-            {!isInternational && (
-                 <div className="bg-white/70 dark:bg-neutral-900/70 backdrop-blur-sm rounded-xl p-4 space-y-3">
-                    <h3 className="font-bold text-base mb-1">Linked Cards</h3>
-                     <div className="flex items-center justify-between">
-                        <div>
-                            <p className="font-semibold text-sm">Debit & Credit Cards</p>
-                            <p className="text-xs text-gray-500 dark:text-neutral-400">No cards linked</p>
-                        </div>
-                        <button disabled className="text-sm font-bold px-3 py-1 rounded-md bg-gray-200 dark:bg-neutral-700/50 text-gray-800/50 dark:text-white/50 cursor-not-allowed">
-                            Add
-                        </button>
+                    <h2 className="text-lg font-bold text-zinc-900 dark:text-white">J. Doe</h2>
+                    <p className="text-sm text-zinc-500">+1 (555) 123-4567</p>
+                    <div className="mt-2 flex items-center gap-2">
+                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase ${kycStatus === 'verified' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-amber-100 text-amber-700'}`}>
+                            {kycStatus}
+                        </span>
+                        {kycStatus !== 'verified' && <button onClick={() => setAuthFlow('kycStart')} className="text-xs font-bold text-indigo-600 dark:text-indigo-400 underline">Verify Now</button>}
                     </div>
                 </div>
+            </div>
+
+            {/* International IBAN */}
+            {isInternational && (
+                <>
+                    <SectionHeader title="Banking" />
+                    <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 overflow-hidden">
+                         {ibanDetails ? (
+                            <div className="p-4">
+                                <div className="flex justify-between items-center mb-2">
+                                    <span className="text-sm font-bold text-zinc-900 dark:text-white">Your US Account</span>
+                                    <span className="text-xs bg-zinc-100 dark:bg-zinc-800 px-2 py-1 rounded text-zinc-600 dark:text-zinc-400">Checking</span>
+                                </div>
+                                <div className="space-y-1 font-mono text-xs text-zinc-500">
+                                    <div className="flex justify-between"><span>IBAN</span> <span className="text-zinc-900 dark:text-white">{ibanDetails.iban}</span></div>
+                                    <div className="flex justify-between"><span>BIC</span> <span className="text-zinc-900 dark:text-white">{ibanDetails.bic}</span></div>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="p-4 text-center">
+                                <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-3">Get your own US bank account details.</p>
+                                <button onClick={handleCreateIban} disabled={isCreatingIban} className="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold px-4 py-2 rounded-lg w-full transition-colors">
+                                    {isCreatingIban ? 'Creating...' : 'Create Account'}
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                </>
             )}
 
-
-            {/* Linked Accounts */}
-            <div className="bg-white/70 dark:bg-neutral-900/70 backdrop-blur-sm rounded-xl p-4 space-y-3">
-                <h3 className="font-bold text-base mb-1">Linked Bank Accounts</h3>
+            <SectionHeader title="Linked Accounts" />
+            <div className="rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800">
                 {isInternational && (
-                    <LinkedAccountItem 
-                        title="US Bank Account" 
-                        subtitle={linkedAccounts.us ? `${linkedAccounts.us.bankName} ••••${linkedAccounts.us.accountNumber.slice(-4)}` : "For adding funds (on-ramp)"}
-                        isLinked={!!linkedAccounts.us}
+                    <MenuItem 
+                        icon={<Landmark size={20} />}
+                        title="US Bank Account"
+                        subtitle={linkedAccounts.us ? linkedAccounts.us.bankName : "Not linked"}
                         onClick={() => openLinkBankModal('us')}
+                        rightElement={<span className="text-xs font-bold text-indigo-600 dark:text-indigo-400">{linkedAccounts.us ? 'Manage' : 'Add'}</span>}
                     />
                 )}
-                 <LinkedAccountItem 
-                    title="Indian Bank Account" 
-                    subtitle={linkedAccounts.inr ? `${linkedAccounts.inr.bankName} ••••${linkedAccounts.inr.accountNumber.slice(-4)}` : "For withdrawals (off-ramp)"}
-                    isLinked={!!linkedAccounts.inr}
+                <MenuItem 
+                    icon={<Landmark size={20} />}
+                    title="Indian Bank Account"
+                    subtitle={linkedAccounts.inr ? linkedAccounts.inr.bankName : "Not linked"}
                     onClick={() => openLinkBankModal('inr')}
-                 />
+                    rightElement={<span className="text-xs font-bold text-indigo-600 dark:text-indigo-400">{linkedAccounts.inr ? 'Manage' : 'Add'}</span>}
+                />
+            </div>
+
+            <SectionHeader title="Settings" />
+            <div className="rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800">
+                <MenuItem icon={<Settings size={20} />} title="Spending Categories" onClick={() => setActiveModal('manage_categories')} />
+                {installPrompt && <MenuItem icon={<CreditCard size={20} />} title="Install App" onClick={() => installPrompt.prompt()} />}
+                <MenuItem icon={<LogOut size={20} />} title="Sign Out" onClick={() => window.location.reload()} />
             </div>
             
-            {/* App Settings */}
-            <div className="bg-white/70 dark:bg-neutral-900/70 backdrop-blur-sm rounded-xl p-4">
-                <h3 className="font-bold text-base mb-3">App Settings</h3>
-                <button onClick={() => setActiveModal('manage_categories')} className="w-full flex justify-between items-center text-left p-2 -mx-2 rounded-lg hover:bg-gray-100/80 dark:hover:bg-neutral-800/80 transition-colors">
-                    <span>Manage Spending Categories</span>
-                    <svg className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-                </button>
-                 {installPrompt && (
-                    <button onClick={() => installPrompt.prompt()} className="w-full flex justify-between items-center text-left p-2 -mx-2 rounded-lg hover:bg-gray-100/80 dark:hover:bg-neutral-800/80 transition-colors mt-2">
-                        <span>Install Vishwam App</span>
-                        <svg className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                    </button>
-                )}
-            </div>
+             <p className="text-center text-xs text-zinc-400 mt-8">Version 1.0.2 • Built with Gemini 3.0</p>
         </div>
     );
 };
-
-const LinkedAccountItem: React.FC<{title: string, subtitle: string, isLinked: boolean, onClick: () => void}> = ({ title, subtitle, isLinked, onClick }) => (
-    <div className="flex items-center justify-between">
-        <div>
-            <p className="font-semibold text-sm">{title}</p>
-            <p className="text-xs text-gray-500 dark:text-neutral-400">{subtitle}</p>
-        </div>
-        <button onClick={onClick} className={`text-sm font-bold px-3 py-1 rounded-md ${isLinked ? 'bg-gray-200 dark:bg-neutral-700 text-gray-800 dark:text-white' : 'bg-violet-100 dark:bg-violet-900/50 text-violet-700 dark:text-violet-300'}`}>
-            {isLinked ? 'Manage' : 'Add'}
-        </button>
-    </div>
-)
-
 
 export default ProfileScreen;
