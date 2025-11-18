@@ -29,13 +29,13 @@ const FALLBACK_TRANSACTIONS: TransactionSummary[] = [
 const CategoryIcon: React.FC<{ category: string }> = ({ category }) => {
     const baseClass = "w-10 h-10 rounded-xl flex items-center justify-center shadow-sm transition-transform hover:scale-105 border border-transparent dark:border-white/5";
     switch (category.toLowerCase()) {
-        case 'food': return <div className={`${baseClass} bg-orange-100 text-orange-600 dark:bg-orange-500/10 dark:text-orange-400`}><Utensils size={20} /></div>;
-        case 'shopping': return <div className={`${baseClass} bg-blue-100 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400`}><ShoppingBag size={20} /></div>;
-        case 'travel': return <div className={`${baseClass} bg-yellow-100 text-yellow-600 dark:bg-yellow-500/10 dark:text-yellow-400`}><Car size={20} /></div>;
-        case 'entertainment': return <div className={`${baseClass} bg-purple-100 text-purple-600 dark:bg-purple-500/10 dark:text-purple-400`}><Film size={20} /></div>;
-        case 'bills': return <div className={`${baseClass} bg-red-100 text-red-600 dark:bg-red-500/10 dark:text-red-400`}><Receipt size={20} /></div>;
-        case 'income': return <div className={`${baseClass} bg-emerald-100 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400`}><Wallet size={20} /></div>;
-        default: return <div className={`${baseClass} bg-gray-100 text-gray-600 dark:bg-white/10 dark:text-gray-400`}><CreditCard size={20} /></div>;
+        case 'food': return <div className={`${baseClass} bg-orange-100 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400`}><Utensils size={20} /></div>;
+        case 'shopping': return <div className={`${baseClass} bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400`}><ShoppingBag size={20} /></div>;
+        case 'travel': return <div className={`${baseClass} bg-yellow-100 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-400`}><Car size={20} /></div>;
+        case 'entertainment': return <div className={`${baseClass} bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400`}><Film size={20} /></div>;
+        case 'bills': return <div className={`${baseClass} bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400`}><Receipt size={20} /></div>;
+        case 'income': return <div className={`${baseClass} bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400`}><Wallet size={20} /></div>;
+        default: return <div className={`${baseClass} bg-gray-100 text-gray-600 dark:bg-neutral-800 dark:text-neutral-400`}><CreditCard size={20} /></div>;
     }
 };
 
@@ -183,7 +183,7 @@ const AnalyticsScreen: React.FC<AnalyticsScreenProps> = ({ onTransactionClick })
             </div>
 
             {/* Scrollable Content */}
-            <div className="flex-1 p-4 space-y-6 overflow-y-auto pb-24">
+            <div className="flex-1 p-4 space-y-6 overflow-y-auto pb-32">
                 {/* Charts Card - Premium Dark Mode: #0A0A0A background with subtle border */}
                 <div className="bg-white dark:bg-[#0A0A0A] p-6 rounded-[2rem] border border-gray-100 dark:border-white/10 shadow-xl dark:shadow-none">
                     <div className="mb-8">

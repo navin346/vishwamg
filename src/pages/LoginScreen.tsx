@@ -38,14 +38,11 @@ const LoginScreen: React.FC = () => {
       if (otp === '12345') {
           setLoading(true);
           triggerHaptic('success');
-          // In a real app, verify OTP then sign in with custom token
-          // For this demo, we'll create a dummy email based on phone to use firebase auth
           const dummyEmail = `${mobile}@vishwam.demo`;
           const dummyPass = "password123"; 
           try {
             await signIn(dummyEmail, dummyPass);
           } catch (e) {
-             // If sign in fails, try sign up (first time user)
              await signUp(dummyEmail, dummyPass);
           }
       } else {
@@ -79,30 +76,33 @@ const LoginScreen: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-6 relative overflow-hidden">
+    <div className="min-h-screen flex flex-col items-center justify-center p-6 relative bg-black">
       
-      <div className="w-full max-w-sm relative z-10 bg-white/10 dark:bg-black/40 backdrop-blur-xl border border-white/20 dark:border-white/10 p-8 rounded-3xl shadow-2xl">
-        <div className="text-center mb-8">
-             <div className="w-16 h-16 bg-gradient-to-tr from-indigo-500 to-purple-500 rounded-2xl mx-auto flex items-center justify-center mb-4 shadow-lg shadow-purple-500/30">
-                <span className="text-3xl font-bold text-white">V</span>
+      {/* Minimal decorative background element */}
+      <div className="absolute top-0 inset-x-0 h-64 bg-gradient-to-b from-indigo-900/20 to-transparent pointer-events-none" />
+
+      <div className="w-full max-w-sm relative z-10">
+        <div className="mb-10 text-center">
+             <div className="w-20 h-20 bg-white rounded-2xl mx-auto flex items-center justify-center mb-6 shadow-2xl shadow-indigo-500/20">
+                <span className="text-4xl font-extrabold text-black tracking-tighter">V</span>
              </div>
-            <h1 className="text-3xl font-bold text-white mb-1 tracking-tight">Vishwam</h1>
-            <p className="text-gray-300 text-sm">Financial operating system for the future.</p>
+            <h1 className="text-4xl font-bold text-white mb-2 tracking-tight">Welcome</h1>
+            <p className="text-neutral-400 font-medium">Sign in to your financial hub.</p>
         </div>
 
         {/* Toggle Auth Method */}
-        <div className="flex bg-black/20 p-1 rounded-xl mb-6">
+        <div className="flex bg-neutral-900 p-1.5 rounded-xl mb-8 border border-neutral-800">
             <button 
                 onClick={() => { setAuthMethod('mobile'); setError(null); setShowOtpInput(false); triggerHaptic('light'); }}
-                className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-bold transition-all ${authMethod === 'mobile' ? 'bg-white text-black shadow-md' : 'text-gray-400 hover:text-white'}`}
+                className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-lg text-sm font-bold transition-all ${authMethod === 'mobile' ? 'bg-white text-black shadow-lg' : 'text-neutral-500 hover:text-neutral-300'}`}
             >
-                <Smartphone size={16} /> Mobile
+                <Smartphone size={18} /> Mobile
             </button>
             <button 
                 onClick={() => { setAuthMethod('email'); setError(null); triggerHaptic('light'); }}
-                className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-sm font-bold transition-all ${authMethod === 'email' ? 'bg-white text-black shadow-md' : 'text-gray-400 hover:text-white'}`}
+                className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-lg text-sm font-bold transition-all ${authMethod === 'email' ? 'bg-white text-black shadow-lg' : 'text-neutral-500 hover:text-neutral-300'}`}
             >
-                <Mail size={16} /> Email
+                <Mail size={18} /> Email
             </button>
         </div>
         
@@ -110,28 +110,28 @@ const LoginScreen: React.FC = () => {
             <div className="space-y-4">
                 {!showOtpInput ? (
                     <div className="space-y-4">
-                        <div className="relative">
-                            <span className="absolute left-4 top-3.5 text-gray-400 border-r border-gray-600 pr-3">+91</span>
+                        <div className="relative group">
+                            <span className="absolute left-4 top-4 text-neutral-400 border-r border-neutral-700 pr-3 pointer-events-none">+91</span>
                             <input
                                 type="tel"
                                 value={mobile}
                                 onChange={(e) => setMobile(e.target.value)}
                                 placeholder="98765 43210"
-                                className="w-full pl-16 pr-4 py-3 bg-black/30 border border-white/10 rounded-xl focus:outline-none focus:border-indigo-500 text-white placeholder-gray-500 font-mono text-lg"
+                                className="w-full pl-16 pr-4 py-4 bg-neutral-900 border border-neutral-800 rounded-2xl focus:outline-none focus:border-white/50 text-white placeholder-neutral-600 font-mono text-lg transition-all"
                             />
                         </div>
                          <button
                             onClick={handleSendOtp}
                             disabled={loading}
-                            className="w-full bg-white hover:bg-gray-100 text-black font-bold py-3 px-4 rounded-xl transition-transform transform active:scale-95 flex items-center justify-center gap-2"
+                            className="w-full bg-white hover:bg-gray-200 text-black font-bold py-4 rounded-2xl transition-transform transform active:scale-95 flex items-center justify-center gap-2 text-lg"
                         >
-                            {loading ? <span className="animate-spin h-5 w-5 border-2 border-black border-t-transparent rounded-full"/> : <>Get OTP <ArrowRight size={18}/></>}
+                            {loading ? <span className="animate-spin h-5 w-5 border-2 border-black border-t-transparent rounded-full"/> : <>Get OTP <ArrowRight size={20}/></>}
                         </button>
                     </div>
                 ) : (
-                    <div className="space-y-4 animate-in slide-in-from-right">
-                        <div className="text-center mb-2">
-                             <p className="text-gray-400 text-sm">Enter OTP sent to +91 {mobile}</p>
+                    <div className="space-y-5 animate-in slide-in-from-right">
+                        <div className="text-center">
+                             <p className="text-neutral-400 text-sm">Code sent to <span className="text-white font-mono">+91 {mobile}</span></p>
                         </div>
                         <input
                             type="text"
@@ -139,16 +139,16 @@ const LoginScreen: React.FC = () => {
                             onChange={(e) => setOtp(e.target.value)}
                             placeholder="• • • • •"
                             maxLength={5}
-                            className="w-full text-center py-3 bg-black/30 border border-white/10 rounded-xl focus:outline-none focus:border-indigo-500 text-white tracking-[1em] font-mono text-xl"
+                            className="w-full text-center py-4 bg-neutral-900 border border-neutral-800 rounded-2xl focus:outline-none focus:border-indigo-500 text-white tracking-[1.5em] font-mono text-2xl"
                         />
                         <button
                             onClick={handleVerifyOtp}
                             disabled={loading}
-                            className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 px-4 rounded-xl transition-transform transform active:scale-95 flex items-center justify-center gap-2 shadow-lg shadow-indigo-500/30"
+                            className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 rounded-2xl transition-transform transform active:scale-95 flex items-center justify-center gap-2 shadow-lg shadow-indigo-500/20 text-lg"
                         >
                              {loading ? <span className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full"/> : "Verify & Login"}
                         </button>
-                         <button onClick={() => setShowOtpInput(false)} className="w-full text-xs text-gray-400 hover:text-white">Change Number</button>
+                         <button onClick={() => setShowOtpInput(false)} className="w-full text-xs text-neutral-500 hover:text-white uppercase tracking-wider font-bold mt-2">Change Number</button>
                     </div>
                 )}
             </div>
@@ -158,8 +158,8 @@ const LoginScreen: React.FC = () => {
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="name@example.com"
-                    className="w-full px-4 py-3 bg-black/30 border border-white/10 rounded-xl focus:outline-none focus:border-indigo-500 text-white placeholder-gray-500"
+                    placeholder="Email Address"
+                    className="w-full px-5 py-4 bg-neutral-900 border border-neutral-800 rounded-2xl focus:outline-none focus:border-white/50 text-white placeholder-neutral-600 transition-all"
                     required
                 />
                 <input
@@ -167,30 +167,33 @@ const LoginScreen: React.FC = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Password"
-                    className="w-full px-4 py-3 bg-black/30 border border-white/10 rounded-xl focus:outline-none focus:border-indigo-500 text-white placeholder-gray-500"
+                    className="w-full px-5 py-4 bg-neutral-900 border border-neutral-800 rounded-2xl focus:outline-none focus:border-white/50 text-white placeholder-neutral-600 transition-all"
                     required
                 />
                 <button
                     type="submit"
                     disabled={loading}
-                    className="w-full bg-white hover:bg-gray-100 text-black font-bold py-3 px-4 rounded-xl transition-transform transform active:scale-95 flex items-center justify-center gap-2"
+                    className="w-full bg-white hover:bg-gray-200 text-black font-bold py-4 rounded-2xl transition-transform transform active:scale-95 flex items-center justify-center gap-2 text-lg"
                 >
                      {loading ? "Processing..." : (isSignUp ? "Create Account" : "Sign In")}
                 </button>
-                <p className="text-center text-sm text-gray-400 mt-4">
+                <p className="text-center text-sm text-neutral-500 mt-6">
                     {isSignUp ? "Existing user?" : "New here?"}
-                    <button type="button" onClick={() => setIsSignUp(!isSignUp)} className="text-indigo-400 font-bold ml-1 hover:text-indigo-300">
+                    <button type="button" onClick={() => setIsSignUp(!isSignUp)} className="text-white font-bold ml-2 hover:underline">
                         {isSignUp ? "Sign In" : "Sign Up"}
                     </button>
                 </p>
             </form>
         )}
         
-        {error && <div className="mt-4 p-3 bg-red-500/20 border border-red-500/50 rounded-lg text-red-200 text-sm text-center">{error}</div>}
+        {error && <div className="mt-6 p-4 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-sm text-center font-medium">{error}</div>}
 
       </div>
       
-      <p className="absolute bottom-6 text-xs text-gray-500/50">Secured by Vishwam Identity™</p>
+      <div className="absolute bottom-8 flex items-center gap-2 opacity-30">
+        <Lock size={12} className="text-white" />
+        <p className="text-[10px] text-white uppercase tracking-widest">End-to-End Encrypted</p>
+      </div>
     </div>
   );
 };
