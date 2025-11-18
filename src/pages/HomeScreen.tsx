@@ -5,15 +5,14 @@ import { db } from '@/src/firebase';
 import { TransactionSummary } from '@/src/data';
 import VirtualCard from '@/src/components/VirtualCard';
 import { ActiveModal } from '@/src/MainApp';
-import { Plus, ArrowUpRight, Download, CreditCard, ChevronRight } from 'lucide-react';
+import { ArrowDownLeft, ArrowUpRight, Download, CreditCard, Plus, ChevronRight } from 'lucide-react';
+import { triggerHaptic } from '@/src/utils/haptics';
 
 // Mock card details
-const mockCard = {
-  number: "1234 5678 9012 3456",
-  name: "J. DOE",
-  expiry: "12/28",
-  cvv: "123"
-};
+const mockCards = [
+  { id: 1, number: "4111 1111 1111 1111", name: "J. DOE", expiry: "12/28", cvv: "123", type: 'visa' },
+  { id: 2, number: "5332 4321 8765 4321", name: "J. DOE", expiry: "09/26", cvv: "456", type: 'mastercard' },
+];
 
 interface HomeScreenProps {
     onTransactionClick: (transaction: TransactionSummary) => void;
@@ -67,6 +66,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onTransactionClick, setActiveMo
     }, [user, userMode]);
 
     const handleProtectedAction = (modal: ActiveModal) => {
+        triggerHaptic('light');
         if (kycStatus !== 'verified') {
             setAuthFlow('kycStart');
         } else {
@@ -77,15 +77,20 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onTransactionClick, setActiveMo
     return (
         <div className="p-5 space-y-8 pb-24">
             {/* Balance Header */}
-            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-neutral-900 to-black dark:from-neutral-900 dark:to-black p-6 text-white shadow-2xl shadow-black/20">
-                 <div className="absolute top-0 right-0 w-40 h-40 bg-indigo-600 rounded-full blur-3xl opacity-20 -mr-10 -mt-10"></div>
+            <div className="relative overflow-hidden rounded-[2rem] bg-white/10 dark:bg-black/20 backdrop-blur-md border border-white/20 dark:border-white/10 p-6 text-black dark:text-white shadow-2xl">
+                 <div className="absolute top-0 right-0 w-40 h-40 bg-indigo-500 rounded-full blur-[60px] opacity-20 -mr-10 -mt-10"></div>
                  <div className="relative z-10">
-                    <p className="text-sm font-medium text-neutral-400 uppercase tracking-wider">Total Balance</p>
+                    <div className="flex justify-between items-start">
+                        <p className="text-xs font-bold text-gray-500 dark:text-neutral-400 uppercase tracking-widest">Total Balance</p>
+                        <div className="bg-green-500/20 px-2 py-1 rounded-md">
+                             <span className="text-xs font-bold text-green-700 dark:text-green-400">▲ 2.4%</span>
+                        </div>
+                    </div>
                     <div className="flex items-baseline gap-1 mt-2">
                         <h1 className="text-5xl font-bold tracking-tight">
                             {currency}{balance}
                         </h1>
-                        <span className="text-xl font-medium text-neutral-500">{isInternational ? 'USDC' : 'INR'}</span>
+                        <span className="text-xl font-medium text-gray-500 dark:text-neutral-500">{isInternational ? 'USDC' : 'INR'}</span>
                     </div>
                  </div>
             </div>
@@ -99,8 +104,8 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onTransactionClick, setActiveMo
                     variant="primary"
                 />
                 <ActionButton 
-                    icon={<Plus className="w-6 h-6" />} 
-                    label="Add" 
+                    icon={<ArrowDownLeft className="w-6 h-6" />} 
+                    label="Deposit" 
                     onClick={() => handleProtectedAction('add_money')} 
                     variant="secondary"
                 />
@@ -112,19 +117,44 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onTransactionClick, setActiveMo
                 />
             </div>
 
-            {/* Cards Section */}
+            {/* Cards Section - Carousel */}
             <div className="space-y-4">
                 <div className="flex justify-between items-center px-1">
-                    <h2 className="text-sm font-bold text-gray-500 dark:text-neutral-400 tracking-wider uppercase">My Cards</h2>
+                    <h2 className="text-xs font-bold text-gray-500 dark:text-neutral-400 tracking-widest uppercase">My Cards</h2>
+                    <button className="text-indigo-600 dark:text-indigo-400 text-xs font-bold">Manage</button>
                 </div>
                 {isInternational ? (
-                     <VirtualCard card={mockCard} disabled={!isCardActive} />
+                    <div className="flex overflow-x-auto gap-4 pb-4 snap-x snap-mandatory scrollbar-hide">
+                         {/* Card 1 */}
+                         <div className="min-w-[85%] snap-center">
+                             <VirtualCard card={mockCards[0]} disabled={!isCardActive} />
+                         </div>
+                         {/* Card 2 (Placeholder) */}
+                         <div className="min-w-[85%] snap-center opacity-90">
+                             <div className="relative w-full aspect-[1.586] bg-gradient-to-br from-gray-800 to-black rounded-xl p-6 text-white border border-white/10 flex flex-col justify-between">
+                                 <div className="flex justify-between">
+                                     <span className="text-xs font-mono">Metal</span>
+                                     <span className="text-xs font-bold italic">VISA</span>
+                                 </div>
+                                 <div className="text-center">
+                                     <p className="text-xs text-gray-400">Tap to activate</p>
+                                     <p className="text-lg font-mono tracking-widest mt-1">•••• •••• •••• 4321</p>
+                                 </div>
+                             </div>
+                         </div>
+                         {/* Add Card Button */}
+                         <div className="min-w-[20%] snap-center flex items-center">
+                            <button className="w-14 h-14 rounded-full bg-gray-200 dark:bg-neutral-800 flex items-center justify-center mx-auto">
+                                <Plus className="text-gray-500" />
+                            </button>
+                         </div>
+                    </div>
                 ) : (
-                    <button className="w-full h-48 rounded-3xl border-2 border-dashed border-gray-300 dark:border-neutral-800 flex flex-col items-center justify-center text-gray-400 dark:text-neutral-600 hover:bg-gray-100 dark:hover:bg-neutral-900 transition-colors group">
+                    <button className="w-full h-48 rounded-3xl border-2 border-dashed border-gray-300 dark:border-neutral-800 flex flex-col items-center justify-center text-gray-400 dark:text-neutral-600 hover:bg-gray-100 dark:hover:bg-neutral-900 transition-colors group bg-white/50 dark:bg-black/50 backdrop-blur-sm">
                         <div className="w-14 h-14 rounded-full bg-gray-200 dark:bg-neutral-800 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform text-gray-500 dark:text-neutral-400">
                             <Plus className="w-6 h-6" />
                         </div>
-                        <span className="font-medium text-sm">Add Card</span>
+                        <span className="font-medium text-sm">Order Physical Card</span>
                     </button>
                 )}
             </div>
@@ -132,20 +162,26 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onTransactionClick, setActiveMo
             {/* Transactions List */}
             <div className="space-y-2">
                 <div className="flex justify-between items-end mb-2 px-1">
-                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">Recent Transactions</h3>
+                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">Recent Activity</h3>
                 </div>
                 
-                {loading ? <p className="text-sm text-gray-500 p-4">Loading...</p> : (
-                    <div className="space-y-0 relative">
+                {loading ? (
+                    // Skeleton Loader
+                    [1,2,3].map(i => (
+                        <div key={i} className="w-full h-16 bg-gray-200 dark:bg-neutral-800 rounded-2xl animate-pulse" />
+                    ))
+                ) : (
+                    <div className="space-y-2 relative">
                         {transactions.length > 0 ? transactions.map((tx, index) => (
                             <button 
                                 key={tx.id} 
                                 onClick={() => onTransactionClick(tx)} 
-                                className={`w-full text-left p-4 flex items-center justify-between hover:bg-gray-100 dark:hover:bg-neutral-900 rounded-2xl transition-colors`}
+                                className={`w-full text-left p-4 flex items-center justify-between bg-white/60 dark:bg-neutral-900/60 backdrop-blur-md border border-gray-100 dark:border-neutral-800 rounded-2xl transition-all hover:scale-[1.02]`}
                             >
                                 <div className="flex items-center gap-4">
-                                    <div className="w-12 h-12 rounded-full bg-gray-100 dark:bg-neutral-900 flex items-center justify-center text-gray-500 dark:text-neutral-400">
-                                        <CreditCard size={20} />
+                                    <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-neutral-800 flex items-center justify-center text-gray-500 dark:text-neutral-400">
+                                        {/* Smart Icon mapping based on merchant would go here */}
+                                        <CreditCard size={18} />
                                     </div>
                                     <div>
                                         <p className="font-bold text-gray-900 dark:text-white text-sm">{tx.merchant}</p>
@@ -158,12 +194,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onTransactionClick, setActiveMo
                                     </p>
                                 </div>
                             </button>
-                        )) : <p className="text-sm text-center py-8 text-gray-500">No transactions yet.</p>}
-                        
-                        {/* Scroll Hint Gradient */}
-                        {transactions.length > 5 && (
-                            <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-gray-50 dark:from-black to-transparent pointer-events-none"></div>
-                        )}
+                        )) : <p className="text-sm text-center py-8 text-gray-500">No recent activity.</p>}
                     </div>
                 )}
             </div>
@@ -172,10 +203,10 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onTransactionClick, setActiveMo
 };
 
 const ActionButton: React.FC<{ icon: React.ReactNode, label: string, onClick?: () => void, variant: 'primary' | 'secondary' }> = ({ icon, label, onClick, variant }) => {
-    const baseClasses = "flex flex-col items-center justify-center rounded-3xl h-24 w-full transition-all transform active:scale-95";
+    const baseClasses = "flex flex-col items-center justify-center rounded-[1.5rem] h-24 w-full transition-all transform active:scale-95 backdrop-blur-md";
     const variantClasses = variant === 'primary' 
-        ? "bg-gray-900 dark:bg-white text-white dark:text-black shadow-lg hover:bg-gray-800 dark:hover:bg-gray-200" 
-        : "bg-white dark:bg-neutral-900 text-gray-900 dark:text-white border border-gray-200 dark:border-neutral-800 hover:bg-gray-50 dark:hover:bg-neutral-800";
+        ? "bg-black/90 dark:bg-white/90 text-white dark:text-black shadow-xl shadow-indigo-500/20" 
+        : "bg-white/70 dark:bg-neutral-900/70 text-gray-900 dark:text-white border border-gray-200 dark:border-neutral-800 shadow-sm";
 
     return (
         <button onClick={onClick} className={`${baseClasses} ${variantClasses}`}>

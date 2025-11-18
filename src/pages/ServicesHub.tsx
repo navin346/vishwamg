@@ -4,7 +4,8 @@ import GlobalPayScreen from '@/src/pages/GlobalPayScreen';
 import BillsScreen from '@/src/pages/BillsScreen';
 import YieldScreen from '@/src/pages/YieldScreen';
 import LoansScreen from '@/src/pages/LoansScreen';
-import { Layers, Zap, Globe, Landmark } from 'lucide-react';
+import { Layers, Zap, Globe, Landmark, TrendingUp } from 'lucide-react';
+import { triggerHaptic } from '@/src/utils/haptics';
 
 interface ServicesHubProps {
     onPayBiller: (billerName: string, amount: number) => void;
@@ -17,6 +18,11 @@ const ServicesHub: React.FC<ServicesHubProps> = ({ onPayBiller }) => {
     const [currentView, setCurrentView] = useState<ServiceView>('menu');
     const isInternational = userMode === 'INTERNATIONAL';
 
+    const handleNav = (view: ServiceView) => {
+        triggerHaptic('light');
+        setCurrentView(view);
+    }
+
     const MenuCard: React.FC<{ 
         title: string, 
         subtitle: string, 
@@ -26,7 +32,7 @@ const ServicesHub: React.FC<ServicesHubProps> = ({ onPayBiller }) => {
     }> = ({ title, subtitle, icon, color, onClick }) => (
         <button 
             onClick={onClick}
-            className="w-full relative overflow-hidden bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-800 rounded-3xl p-6 text-left group hover:border-gray-300 dark:hover:border-neutral-700 transition-all"
+            className="w-full relative overflow-hidden bg-white/80 dark:bg-neutral-900/80 backdrop-blur-md border border-gray-200 dark:border-neutral-800 rounded-3xl p-6 text-left group hover:border-gray-300 dark:hover:border-neutral-700 transition-all shadow-sm"
         >
             <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${color} opacity-10 blur-2xl rounded-full -mr-10 -mt-10 group-hover:opacity-20 transition-opacity`} />
             <div className="relative z-10">
@@ -52,33 +58,33 @@ const ServicesHub: React.FC<ServicesHubProps> = ({ onPayBiller }) => {
     }
 
     return (
-        <div className="p-5 space-y-6 pb-24 min-h-full bg-gray-50 dark:bg-black">
+        <div className="p-5 space-y-6 pb-24 min-h-full">
             <div className="space-y-2">
                 <h1 className="text-4xl font-bold text-gray-900 dark:text-white tracking-tight">Services</h1>
                 <p className="text-gray-600 dark:text-neutral-400 text-base">Explore the financial hub.</p>
             </div>
 
             <div className="grid gap-4">
-                <MenuCard 
-                    title="Yield Vaults" 
-                    subtitle="Earn up to 12% APY on stablecoins" 
-                    icon={<Layers size={24} />}
+                 <MenuCard 
+                    title={isInternational ? "Earn $" : "Earn ₹"}
+                    subtitle={isInternational ? "Stablecoin Vaults & DeFi" : "Mutual Funds, Gold & P2P"} 
+                    icon={<TrendingUp size={24} />}
                     color="from-emerald-500 to-teal-500"
-                    onClick={() => setCurrentView('yield')}
+                    onClick={() => handleNav('yield')}
                 />
                 <MenuCard 
                     title={isInternational ? "Global Lifestyle" : "Bills & Recharge"} 
                     subtitle={isInternational ? "eSIM, Travel & Forex" : "Pay Utilities, DTH & more"} 
                     icon={isInternational ? <Globe size={24} /> : <Zap size={24} />}
                     color="from-indigo-500 to-purple-500"
-                    onClick={() => setCurrentView('bills_global')}
+                    onClick={() => handleNav('bills_global')}
                 />
                  <MenuCard 
                     title="Credit Line" 
                     subtitle="Instant loans against your assets" 
                     icon={<Landmark size={24} />}
                     color="from-orange-500 to-amber-500"
-                    onClick={() => setCurrentView('loans')}
+                    onClick={() => handleNav('loans')}
                 />
             </div>
         </div>
