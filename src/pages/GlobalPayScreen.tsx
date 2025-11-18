@@ -12,7 +12,7 @@ const ServiceCard: React.FC<{ icon: React.ReactNode, label: string, desc: string
         </div>
         <div>
             <p className="font-bold text-gray-900 dark:text-white text-lg tracking-tight">{label}</p>
-            <p className="text-sm text-gray-500 dark:text-neutral-400 mt-0.5">{desc}</p>
+            <p className="text-sm text-gray-500 dark:text-gray-300 mt-0.5">{desc}</p>
         </div>
     </button>
 )
@@ -28,7 +28,7 @@ const GlobalPayScreen: React.FC<GlobalPayScreenProps> = ({ onBack }) => {
                 )}
                 <div className="space-y-0.5">
                     <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Global Lifestyle</h1>
-                    <p className="text-xs text-gray-500 dark:text-neutral-400 font-medium uppercase tracking-wider">Tools for the international citizen</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 font-medium uppercase tracking-wider">Tools for the international citizen</p>
                 </div>
             </div>
 
@@ -62,9 +62,9 @@ const GlobalPayScreen: React.FC<GlobalPayScreenProps> = ({ onBack }) => {
             {/* Promo Banner */}
             <div className="mt-8 relative overflow-hidden rounded-3xl p-6 bg-indigo-600 dark:bg-neutral-900 border border-indigo-500/20 dark:border-white/10">
                 <div className="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-white/10 rounded-full blur-2xl"></div>
-                <p className="text-indigo-100 dark:text-neutral-400 text-xs font-bold uppercase tracking-wider mb-2">Coming Soon</p>
+                <p className="text-indigo-100 dark:text-gray-300 text-xs font-bold uppercase tracking-wider mb-2">Coming Soon</p>
                 <h3 className="text-white text-xl font-bold mb-1">Concierge Service</h3>
-                <p className="text-indigo-100 dark:text-neutral-400 text-sm opacity-80">24/7 travel and lifestyle assistance for premium members.</p>
+                <p className="text-indigo-100 dark:text-gray-400 text-sm opacity-80">24/7 travel and lifestyle assistance for premium members.</p>
             </div>
         </div>
     );

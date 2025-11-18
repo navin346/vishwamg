@@ -21,7 +21,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ setActiveModal, openLinkB
     }
 
     const SectionHeader: React.FC<{ title: string }> = ({ title }) => (
-        <h3 className="text-xs font-bold text-gray-500 dark:text-neutral-400 uppercase tracking-wider mb-2 px-4 mt-8">{title}</h3>
+        <h3 className="text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider mb-2 px-4 mt-8">{title}</h3>
     );
 
     const MenuGroup: React.FC<{ children: React.ReactNode }> = ({ children }) => (
@@ -33,10 +33,10 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ setActiveModal, openLinkB
     const MenuItem: React.FC<{ icon: React.ReactNode, title: string, subtitle?: string, onClick?: () => void, rightElement?: React.ReactNode, isDestructive?: boolean }> = ({ icon, title, subtitle, onClick, rightElement, isDestructive }) => (
         <button onClick={onClick} className="w-full p-4 flex items-center justify-between border-b border-gray-100 dark:border-neutral-800 last:border-0 hover:bg-gray-50 dark:hover:bg-neutral-800 transition-colors text-left">
             <div className="flex items-center gap-3">
-                <div className={`${isDestructive ? 'text-red-500' : 'text-gray-500 dark:text-neutral-400'}`}>{icon}</div>
+                <div className={`${isDestructive ? 'text-red-500' : 'text-gray-500 dark:text-gray-400'}`}>{icon}</div>
                 <div>
                     <p className={`font-semibold text-sm ${isDestructive ? 'text-red-500' : 'text-gray-900 dark:text-white'}`}>{title}</p>
-                    {subtitle && <p className="text-xs text-gray-500 dark:text-neutral-400">{subtitle}</p>}
+                    {subtitle && <p className="text-xs text-gray-500 dark:text-gray-300">{subtitle}</p>}
                 </div>
             </div>
             {rightElement || <ChevronRight size={16} className="text-gray-400 dark:text-neutral-600" />}
@@ -47,7 +47,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ setActiveModal, openLinkB
         <div className="pb-24 min-h-full bg-gray-50 dark:bg-black pt-4">
             <div className="px-4 mb-6">
                 <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-1">Profile</h1>
-                <p className="text-gray-500 dark:text-neutral-400">Manage your account and settings</p>
+                <p className="text-gray-500 dark:text-gray-300">Manage your account and settings</p>
             </div>
 
             {/* Identity Card */}
@@ -57,7 +57,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ setActiveModal, openLinkB
                 </div>
                 <div className="flex-1">
                     <h2 className="text-lg font-bold text-gray-900 dark:text-white">J. Doe</h2>
-                    <p className="text-sm text-gray-500 dark:text-neutral-400">+1 (555) 123-4567</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-300">+1 (555) 123-4567</p>
                 </div>
                 <div className="flex flex-col items-end gap-1">
                     <span className={`text-[10px] font-bold px-2 py-1 rounded-full uppercase ${kycStatus === 'verified' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-amber-100 text-amber-700'}`}>
@@ -115,7 +115,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ setActiveModal, openLinkB
                 <MenuItem isDestructive icon={<LogOut size={20} />} title="Sign Out" onClick={() => window.location.reload()} />
             </MenuGroup>
             
-             <p className="text-center text-xs text-gray-400 dark:text-neutral-600 mt-8 mb-4">Vishwam v1.3.0</p>
+             <p className="text-center text-xs text-gray-400 dark:text-gray-600 mt-8 mb-4">Vishwam v1.3.0</p>
         </div>
     );
 };

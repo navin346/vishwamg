@@ -37,7 +37,7 @@ const PayScreen: React.FC<ModalProps> = ({ onClose, onGoToKyc }) => {
                     </div>
                     <div className="text-center py-4">
                          <h3 className="font-bold text-lg mb-2 text-gray-900 dark:text-white">Complete Your Setup</h3>
-                         <p className="text-sm text-gray-500 dark:text-neutral-400 mb-6">To pay contacts, please verify your identity (KYC) first.</p>
+                         <p className="text-sm text-gray-500 dark:text-gray-300 mb-6">To pay contacts, please verify your identity (KYC) first.</p>
                          <button onClick={onGoToKyc} className="w-full bg-violet-600 hover:bg-violet-700 text-white font-bold py-3 px-4 rounded-lg transition-transform transform active:scale-95">
                             Start KYC
                          </button>
@@ -52,14 +52,14 @@ const PayScreen: React.FC<ModalProps> = ({ onClose, onGoToKyc }) => {
     const InputView = () => (
         <>
             <div className="bg-gray-100 dark:bg-neutral-800 p-3 rounded-lg mb-4">
-                <p className="text-xs text-gray-500 dark:text-neutral-400">Paying</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Paying</p>
                 <p className="font-semibold text-gray-900 dark:text-white">{selectedContact?.name}</p>
-                <p className="text-sm text-gray-500 dark:text-neutral-400">{selectedContact?.phone}</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">{selectedContact?.phone}</p>
             </div>
             
             <div className="space-y-4">
                 <div>
-                    <label htmlFor="amount" className="text-sm font-medium text-gray-700 dark:text-neutral-300">Amount ({isIndiaMode ? 'INR' : 'USDC'})</label>
+                    <label htmlFor="amount" className="text-sm font-medium text-gray-700 dark:text-gray-200">Amount ({isIndiaMode ? 'INR' : 'USDC'})</label>
                     <div className="relative mt-1">
                             <span className="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-500">{isIndiaMode ? '₹' : '$'}</span>
                             <input
@@ -71,7 +71,7 @@ const PayScreen: React.FC<ModalProps> = ({ onClose, onGoToKyc }) => {
                     </div>
                 </div>
                  <div>
-                    <label htmlFor="note" className="text-sm font-medium text-gray-700 dark:text-neutral-300">Note (Optional)</label>
+                    <label htmlFor="note" className="text-sm font-medium text-gray-700 dark:text-gray-200">Note (Optional)</label>
                     <input
                         id="note"
                         type="text"
@@ -97,7 +97,7 @@ const PayScreen: React.FC<ModalProps> = ({ onClose, onGoToKyc }) => {
                 {mockContacts.map(contact => (
                     <button key={contact.phone} onClick={() => handleSelectContact(contact)} className="w-full text-left p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors">
                         <p className="font-semibold text-gray-900 dark:text-white">{contact.name}</p>
-                        <p className="text-sm text-gray-500 dark:text-neutral-400">{contact.phone}</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-300">{contact.phone}</p>
                     </button>
                 ))}
             </div>

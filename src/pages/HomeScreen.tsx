@@ -81,7 +81,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onTransactionClick, setActiveMo
                  <div className="absolute top-0 right-0 w-40 h-40 bg-indigo-500 rounded-full blur-[60px] opacity-20 -mr-10 -mt-10"></div>
                  <div className="relative z-10">
                     <div className="flex justify-between items-start">
-                        <p className="text-xs font-bold text-gray-500 dark:text-neutral-400 uppercase tracking-widest">Total Balance</p>
+                        <p className="text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-widest">Total Balance</p>
                         <div className="bg-green-500/20 px-2 py-1 rounded-md">
                              <span className="text-xs font-bold text-green-700 dark:text-green-400">▲ 2.4%</span>
                         </div>
@@ -90,7 +90,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onTransactionClick, setActiveMo
                         <h1 className="text-5xl font-bold tracking-tight text-gray-900 dark:text-white">
                             {currency}{balance}
                         </h1>
-                        <span className="text-xl font-medium text-gray-500 dark:text-neutral-400">{isInternational ? 'USDC' : 'INR'}</span>
+                        <span className="text-xl font-medium text-gray-500 dark:text-gray-300">{isInternational ? 'USDC' : 'INR'}</span>
                     </div>
                  </div>
             </div>
@@ -120,7 +120,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onTransactionClick, setActiveMo
             {/* Cards Section - Carousel */}
             <div className="space-y-4">
                 <div className="flex justify-between items-center px-1">
-                    <h2 className="text-xs font-bold text-gray-500 dark:text-neutral-400 tracking-widest uppercase">My Cards</h2>
+                    <h2 className="text-xs font-bold text-gray-500 dark:text-gray-300 tracking-widest uppercase">My Cards</h2>
                     <button className="text-indigo-600 dark:text-indigo-400 text-xs font-bold">Manage</button>
                 </div>
                 {isInternational ? (
@@ -179,12 +179,12 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onTransactionClick, setActiveMo
                                 className={`w-full text-left p-4 flex items-center justify-between bg-white/60 dark:bg-neutral-900/60 backdrop-blur-md border border-gray-100 dark:border-neutral-800 rounded-2xl transition-all hover:scale-[1.02]`}
                             >
                                 <div className="flex items-center gap-4">
-                                    <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-neutral-800 flex items-center justify-center text-gray-500 dark:text-neutral-400">
+                                    <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-neutral-800 flex items-center justify-center text-gray-500 dark:text-gray-400">
                                         <CreditCard size={18} />
                                     </div>
                                     <div>
                                         <p className="font-bold text-gray-900 dark:text-white text-sm">{tx.merchant}</p>
-                                        <p className="text-xs text-gray-500 dark:text-neutral-400 font-medium mt-0.5">{tx.category} • {tx.date}</p>
+                                        <p className="text-xs text-gray-500 dark:text-gray-300 font-medium mt-0.5">{tx.category} • {tx.date}</p>
                                     </div>
                                 </div>
                                 <div className="text-right">
@@ -193,7 +193,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onTransactionClick, setActiveMo
                                     </p>
                                 </div>
                             </button>
-                        )) : <p className="text-sm text-center py-8 text-gray-500 dark:text-neutral-500">No recent activity.</p>}
+                        )) : <p className="text-sm text-center py-8 text-gray-500 dark:text-gray-400">No recent activity.</p>}
                     </div>
                 )}
             </div>

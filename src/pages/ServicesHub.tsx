@@ -45,7 +45,7 @@ const ServicesHub: React.FC<ServicesHubProps> = ({ onPayBiller }) => {
                     {icon}
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 dark:text-white tracking-tight">{title}</h3>
-                <p className="text-sm text-gray-500 dark:text-neutral-400 mt-1 font-medium">{subtitle}</p>
+                <p className="text-sm text-gray-500 dark:text-gray-300 mt-1 font-medium">{subtitle}</p>
             </div>
         </button>
     );
@@ -66,7 +66,7 @@ const ServicesHub: React.FC<ServicesHubProps> = ({ onPayBiller }) => {
         <div className="p-5 space-y-6 pb-24 min-h-full">
             <div className="space-y-2">
                 <h1 className="text-4xl font-bold text-gray-900 dark:text-white tracking-tight">Services</h1>
-                <p className="text-gray-600 dark:text-neutral-400 text-base font-medium">Explore the financial hub.</p>
+                <p className="text-gray-600 dark:text-gray-300 text-base font-medium">Explore the financial hub.</p>
             </div>
 
             <div className="grid gap-4">

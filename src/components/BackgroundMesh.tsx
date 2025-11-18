@@ -6,7 +6,7 @@ const BackgroundMesh: React.FC = () => {
   const isDark = theme === 'dark';
 
   return (
-    <div className={`fixed inset-0 z-[-1] overflow-hidden pointer-events-none transition-colors duration-700 ${isDark ? 'bg-[#050505]' : 'bg-white'}`}>
+    <div className={`fixed inset-0 z-[-1] overflow-hidden pointer-events-none transition-colors duration-700 ${isDark ? 'bg-[#000000]' : 'bg-[#ffffff]'}`}>
       {/* CSS for continuous floating animation */}
       <style>
         {`
@@ -34,27 +34,27 @@ const BackgroundMesh: React.FC = () => {
         `}
       </style>
 
-      {/* Light Mode: Very subtle, "Whitish" graphic feel with pastels */}
-      {/* Dark Mode: Deep, ambient glow that doesn't reduce text contrast */}
+      {/* Light Mode: Pure white base with very faint, clean pastel blobs. */}
+      {/* Dark Mode: Deep black with ambient glow, not interfering with text. */}
 
       {/* Top Blob */}
       <div 
-        className={`absolute top-[-10%] left-[-10%] w-[80vw] h-[80vw] rounded-full filter blur-[80px] opacity-40 animate-float-1 ${
-          isDark ? 'bg-indigo-900/30 mix-blend-screen' : 'bg-indigo-100 mix-blend-multiply'
+        className={`absolute top-[-10%] left-[-10%] w-[80vw] h-[80vw] rounded-full filter blur-[80px] animate-float-1 ${
+          isDark ? 'bg-indigo-900/20 mix-blend-screen opacity-40' : 'bg-indigo-50 mix-blend-multiply opacity-60'
         }`} 
       />
       
       {/* Bottom Blob */}
       <div 
-        className={`absolute bottom-[-10%] right-[-10%] w-[80vw] h-[80vw] rounded-full filter blur-[90px] opacity-40 animate-float-2 ${
-          isDark ? 'bg-purple-900/20 mix-blend-screen' : 'bg-purple-100 mix-blend-multiply'
+        className={`absolute bottom-[-10%] right-[-10%] w-[80vw] h-[80vw] rounded-full filter blur-[90px] animate-float-2 ${
+          isDark ? 'bg-purple-900/20 mix-blend-screen opacity-40' : 'bg-purple-50 mix-blend-multiply opacity-60'
         }`} 
       />
 
       {/* Accent Blob (Middle/Side) */}
        <div 
-        className={`absolute top-[40%] left-[30%] w-[50vw] h-[50vw] rounded-full filter blur-[100px] opacity-30 animate-float-3 ${
-          isDark ? 'bg-blue-900/20 mix-blend-screen' : 'bg-sky-100 mix-blend-multiply'
+        className={`absolute top-[40%] left-[30%] w-[50vw] h-[50vw] rounded-full filter blur-[100px] animate-float-3 ${
+          isDark ? 'bg-blue-900/15 mix-blend-screen opacity-30' : 'bg-sky-50 mix-blend-multiply opacity-50'
         }`} 
       />
 
