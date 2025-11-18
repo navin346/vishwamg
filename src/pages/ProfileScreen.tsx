@@ -21,7 +21,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ setActiveModal, openLinkB
     }
 
     const SectionHeader: React.FC<{ title: string }> = ({ title }) => (
-        <h3 className="text-xs font-bold text-gray-500 dark:text-neutral-500 uppercase tracking-wider mb-2 px-4 mt-8">{title}</h3>
+        <h3 className="text-xs font-bold text-gray-500 dark:text-neutral-400 uppercase tracking-wider mb-2 px-4 mt-8">{title}</h3>
     );
 
     const MenuGroup: React.FC<{ children: React.ReactNode }> = ({ children }) => (
@@ -36,7 +36,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ setActiveModal, openLinkB
                 <div className={`${isDestructive ? 'text-red-500' : 'text-gray-500 dark:text-neutral-400'}`}>{icon}</div>
                 <div>
                     <p className={`font-semibold text-sm ${isDestructive ? 'text-red-500' : 'text-gray-900 dark:text-white'}`}>{title}</p>
-                    {subtitle && <p className="text-xs text-gray-500 dark:text-neutral-500">{subtitle}</p>}
+                    {subtitle && <p className="text-xs text-gray-500 dark:text-neutral-400">{subtitle}</p>}
                 </div>
             </div>
             {rightElement || <ChevronRight size={16} className="text-gray-400 dark:text-neutral-600" />}
@@ -57,7 +57,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ setActiveModal, openLinkB
                 </div>
                 <div className="flex-1">
                     <h2 className="text-lg font-bold text-gray-900 dark:text-white">J. Doe</h2>
-                    <p className="text-sm text-gray-500">+1 (555) 123-4567</p>
+                    <p className="text-sm text-gray-500 dark:text-neutral-400">+1 (555) 123-4567</p>
                 </div>
                 <div className="flex flex-col items-end gap-1">
                     <span className={`text-[10px] font-bold px-2 py-1 rounded-full uppercase ${kycStatus === 'verified' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-amber-100 text-amber-700'}`}>

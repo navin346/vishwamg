@@ -28,7 +28,7 @@ const GlobalPayScreen: React.FC<GlobalPayScreenProps> = ({ onBack }) => {
                 )}
                 <div className="space-y-0.5">
                     <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Global Lifestyle</h1>
-                    <p className="text-xs text-gray-500 dark:text-neutral-500 font-medium uppercase tracking-wider">Tools for the international citizen</p>
+                    <p className="text-xs text-gray-500 dark:text-neutral-400 font-medium uppercase tracking-wider">Tools for the international citizen</p>
                 </div>
             </div>
 

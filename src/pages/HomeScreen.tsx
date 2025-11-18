@@ -90,7 +90,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onTransactionClick, setActiveMo
                         <h1 className="text-5xl font-bold tracking-tight text-gray-900 dark:text-white">
                             {currency}{balance}
                         </h1>
-                        <span className="text-xl font-medium text-gray-500 dark:text-neutral-500">{isInternational ? 'USDC' : 'INR'}</span>
+                        <span className="text-xl font-medium text-gray-500 dark:text-neutral-400">{isInternational ? 'USDC' : 'INR'}</span>
                     </div>
                  </div>
             </div>
@@ -184,16 +184,16 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onTransactionClick, setActiveMo
                                     </div>
                                     <div>
                                         <p className="font-bold text-gray-900 dark:text-white text-sm">{tx.merchant}</p>
-                                        <p className="text-xs text-gray-500 dark:text-neutral-500 font-medium mt-0.5">{tx.category} • {tx.date}</p>
+                                        <p className="text-xs text-gray-500 dark:text-neutral-400 font-medium mt-0.5">{tx.category} • {tx.date}</p>
                                     </div>
                                 </div>
                                 <div className="text-right">
-                                     <p className={`font-bold text-sm ${tx.category === 'Income' ? 'text-emerald-600 dark:text-emerald-500' : 'text-gray-900 dark:text-white'}`}>
+                                     <p className={`font-bold text-sm ${tx.category === 'Income' ? 'text-emerald-600 dark:text-emerald-400' : 'text-gray-900 dark:text-white'}`}>
                                         {tx.category === 'Income' ? '+' : ''}{currency}{tx.amount.toFixed(2)}
                                     </p>
                                 </div>
                             </button>
-                        )) : <p className="text-sm text-center py-8 text-gray-500">No recent activity.</p>}
+                        )) : <p className="text-sm text-center py-8 text-gray-500 dark:text-neutral-500">No recent activity.</p>}
                     </div>
                 )}
             </div>
@@ -205,8 +205,6 @@ const ActionButton: React.FC<{ icon: React.ReactNode, label: string, onClick?: (
     const baseClasses = "flex flex-col items-center justify-center rounded-[1.5rem] h-24 w-full transition-all transform active:scale-95 backdrop-blur-md";
     
     // Updated variants for high contrast in dark mode
-    // Primary (Send): Black button in light, White button in dark.
-    // Secondary (Deposit/Withdraw): Light gray in light, Dark gray in dark.
     const variantClasses = variant === 'primary' 
         ? "bg-black text-white dark:bg-white dark:text-black shadow-xl shadow-indigo-500/20" 
         : "bg-white/70 dark:bg-neutral-900/70 text-gray-900 dark:text-white border border-gray-200 dark:border-neutral-800 shadow-sm";

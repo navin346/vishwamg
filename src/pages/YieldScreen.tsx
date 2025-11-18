@@ -23,7 +23,7 @@ const VaultItem: React.FC<{ name: string, apy: string, balance?: string, color: 
             {balance ? (
                 <>
                     <p className="font-bold text-gray-900 dark:text-white">{balance}</p>
-                    <p className="text-xs text-gray-500 dark:text-neutral-500">Balance</p>
+                    <p className="text-xs text-gray-500 dark:text-neutral-400">Balance</p>
                 </>
             ) : (
                 <button className="bg-black dark:bg-white text-white dark:text-black text-xs font-bold px-4 py-2 rounded-full">
@@ -69,7 +69,7 @@ const YieldScreen: React.FC<YieldScreenProps> = ({ onBack }) => {
 
             <div className="space-y-4">
                 <div className="flex justify-between items-center px-1">
-                    <h3 className="text-sm font-bold text-gray-500 dark:text-neutral-500 uppercase tracking-wider">Available Vaults</h3>
+                    <h3 className="text-sm font-bold text-gray-500 dark:text-neutral-400 uppercase tracking-wider">Available Vaults</h3>
                     <button className="text-black dark:text-white bg-gray-100 dark:bg-neutral-800 p-2 rounded-full">
                         <Plus size={18} />
                     </button>

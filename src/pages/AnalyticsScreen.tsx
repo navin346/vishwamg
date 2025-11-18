@@ -210,7 +210,7 @@ const AnalyticsScreen: React.FC<AnalyticsScreenProps> = ({ onTransactionClick })
                                 <CategoryIcon category={tx.category} />
                                 <div className="text-left">
                                     <p className="font-bold text-gray-900 dark:text-white text-sm">{tx.merchant}</p>
-                                    <p className="text-xs text-gray-500 dark:text-neutral-500 mt-0.5">{tx.date}</p>
+                                    <p className="text-xs text-gray-500 dark:text-neutral-400 mt-0.5">{tx.date}</p>
                                 </div>
                             </div>
                             <div className="text-right">
