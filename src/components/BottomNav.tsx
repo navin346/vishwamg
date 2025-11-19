@@ -24,7 +24,7 @@ const NavItem: React.FC<{
   return (
     <button
       onClick={handleClick}
-      className={`flex flex-col items-center justify-center w-16 h-full transition-all duration-200 group ${isActive ? 'text-black dark:text-white' : 'text-gray-400 dark:text-neutral-500 hover:text-gray-600 dark:hover:text-neutral-300'}`}
+      className={`flex flex-col items-center justify-center w-16 h-full transition-all duration-200 group ${isActive ? 'text-gray-900' : 'text-gray-400 hover:text-gray-600'}`}
     >
       <div className={`transition-transform duration-200 ${isActive ? '-translate-y-1' : ''}`}>
         {icon}
@@ -41,17 +41,17 @@ const BottomNav: React.FC<BottomNavProps> = ({ activePage, setActivePage, onScan
   }
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 h-20 bg-white/90 dark:bg-[#0A0A0A]/90 backdrop-blur-xl border-t border-gray-200 dark:border-white/10 z-50 pb-safe">
+    <div className="fixed bottom-0 left-0 right-0 h-20 bg-white/90 backdrop-blur-xl border-t border-gray-100 z-50 pb-safe shadow-[0_-4px_20px_rgba(0,0,0,0.03)]">
       <div className="relative flex justify-between items-center h-full px-2 max-w-md mx-auto">
         
         <NavItem label="Home" page="home" activePage={activePage} setActivePage={setActivePage} icon={<Home size={24} strokeWidth={activePage === 'home' ? 2.5 : 2} />} />
         <NavItem label="Analytics" page="analytics" activePage={activePage} setActivePage={setActivePage} icon={<BarChart3 size={24} strokeWidth={activePage === 'analytics' ? 2.5 : 2} />} />
         
-        {/* Floating Scan Button */}
+        {/* Floating Scan Button - Aave Style (White or Black) */}
         <div className="relative -top-6">
             <button 
                 onClick={handleScan}
-                className="w-16 h-16 rounded-full bg-black dark:bg-white text-white dark:text-black shadow-2xl shadow-indigo-500/30 flex items-center justify-center transform transition-transform active:scale-90 border-4 border-white dark:border-[#0A0A0A]"
+                className="w-16 h-16 rounded-full bg-gray-900 text-white shadow-xl shadow-gray-900/20 flex items-center justify-center transform transition-transform active:scale-90 border-[4px] border-white"
             >
                 <ScanLine size={28} strokeWidth={2.5} />
             </button>

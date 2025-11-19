@@ -1,65 +1,47 @@
 import React from 'react';
-import { useTheme } from '@/src/context/ThemeContext';
 
 const BackgroundMesh: React.FC = () => {
-  const { theme } = useTheme();
-  const isDark = theme === 'dark';
-
   return (
-    <div className={`fixed inset-0 z-[-1] overflow-hidden pointer-events-none transition-colors duration-700 ${isDark ? 'bg-[#000000]' : 'bg-[#ffffff]'}`}>
-      {/* CSS for continuous floating animation */}
+    <div className="fixed inset-0 z-[-1] overflow-hidden pointer-events-none bg-[#FDFDFD]">
       <style>
         {`
-          @keyframes float-slow {
-            0% { transform: translate(0, 0) scale(1); }
-            33% { transform: translate(30px, -50px) scale(1.1); }
-            66% { transform: translate(-20px, 20px) scale(0.9); }
-            100% { transform: translate(0, 0) scale(1); }
+          @keyframes float-gentle {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -30px) scale(1.05); }
+            66% { transform: translate(-20px, 20px) scale(0.95); }
           }
-          @keyframes float-slower {
-            0% { transform: translate(0, 0) scale(1); }
-            33% { transform: translate(-30px, 50px) scale(1.2); }
-            66% { transform: translate(20px, -20px) scale(0.8); }
-            100% { transform: translate(0, 0) scale(1); }
+          @keyframes float-drift {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(-40px, 10px) scale(1.1); }
           }
-          @keyframes float-reverse {
-            0% { transform: translate(0, 0) scale(1); }
-            33% { transform: translate(-20px, 30px) scale(0.9); }
-            66% { transform: translate(30px, -40px) scale(1.1); }
-            100% { transform: translate(0, 0) scale(1); }
-          }
-          .animate-float-1 { animation: float-slow 18s ease-in-out infinite; }
-          .animate-float-2 { animation: float-slower 24s ease-in-out infinite; }
-          .animate-float-3 { animation: float-reverse 20s ease-in-out infinite; }
         `}
       </style>
 
-      {/* Light Mode: Pure white base with very faint, clean pastel blobs. */}
-      {/* Dark Mode: Deep black with ambient glow, not interfering with text. */}
+      {/* Premium Light Aesthetics - "Aave-like"
+          Using very soft, high-key gradients that blend into white. 
+          Avoids muddiness by keeping opacity low and blur high.
+      */}
 
-      {/* Top Blob */}
+      {/* Top Left - Soft Violet/Blue */}
       <div 
-        className={`absolute top-[-10%] left-[-10%] w-[80vw] h-[80vw] rounded-full filter blur-[80px] animate-float-1 ${
-          isDark ? 'bg-indigo-900/20 mix-blend-screen opacity-40' : 'bg-indigo-50 mix-blend-multiply opacity-60'
-        }`} 
+        className="absolute top-[-10%] left-[-10%] w-[70vw] h-[70vw] rounded-full mix-blend-multiply filter blur-[80px] opacity-20 animate-[float-gentle_15s_ease-in-out_infinite]"
+        style={{ background: 'radial-gradient(circle, #a78bfa 0%, transparent 70%)' }} 
       />
       
-      {/* Bottom Blob */}
+      {/* Top Right - Soft Pink/Fuchsia */}
       <div 
-        className={`absolute bottom-[-10%] right-[-10%] w-[80vw] h-[80vw] rounded-full filter blur-[90px] animate-float-2 ${
-          isDark ? 'bg-purple-900/20 mix-blend-screen opacity-40' : 'bg-purple-50 mix-blend-multiply opacity-60'
-        }`} 
+        className="absolute top-[0%] right-[-10%] w-[60vw] h-[60vw] rounded-full mix-blend-multiply filter blur-[80px] opacity-20 animate-[float-drift_20s_ease-in-out_infinite]"
+        style={{ background: 'radial-gradient(circle, #f472b6 0%, transparent 70%)' }} 
       />
 
-      {/* Accent Blob (Middle/Side) */}
-       <div 
-        className={`absolute top-[40%] left-[30%] w-[50vw] h-[50vw] rounded-full filter blur-[100px] animate-float-3 ${
-          isDark ? 'bg-blue-900/15 mix-blend-screen opacity-30' : 'bg-sky-50 mix-blend-multiply opacity-50'
-        }`} 
+      {/* Bottom Center - Soft Cyan/Teal */}
+      <div 
+        className="absolute bottom-[-10%] left-[20%] w-[80vw] h-[80vw] rounded-full mix-blend-multiply filter blur-[100px] opacity-15 animate-[float-gentle_18s_ease-in-out_infinite_reverse]"
+        style={{ background: 'radial-gradient(circle, #22d3ee 0%, transparent 70%)' }} 
       />
-
-      {/* Noise Overlay for Texture - Extremely subtle */}
-      <div className="absolute inset-0 opacity-[0.015] bg-[url('https://grainy-gradients.vercel.app/noise.svg')] brightness-100 contrast-150"></div>
+      
+      {/* Subtle texture overlay for paper-like feel */}
+      <div className="absolute inset-0 opacity-[0.02] bg-[url('https://grainy-gradients.vercel.app/noise.svg')] brightness-100 contrast-150"></div>
     </div>
   );
 };

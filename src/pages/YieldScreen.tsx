@@ -1,20 +1,20 @@
 import React from 'react';
-import { ArrowLeft, Info, Plus, TrendingUp, ShieldCheck } from 'lucide-react';
+import { ArrowLeft, Plus, TrendingUp, ShieldCheck } from 'lucide-react';
 import { useAppContext } from '@/src/context/AppContext';
 
 interface YieldScreenProps {
     onBack?: () => void;
 }
 
-const VaultItem: React.FC<{ name: string, apy: string, balance?: string, color: string }> = ({ name, apy, balance, color }) => (
-    <div className="bg-white dark:bg-[#0A0A0A] border border-gray-200 dark:border-white/10 rounded-2xl p-5 flex items-center justify-between hover:border-gray-300 dark:hover:border-white/20 transition-all group">
+const VaultItem: React.FC<{ name: string, apy: string, balance?: string, colorClass: string }> = ({ name, apy, balance, colorClass }) => (
+    <div className="bg-white border border-gray-100 rounded-[1.5rem] p-5 flex items-center justify-between hover:border-violet-100 hover:shadow-md transition-all group shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
         <div className="flex items-center gap-4">
-            <div className={`w-12 h-12 rounded-full ${color} bg-opacity-20 flex items-center justify-center text-lg font-bold shadow-sm`}>
+            <div className={`w-12 h-12 rounded-full ${colorClass} flex items-center justify-center text-lg font-bold shadow-sm`}>
                 {name[0]}
             </div>
             <div>
-                <h3 className="font-bold text-gray-900 dark:text-white">{name}</h3>
-                <p className="text-xs font-medium text-green-600 dark:text-green-400 flex items-center gap-1">
+                <h3 className="font-bold text-gray-900 text-lg">{name}</h3>
+                <p className="text-xs font-bold text-emerald-600 flex items-center gap-1 mt-0.5 bg-emerald-50 px-2 py-0.5 rounded-md w-fit">
                     <TrendingUp size={12} /> {apy} APY
                 </p>
             </div>
@@ -22,11 +22,11 @@ const VaultItem: React.FC<{ name: string, apy: string, balance?: string, color: 
         <div className="text-right">
             {balance ? (
                 <>
-                    <p className="font-bold text-gray-900 dark:text-white">{balance}</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-300">Balance</p>
+                    <p className="font-bold text-gray-900 text-lg">{balance}</p>
+                    <p className="text-xs text-gray-400 font-medium">Balance</p>
                 </>
             ) : (
-                <button className="bg-black dark:bg-white text-white dark:text-black text-xs font-bold px-4 py-2 rounded-full">
+                <button className="bg-gray-900 text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-lg shadow-gray-900/10 hover:bg-black transition-colors">
                     Start
                 </button>
             )}
@@ -41,51 +41,52 @@ const YieldScreen: React.FC<YieldScreenProps> = ({ onBack }) => {
     const title = isInternational ? 'Smart Vaults' : 'Growth Pots';
 
     return (
-        <div className="p-5 space-y-8 pb-24 min-h-full bg-gray-50 dark:bg-black">
-            <div className="flex items-center gap-3">
+        <div className="p-6 space-y-8 pb-24 min-h-full bg-[#FDFDFD]">
+            <div className="flex items-center gap-3 pt-2">
                 {onBack && (
-                    <button onClick={onBack} className="p-2 rounded-full bg-gray-100 dark:bg-neutral-900 text-gray-600 dark:text-white">
+                    <button onClick={onBack} className="p-2 rounded-full bg-white border border-gray-100 text-gray-600 shadow-sm hover:bg-gray-50">
                         <ArrowLeft size={20} />
                     </button>
                 )}
                 <div className="flex-1">
-                    <h1 className="text-3xl font-bold text-gray-900 dark:text-white tracking-tight">{title}</h1>
+                    <h1 className="text-3xl font-bold text-gray-900 tracking-tight">{title}</h1>
                 </div>
             </div>
 
-            {/* Total Balance Card */}
-            <div className="bg-black dark:bg-white rounded-[2rem] p-8 text-white dark:text-black shadow-2xl relative overflow-hidden">
+            {/* Total Balance Card - Premium Black or Deep Violet for Contrast */}
+            <div className="bg-gray-900 rounded-[2.5rem] p-8 text-white shadow-2xl shadow-gray-900/20 relative overflow-hidden">
                 <div className="relative z-10">
-                    <p className="text-sm font-medium opacity-60 uppercase tracking-widest mb-2">Total Earnings</p>
-                    <h2 className="text-5xl font-bold tracking-tighter">{currencySymbol}124.50</h2>
-                    <div className="mt-6 flex items-center gap-2 text-sm font-medium opacity-80">
+                    <p className="text-sm font-bold opacity-60 uppercase tracking-widest mb-2">Total Earnings</p>
+                    <h2 className="text-[3.5rem] leading-none font-bold tracking-tighter">{currencySymbol}124.50</h2>
+                    <div className="mt-8 flex items-center gap-2 text-sm font-medium text-gray-300 bg-white/10 px-3 py-1.5 rounded-lg w-fit backdrop-blur-md">
                         <ShieldCheck size={16} />
                         <span>Assets 100% Backed & Audited</span>
                     </div>
                 </div>
-                {/* Decorative circle */}
-                <div className="absolute -right-10 -top-10 w-40 h-40 rounded-full border-[20px] border-white/10 dark:border-black/10"></div>
+                {/* Decorative elements */}
+                <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-violet-500 to-transparent rounded-full -mr-20 -mt-20 opacity-30 blur-3xl"></div>
+                <div className="absolute bottom-0 left-0 w-40 h-40 bg-blue-500 rounded-full -ml-10 -mb-10 opacity-20 blur-3xl"></div>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-5">
                 <div className="flex justify-between items-center px-1">
-                    <h3 className="text-sm font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Available Vaults</h3>
-                    <button className="text-black dark:text-white bg-gray-100 dark:bg-neutral-800 p-2 rounded-full">
+                    <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider">Available Vaults</h3>
+                    <button className="text-gray-900 bg-white border border-gray-200 p-2 rounded-full shadow-sm hover:bg-gray-50">
                         <Plus size={18} />
                     </button>
                 </div>
                 
                 {isInternational ? (
                     <>
-                        <VaultItem name="USDC Core" apy="5.2%" color="bg-blue-500 text-blue-500" />
-                        <VaultItem name="Ethereum" apy="3.8%" color="bg-purple-500 text-purple-500" balance="0.45 ETH" />
-                        <VaultItem name="Bitcoin" apy="1.5%" color="bg-orange-500 text-orange-500" />
+                        <VaultItem name="USDC Core" apy="5.2%" colorClass="bg-blue-100 text-blue-600" />
+                        <VaultItem name="Ethereum" apy="3.8%" colorClass="bg-purple-100 text-purple-600" balance="0.45 ETH" />
+                        <VaultItem name="Bitcoin" apy="1.5%" colorClass="bg-orange-100 text-orange-600" />
                     </>
                 ) : (
                     <>
-                        <VaultItem name="Nifty 50" apy="12.5%" color="bg-blue-500 text-blue-500" />
-                        <VaultItem name="Digital Gold" apy="2.5%" color="bg-yellow-500 text-yellow-500" balance="1.2g" />
-                        <VaultItem name="Liquid Pot" apy="6.8%" color="bg-teal-500 text-teal-500" />
+                        <VaultItem name="Nifty 50" apy="12.5%" colorClass="bg-blue-100 text-blue-600" />
+                        <VaultItem name="Digital Gold" apy="2.5%" colorClass="bg-yellow-100 text-yellow-600" balance="1.2g" />
+                        <VaultItem name="Liquid Pot" apy="6.8%" colorClass="bg-teal-100 text-teal-600" />
                     </>
                 )}
             </div>

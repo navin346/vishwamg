@@ -5,7 +5,7 @@ import { db } from '@/src/firebase';
 import { TransactionSummary } from '@/src/data';
 import VirtualCard from '@/src/components/VirtualCard';
 import { ActiveModal } from '@/src/MainApp';
-import { ArrowDownLeft, ArrowUpRight, Download, CreditCard, Plus, ChevronRight } from 'lucide-react';
+import { ArrowDownLeft, ArrowUpRight, Download, CreditCard, Plus, Sparkles } from 'lucide-react';
 import { triggerHaptic } from '@/src/utils/haptics';
 
 // Mock card details
@@ -76,21 +76,26 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onTransactionClick, setActiveMo
     
     return (
         <div className="p-5 space-y-8 pb-24">
-            {/* Balance Header */}
-            <div className="relative overflow-hidden rounded-[2rem] bg-white/10 dark:bg-white/5 backdrop-blur-md border border-white/20 dark:border-white/10 p-6 shadow-2xl">
-                 <div className="absolute top-0 right-0 w-40 h-40 bg-indigo-500 rounded-full blur-[60px] opacity-20 -mr-10 -mt-10"></div>
+            {/* Aave-inspired Balance Card: Clean white with subtle border/gradient */}
+            <div className="relative overflow-hidden rounded-[2.5rem] bg-white border border-gray-100 p-8 shadow-[0_8px_30px_rgba(0,0,0,0.04)]">
+                 {/* Decorative ambient gradient */}
+                 <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-violet-50 to-transparent rounded-full -mr-16 -mt-16 opacity-60 pointer-events-none"></div>
+                 
                  <div className="relative z-10">
-                    <div className="flex justify-between items-start">
-                        <p className="text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-widest">Total Balance</p>
-                        <div className="bg-green-500/20 px-2 py-1 rounded-md">
-                             <span className="text-xs font-bold text-green-700 dark:text-green-400">▲ 2.4%</span>
+                    <div className="flex justify-between items-center mb-4">
+                         <div className="flex items-center gap-2 px-3 py-1 bg-gray-50 rounded-full border border-gray-100">
+                            <Sparkles size={12} className="text-violet-600" />
+                            <span className="text-[10px] font-bold text-gray-600 uppercase tracking-wider">Total Balance</span>
+                         </div>
+                        <div className="bg-emerald-50 px-2 py-1 rounded-md border border-emerald-100">
+                             <span className="text-xs font-bold text-emerald-700">▲ 2.4%</span>
                         </div>
                     </div>
-                    <div className="flex items-baseline gap-1 mt-2">
-                        <h1 className="text-5xl font-bold tracking-tight text-gray-900 dark:text-white">
+                    <div className="flex flex-col">
+                        <h1 className="text-[3.5rem] leading-none font-bold tracking-tighter text-gray-900">
                             {currency}{balance}
                         </h1>
-                        <span className="text-xl font-medium text-gray-500 dark:text-gray-300">{isInternational ? 'USDC' : 'INR'}</span>
+                        <span className="text-lg font-medium text-gray-400 mt-2 ml-1">{isInternational ? 'USDC' : 'INR'}</span>
                     </div>
                  </div>
             </div>
@@ -98,7 +103,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onTransactionClick, setActiveMo
             {/* Action Grid */}
             <div className="grid grid-cols-3 gap-4">
                 <ActionButton 
-                    icon={<ArrowUpRight className="w-6 h-6" />} 
+                    icon={<ArrowUpRight className="w-6 h-6 text-white" />} 
                     label="Send" 
                     onClick={() => handleProtectedAction('pay')} 
                     variant="primary"
@@ -120,8 +125,8 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onTransactionClick, setActiveMo
             {/* Cards Section - Carousel */}
             <div className="space-y-4">
                 <div className="flex justify-between items-center px-1">
-                    <h2 className="text-xs font-bold text-gray-500 dark:text-gray-300 tracking-widest uppercase">My Cards</h2>
-                    <button className="text-indigo-600 dark:text-indigo-400 text-xs font-bold">Manage</button>
+                    <h2 className="text-xs font-bold text-gray-500 tracking-widest uppercase">My Cards</h2>
+                    <button className="text-violet-600 text-xs font-bold hover:bg-violet-50 px-2 py-1 rounded-md transition-colors">Manage</button>
                 </div>
                 {isInternational ? (
                     <div className="flex overflow-x-auto gap-4 pb-4 snap-x snap-mandatory scrollbar-hide">
@@ -131,9 +136,9 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onTransactionClick, setActiveMo
                          </div>
                          {/* Card 2 (Placeholder) */}
                          <div className="min-w-[85%] snap-center opacity-90">
-                             <div className="relative w-full aspect-[1.586] bg-gradient-to-br from-gray-800 to-black rounded-xl p-6 text-white border border-white/10 flex flex-col justify-between">
+                             <div className="relative w-full aspect-[1.586] bg-gradient-to-br from-gray-900 to-black rounded-xl p-6 text-white border border-gray-200 flex flex-col justify-between shadow-xl">
                                  <div className="flex justify-between">
-                                     <span className="text-xs font-mono">Metal</span>
+                                     <span className="text-xs font-mono text-gray-400">Metal</span>
                                      <span className="text-xs font-bold italic">VISA</span>
                                  </div>
                                  <div className="text-center">
@@ -144,56 +149,58 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onTransactionClick, setActiveMo
                          </div>
                          {/* Add Card Button */}
                          <div className="min-w-[20%] snap-center flex items-center">
-                            <button className="w-14 h-14 rounded-full bg-gray-200 dark:bg-neutral-800 flex items-center justify-center mx-auto">
-                                <Plus className="text-gray-500" />
+                            <button className="w-14 h-14 rounded-full bg-white border-2 border-dashed border-gray-300 flex items-center justify-center mx-auto shadow-sm">
+                                <Plus className="text-gray-400" />
                             </button>
                          </div>
                     </div>
                 ) : (
-                    <button className="w-full h-48 rounded-3xl border-2 border-dashed border-gray-300 dark:border-neutral-800 flex flex-col items-center justify-center text-gray-400 dark:text-neutral-600 hover:bg-gray-100 dark:hover:bg-neutral-900 transition-colors group bg-white/50 dark:bg-black/50 backdrop-blur-sm">
-                        <div className="w-14 h-14 rounded-full bg-gray-200 dark:bg-neutral-800 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform text-gray-500 dark:text-neutral-400">
+                    <button className="w-full h-40 rounded-3xl bg-white border border-gray-100 shadow-sm flex flex-col items-center justify-center group transition-all active:scale-98">
+                        <div className="w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center mb-3 text-gray-400 group-hover:bg-violet-50 group-hover:text-violet-600 transition-colors">
                             <Plus className="w-6 h-6" />
                         </div>
-                        <span className="font-medium text-sm text-gray-900 dark:text-gray-300">Order Physical Card</span>
+                        <span className="font-bold text-sm text-gray-900">Order Physical Card</span>
+                        <span className="text-xs text-gray-400 mt-1">Free for premium members</span>
                     </button>
                 )}
             </div>
 
             {/* Transactions List */}
-            <div className="space-y-2">
+            <div className="space-y-3">
                 <div className="flex justify-between items-end mb-2 px-1">
-                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">Recent Activity</h3>
+                    <h3 className="text-lg font-bold text-gray-900">Recent Activity</h3>
+                    <button className="text-xs font-bold text-gray-400 hover:text-gray-600">View All</button>
                 </div>
                 
                 {loading ? (
                     // Skeleton Loader
                     [1,2,3].map(i => (
-                        <div key={i} className="w-full h-16 bg-gray-200 dark:bg-neutral-800 rounded-2xl animate-pulse" />
+                        <div key={i} className="w-full h-20 bg-white rounded-2xl animate-pulse shadow-sm border border-gray-50" />
                     ))
                 ) : (
-                    <div className="space-y-2 relative">
+                    <div className="space-y-3">
                         {transactions.length > 0 ? transactions.map((tx, index) => (
                             <button 
                                 key={tx.id} 
                                 onClick={() => onTransactionClick(tx)} 
-                                className={`w-full text-left p-4 flex items-center justify-between bg-white/60 dark:bg-neutral-900/60 backdrop-blur-md border border-gray-100 dark:border-neutral-800 rounded-2xl transition-all hover:scale-[1.02]`}
+                                className="w-full text-left p-4 flex items-center justify-between bg-white rounded-[1.25rem] border border-gray-50 shadow-[0_2px_10px_rgba(0,0,0,0.02)] transition-all hover:shadow-md hover:-translate-y-0.5 active:translate-y-0"
                             >
                                 <div className="flex items-center gap-4">
-                                    <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-neutral-800 flex items-center justify-center text-gray-500 dark:text-gray-400">
-                                        <CreditCard size={18} />
+                                    <div className="w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center text-gray-500 border border-gray-100">
+                                        <CreditCard size={20} />
                                     </div>
                                     <div>
-                                        <p className="font-bold text-gray-900 dark:text-white text-sm">{tx.merchant}</p>
-                                        <p className="text-xs text-gray-500 dark:text-gray-300 font-medium mt-0.5">{tx.category} • {tx.date}</p>
+                                        <p className="font-bold text-gray-900 text-base">{tx.merchant}</p>
+                                        <p className="text-xs text-gray-500 font-medium mt-0.5">{tx.category} • {tx.date}</p>
                                     </div>
                                 </div>
                                 <div className="text-right">
-                                     <p className={`font-bold text-sm ${tx.category === 'Income' ? 'text-emerald-600 dark:text-emerald-400' : 'text-gray-900 dark:text-white'}`}>
+                                     <p className={`font-bold text-base ${tx.category === 'Income' ? 'text-emerald-600' : 'text-gray-900'}`}>
                                         {tx.category === 'Income' ? '+' : ''}{currency}{tx.amount.toFixed(2)}
                                     </p>
                                 </div>
                             </button>
-                        )) : <p className="text-sm text-center py-8 text-gray-500 dark:text-gray-400">No recent activity.</p>}
+                        )) : <p className="text-sm text-center py-8 text-gray-400">No recent activity.</p>}
                     </div>
                 )}
             </div>
@@ -202,17 +209,18 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onTransactionClick, setActiveMo
 };
 
 const ActionButton: React.FC<{ icon: React.ReactNode, label: string, onClick?: () => void, variant: 'primary' | 'secondary' }> = ({ icon, label, onClick, variant }) => {
-    const baseClasses = "flex flex-col items-center justify-center rounded-[1.5rem] h-24 w-full transition-all transform active:scale-95 backdrop-blur-md";
+    const baseClasses = "flex flex-col items-center justify-center rounded-[1.75rem] h-24 w-full transition-all transform active:scale-95";
     
-    // Updated variants for high contrast in dark mode
+    // Primary: Solid Black/Dark Gray
+    // Secondary: White with shadow
     const variantClasses = variant === 'primary' 
-        ? "bg-black text-white dark:bg-white dark:text-black shadow-xl shadow-indigo-500/20" 
-        : "bg-white/70 dark:bg-neutral-900/70 text-gray-900 dark:text-white border border-gray-200 dark:border-neutral-800 shadow-sm";
+        ? "bg-gray-900 text-white shadow-lg shadow-gray-900/20 hover:bg-black" 
+        : "bg-white text-gray-900 border border-gray-100 shadow-sm hover:bg-gray-50";
 
     return (
         <button onClick={onClick} className={`${baseClasses} ${variantClasses}`}>
-            <div className="mb-1">{icon}</div>
-            <span className="text-xs font-bold">{label}</span>
+            <div className={`mb-1 ${variant === 'secondary' ? 'text-gray-900' : ''}`}>{icon}</div>
+            <span className="text-xs font-bold mt-1">{label}</span>
         </button>
     )
 }
