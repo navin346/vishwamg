@@ -6,7 +6,7 @@ import PieChart from '@/src/components/charts/PieChart';
 import BarChart from '@/src/components/charts/BarChart';
 import { TransactionSummary } from '@/src/data';
 import { 
-    Search, ArrowUpDown, Utensils, ShoppingBag, Car, Film, Receipt, Wallet, CreditCard, Filter
+    Search, ArrowUpDown, Utensils, ShoppingBag, Car, Film, Receipt, Wallet, CreditCard, X
 } from 'lucide-react';
 
 type Timeframe = 'week' | 'month' | 'all';
@@ -27,25 +27,25 @@ const FALLBACK_TRANSACTIONS: TransactionSummary[] = [
 
 const CategoryIcon: React.FC<{ category: string }> = ({ category }) => {
     const baseClass = "w-10 h-10 rounded-xl flex items-center justify-center shadow-sm transition-transform hover:scale-105 border border-transparent";
-    switch (category.toLowerCase()) {
-        case 'food': return <div className={`${baseClass} bg-orange-50 text-orange-600`}><Utensils size={20} /></div>;
-        case 'shopping': return <div className={`${baseClass} bg-blue-50 text-blue-600`}><ShoppingBag size={20} /></div>;
-        case 'travel': return <div className={`${baseClass} bg-yellow-50 text-yellow-600`}><Car size={20} /></div>;
-        case 'entertainment': return <div className={`${baseClass} bg-purple-50 text-purple-600`}><Film size={20} /></div>;
-        case 'bills': return <div className={`${baseClass} bg-red-50 text-red-600`}><Receipt size={20} /></div>;
-        case 'income': return <div className={`${baseClass} bg-emerald-50 text-emerald-600`}><Wallet size={20} /></div>;
-        default: return <div className={`${baseClass} bg-gray-50 text-gray-600`}><CreditCard size={20} /></div>;
-    }
+    const lowerCat = category.toLowerCase();
+    
+    if (lowerCat.includes('food')) return <div className={`${baseClass} bg-orange-50 text-orange-600`}><Utensils size={20} /></div>;
+    if (lowerCat.includes('shop')) return <div className={`${baseClass} bg-blue-50 text-blue-600`}><ShoppingBag size={20} /></div>;
+    if (lowerCat.includes('travel') || lowerCat.includes('transport')) return <div className={`${baseClass} bg-yellow-50 text-yellow-600`}><Car size={20} /></div>;
+    if (lowerCat.includes('entertain')) return <div className={`${baseClass} bg-purple-50 text-purple-600`}><Film size={20} /></div>;
+    if (lowerCat.includes('bill')) return <div className={`${baseClass} bg-red-50 text-red-600`}><Receipt size={20} /></div>;
+    if (lowerCat.includes('income')) return <div className={`${baseClass} bg-emerald-50 text-emerald-600`}><Wallet size={20} /></div>;
+    
+    return <div className={`${baseClass} bg-gray-50 text-gray-600`}><CreditCard size={20} /></div>;
 };
 
 const AnalyticsScreen: React.FC<AnalyticsScreenProps> = ({ onTransactionClick }) => {
-    const { user, userMode } = useAppContext();
+    const { user, userMode, categories } = useAppContext(); // Use dynamic categories
     const [timeframe, setTimeframe] = useState<Timeframe>('month');
     const [transactions, setTransactions] = useState<TransactionSummary[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const [sortOrder, setSortOrder] = useState<'desc' | 'asc'>('desc');
-    const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [selectedCategoryFilter, setSelectedCategoryFilter] = useState<string | null>(null);
 
     const isInternational = userMode === 'INTERNATIONAL';
@@ -125,56 +125,73 @@ const AnalyticsScreen: React.FC<AnalyticsScreenProps> = ({ onTransactionClick })
 
     return (
         <div className="flex flex-col h-full bg-transparent">
-            {/* Header */}
-            <div className="sticky top-0 z-20 bg-white/90 backdrop-blur-xl border-b border-gray-100 p-4 space-y-4">
-                <div className="flex justify-between items-center">
-                    <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Analytics</h1>
-                    <div className="flex gap-2">
-                         <button onClick={() => setIsFilterOpen(!isFilterOpen)} className={`p-2 rounded-full transition-all ${isFilterOpen ? 'bg-violet-100 text-violet-600' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
-                            <Filter size={20} />
+            {/* Header with Search, Filters and Sort */}
+            <div className="sticky top-0 z-20 bg-white/95 backdrop-blur-xl border-b border-gray-100 pb-2 pt-safe-top">
+                <div className="px-4 py-3">
+                    <div className="flex justify-between items-center mb-4">
+                        <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Analytics</h1>
+                        <button 
+                            onClick={() => setSortOrder(prev => prev === 'desc' ? 'asc' : 'desc')} 
+                            className="flex items-center gap-1 text-xs font-bold text-violet-600 bg-violet-50 px-3 py-1.5 rounded-full active:scale-95 transition-transform"
+                        >
+                             {sortOrder === 'desc' ? 'Newest First' : 'Oldest First'} 
+                             <ArrowUpDown size={12} className={`transition-transform ${sortOrder === 'asc' ? 'rotate-180' : ''}`} />
                         </button>
                     </div>
-                </div>
 
-                {isFilterOpen && (
-                    <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide animate-in slide-in-from-top-2 fade-in">
-                         {['Food', 'Travel', 'Shopping', 'Entertainment', 'Bills'].map(cat => (
+                    <div className="flex gap-3 mb-4">
+                        <div className="relative flex-1">
+                            <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
+                            <input 
+                                type="text" 
+                                placeholder="Search transactions..." 
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                className="w-full pl-9 pr-3 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-sm text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-violet-100 focus:bg-white focus:border-violet-200 transition-all outline-none"
+                            />
+                            {searchQuery && (
+                                <button onClick={() => setSearchQuery('')} className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600">
+                                    <X size={16} />
+                                </button>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Filters - Always Visible Horizontal Scroll */}
+                    <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide -mx-4 px-4">
+                         <button 
+                            onClick={() => setSelectedCategoryFilter(null)}
+                            className={`px-4 py-1.5 rounded-full text-xs font-bold whitespace-nowrap border transition-all ${selectedCategoryFilter === null ? 'bg-gray-900 text-white border-gray-900' : 'bg-white text-gray-500 border-gray-200 hover:border-gray-300'}`}
+                         >
+                            All
+                         </button>
+                         {categories.map(cat => (
                              <button 
                                 key={cat}
                                 onClick={() => setSelectedCategoryFilter(prev => prev === cat ? null : cat)}
-                                className={`px-4 py-1.5 rounded-full text-xs font-bold whitespace-nowrap border transition-all ${selectedCategoryFilter === cat ? 'bg-gray-900 text-white border-gray-900' : 'bg-white text-gray-600 border-gray-200'}`}
+                                className={`px-4 py-1.5 rounded-full text-xs font-bold whitespace-nowrap border transition-all ${selectedCategoryFilter === cat ? 'bg-gray-900 text-white border-gray-900' : 'bg-white text-gray-500 border-gray-200 hover:border-gray-300'}`}
                              >
                                 {cat}
                              </button>
                          ))}
                     </div>
-                )}
-
-                <div className="flex gap-3">
-                    <div className="relative flex-1">
-                        <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
-                        <input 
-                            type="text" 
-                            placeholder="Search..." 
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full pl-9 pr-3 py-2 bg-gray-50 border-none rounded-xl text-sm text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-violet-100 focus:bg-white transition-all"
-                        />
-                    </div>
                 </div>
                 
-                <div className="flex bg-gray-100 p-1 rounded-xl">
-                    {(['week', 'month', 'all'] as const).map(t => (
-                        <button key={t} onClick={() => setTimeframe(t)} className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all ${timeframe === t ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
-                            {t.charAt(0).toUpperCase() + t.slice(1)}
-                        </button>
-                    ))}
+                {/* Timeframe Toggle */}
+                <div className="px-4">
+                    <div className="flex bg-gray-100 p-1 rounded-xl">
+                        {(['week', 'month', 'all'] as const).map(t => (
+                            <button key={t} onClick={() => setTimeframe(t)} className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all ${timeframe === t ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
+                                {t.charAt(0).toUpperCase() + t.slice(1)}
+                            </button>
+                        ))}
+                    </div>
                 </div>
             </div>
 
-            {/* Content */}
+            {/* Scrollable Content */}
             <div className="flex-1 p-4 space-y-6 overflow-y-auto pb-32">
-                {/* Charts - White Cards */}
+                {/* Bar Chart Card */}
                 <div className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)]">
                     <div className="mb-6">
                          <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Total Spent</p>
@@ -183,37 +200,37 @@ const AnalyticsScreen: React.FC<AnalyticsScreenProps> = ({ onTransactionClick })
                     <BarChart data={barChartData} currency={currency} />
                 </div>
 
+                {/* Pie Chart Card */}
                 <div className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)]">
                     <h3 className="text-sm font-bold text-gray-900 mb-6">Category Breakdown</h3>
                     <PieChart data={categoryData} currency={currency} />
                 </div>
 
-                 {/* History List */}
+                 {/* Transaction List */}
                  <div className="space-y-3">
-                    <div className="flex justify-between items-center px-2">
-                        <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider">History</h3>
-                        <button onClick={() => setSortOrder(prev => prev === 'desc' ? 'asc' : 'desc')} className="flex items-center gap-1 text-xs font-bold text-violet-600 bg-violet-50 px-2 py-1 rounded-lg">
-                             Sort <ArrowUpDown size={12} className={`transition-transform ${sortOrder === 'asc' ? 'rotate-180' : ''}`} />
-                        </button>
-                    </div>
+                    <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider px-2">History</h3>
                     
                     {filteredTransactions.length > 0 ? filteredTransactions.map((tx, i) => (
-                        <button key={tx.id + i} onClick={() => onTransactionClick(tx)} className="w-full bg-white p-4 rounded-2xl flex items-center justify-between border border-gray-50 shadow-[0_2px_10px_rgba(0,0,0,0.02)] hover:border-gray-200 transition-all">
+                        <button key={tx.id + i} onClick={() => onTransactionClick(tx)} className="w-full bg-white p-4 rounded-2xl flex items-center justify-between border border-gray-50 shadow-[0_2px_10px_rgba(0,0,0,0.02)] hover:border-gray-200 transition-all active:scale-[0.99]">
                             <div className="flex items-center gap-4">
                                 <CategoryIcon category={tx.category} />
                                 <div className="text-left">
-                                    <p className="font-bold text-gray-900 text-sm">{tx.merchant}</p>
+                                    <p className="font-bold text-gray-900 text-sm line-clamp-1">{tx.merchant}</p>
                                     <p className="text-xs text-gray-500 mt-0.5">{tx.date}</p>
                                 </div>
                             </div>
-                            <div className="text-right">
+                            <div className="text-right min-w-[80px]">
                                 <p className={`font-bold text-sm ${tx.category === 'Income' ? 'text-emerald-600' : 'text-gray-900'}`}>
                                     {tx.category === 'Income' ? '+' : ''}{currency}{tx.amount.toFixed(2)}
                                 </p>
                             </div>
                         </button>
                     )) : (
-                         <div className="text-center py-10 text-gray-400 text-sm">No transactions match your filters.</div>
+                         <div className="flex flex-col items-center justify-center py-12 text-gray-400">
+                            <Search size={32} className="mb-3 opacity-20" />
+                            <p className="text-sm font-medium">No transactions found.</p>
+                            {selectedCategoryFilter && <button onClick={() => setSelectedCategoryFilter(null)} className="text-xs text-violet-600 font-bold mt-2">Clear Filters</button>}
+                         </div>
                     )}
                 </div>
             </div>

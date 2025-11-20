@@ -19,9 +19,9 @@ const BarChart: React.FC<BarChartProps> = ({ data, currency = '' }) => {
 
     const maxValue = Math.max(...data.map(d => d.value), 0);
     const chartHeight = 180;
-    const barWidth = 14;
-    const gap = 28;
-    const width = data.length * (barWidth + gap);
+    const barWidth = 24; // Increased from 14
+    const gap = 36; // Increased from 28 to prevent label overlap
+    const width = Math.max(data.length * (barWidth + gap), 300); // Ensure minimum width
 
     return (
         <div className="w-full overflow-x-auto pb-4 scrollbar-hide">
@@ -60,7 +60,7 @@ const BarChart: React.FC<BarChartProps> = ({ data, currency = '' }) => {
                                 onMouseLeave={() => setTooltip(null)}
                                 className="group cursor-pointer"
                             >
-                                {/* Invisible Hit Area */}
+                                {/* Invisible Hit Area for easier hovering */}
                                 <rect x={x - gap/2} y="0" width={barWidth + gap} height={chartHeight} fill="transparent" />
                                 
                                 {/* The Bar */}
@@ -70,7 +70,7 @@ const BarChart: React.FC<BarChartProps> = ({ data, currency = '' }) => {
                                     width={barWidth}
                                     height={mounted ? barHeight : 0}
                                     fill="url(#barGradient)"
-                                    rx={barWidth / 2}
+                                    rx={6}
                                     className="transition-all duration-[800ms] ease-spring group-hover:fill-[url(#barHighlight)]"
                                     style={{ transitionDelay: `${i * 70}ms` }}
                                 />
@@ -81,8 +81,9 @@ const BarChart: React.FC<BarChartProps> = ({ data, currency = '' }) => {
                                     y={chartHeight + 24}
                                     textAnchor="middle"
                                     fontSize="11"
-                                    fontWeight="500"
+                                    fontWeight="600"
                                     className="fill-current text-gray-400 dark:text-gray-500"
+                                    style={{ pointerEvents: 'none' }}
                                 >
                                     {d.label}
                                 </text>
