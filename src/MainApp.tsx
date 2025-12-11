@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import Header from '@/src/components/Header';
 import BottomNav from '@/src/components/BottomNav';
@@ -13,11 +14,12 @@ import TransactionDetailScreen from '@/src/pages/TransactionDetailScreen';
 import ScanQRModal from '@/src/pages/ScanQRModal';
 import PayBillModal from '@/src/pages/PayBillModal';
 import ServicesHub from '@/src/pages/ServicesHub';
+import SendMoneyScreen from '@/src/pages/SendMoneyScreen';
 import { TransactionSummary } from '@/src/data';
 import { useAppContext } from '@/src/context/AppContext';
 
 export type ActivePage = 'home' | 'analytics' | 'services' | 'profile';
-export type ActiveModal = 'pay' | 'add_money' | 'withdraw' | 'link_bank' | 'manage_categories' | 'transaction_detail' | 'scan_qr' | 'pay_bill' | null;
+export type ActiveModal = 'pay' | 'send_international' | 'add_money' | 'withdraw' | 'link_bank' | 'manage_categories' | 'transaction_detail' | 'scan_qr' | 'pay_bill' | null;
 export type BankAccountType = 'us' | 'inr';
 
 interface MainAppProps {
@@ -116,6 +118,8 @@ const MainApp: React.FC<MainAppProps> = ({ onLogout }) => {
     switch (activeModal) {
       case 'pay':
         return <PayScreen onClose={handleClose} onGoToKyc={handleGoToKyc} />;
+      case 'send_international':
+        return <SendMoneyScreen onClose={handleClose} onGoToKyc={handleGoToKyc} />;
       case 'add_money':
         const addMoneyLinkType: BankAccountType = userMode === 'INTERNATIONAL' ? 'us' : 'inr';
         return <AddMoneyScreen onClose={handleClose} openLinkBankModal={() => handleOpenLinkBankModal(addMoneyLinkType)} onGoToKyc={handleGoToKyc} />;

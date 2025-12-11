@@ -1,11 +1,10 @@
-
 import React from 'react';
 import { Copy, Share2 } from 'lucide-react';
 import { triggerHaptic } from '@/src/utils/haptics';
-import { VirtualAccountDetails } from '@/src/services/banking/IBUAdapter';
+import { BankAccountDetails } from '@/src/services/banking/CoreBankingService';
 
 interface BankDetailsCardProps {
-    details: VirtualAccountDetails;
+    details: BankAccountDetails;
 }
 
 const BankDetailsCard: React.FC<BankDetailsCardProps> = ({ details }) => {
@@ -36,7 +35,7 @@ const BankDetailsCard: React.FC<BankDetailsCardProps> = ({ details }) => {
                 <div className="flex justify-between items-start mb-4">
                     <div>
                         <h3 className="font-bold text-lg opacity-90">GIFT City Wallet</h3>
-                        <p className="text-xs text-indigo-100 font-medium tracking-wide">VIRTUAL ACCOUNT (USD)</p>
+                        <p className="text-xs text-indigo-100 font-medium tracking-wide">VIRTUAL ACCOUNT ({details.currency})</p>
                     </div>
                     <div className="bg-white/10 p-2 rounded-lg backdrop-blur-md">
                         <Share2 size={18} />
@@ -53,8 +52,9 @@ const BankDetailsCard: React.FC<BankDetailsCardProps> = ({ details }) => {
                 <DetailRow label="Bank Name" value={details.bankName} />
                 <DetailRow label="Account Number" value={details.accountNumber} />
                 <DetailRow label="SWIFT / BIC" value={details.swiftCode} />
-                {details.iban && <DetailRow label="IBAN" value={details.iban} />}
-                <DetailRow label="Bank Address" value={details.address} />
+                {details.ifscCode && <DetailRow label="IFSC Code" value={details.ifscCode} />}
+                {details.routingNumber && <DetailRow label="Routing Number" value={details.routingNumber} />}
+                <DetailRow label="Branch" value={details.branchName} />
             </div>
             
             <div className="bg-gray-50 p-4 text-center">

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useAppContext } from '@/src/context/AppContext';
 import { collection, query, where, getDocs, orderBy, Timestamp, limit } from 'firebase/firestore';
@@ -65,12 +66,24 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onTransactionClick, setActiveMo
         }
     }, [user, userMode]);
 
-    const handleProtectedAction = (modal: ActiveModal) => {
+    const handleProtectedAction = (actionType: 'pay' | 'add' | 'withdraw') => {
         triggerHaptic('light');
         if (kycStatus !== 'verified') {
             setAuthFlow('kycStart');
-        } else {
-            setActiveModal(modal);
+            return;
+        }
+
+        if (actionType === 'pay') {
+            // Smart Routing: International -> SendMoneyScreen (Remittance), India -> PayScreen (UPI)
+            if (isInternational) {
+                setActiveModal('send_international');
+            } else {
+                setActiveModal('pay');
+            }
+        } else if (actionType === 'add') {
+            setActiveModal('add_money');
+        } else if (actionType === 'withdraw') {
+            setActiveModal('withdraw');
         }
     };
     
@@ -111,7 +124,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onTransactionClick, setActiveMo
                 <ActionButton 
                     icon={<ArrowDownLeft className="w-6 h-6" />} 
                     label="Deposit" 
-                    onClick={() => handleProtectedAction('add_money')} 
+                    onClick={() => handleProtectedAction('add')} 
                     variant="secondary"
                 />
                  <ActionButton 

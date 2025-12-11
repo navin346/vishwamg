@@ -21,6 +21,18 @@ export interface LedgerTransactionInput {
     metadata?: Record<string, any>;
 }
 
+export interface CrossBorderTransactionInput {
+    userId: string;
+    fromCurrency: 'USD' | 'INR';
+    toCurrency: 'USD' | 'INR';
+    amountIn: number; // Amount deducted from Source
+    amountOut: number; // Amount added to Destination
+    rate: number;
+    fees: number;
+    description: string;
+    beneficiaryMetadata: any;
+}
+
 export const LedgerService = {
     /**
      * Records a transaction with double-entry principles (conceptually).
@@ -46,10 +58,6 @@ export const LedgerService = {
             const currentBalance = parseFloat(currentBalanceStr.replace(/,/g, ''));
             
             // Calculate new balance
-            // For SPEND, WITHDRAWAL, REMITTANCE, BILL_PAY, amount implies a debit if passed as positive?
-            // Usually, inputs for debits are negative or handled by logic. 
-            // Let's assume the 'amount' passed here is the absolute value and the type determines the sign.
-            
             let finalAmount = amount;
             if ([TransactionType.WITHDRAWAL, TransactionType.SPEND, TransactionType.BILL_PAY, TransactionType.REMITTANCE].includes(type)) {
                 finalAmount = -amount;
@@ -77,6 +85,71 @@ export const LedgerService = {
                 timestamp: Timestamp.now(),
                 method: metadata?.method || 'System',
                 metadata: metadata || {}
+            });
+        });
+    },
+
+    /**
+     * Executes an atomic cross-border transfer.
+     * Debits Source Currency Wallet -> Credits Destination Currency Wallet (Simulating instant remit)
+     */
+    recordCrossBorderTransaction: async (input: CrossBorderTransactionInput) => {
+        const { userId, fromCurrency, toCurrency, amountIn, amountOut, rate, fees, description, beneficiaryMetadata } = input;
+
+        const userDocRef = doc(db, 'users', userId);
+        const sourceBalanceField = fromCurrency === 'USD' ? 'usd_balance' : 'inr_balance';
+        const destBalanceField = toCurrency === 'USD' ? 'usd_balance' : 'inr_balance';
+
+        await runTransaction(db, async (transaction) => {
+            const userDoc = await transaction.get(userDocRef);
+            if (!userDoc.exists()) throw new Error("User not found");
+
+            const userData = userDoc.data();
+
+            // 1. Check Source Balance
+            const sourceStr = userData[sourceBalanceField] || '0.00';
+            const sourceBalance = parseFloat(sourceStr.replace(/,/g, ''));
+            if (sourceBalance < amountIn) throw new Error("Insufficient funds for remittance");
+
+            // 2. Calculate New Balances
+            const newSourceBalance = sourceBalance - amountIn;
+            
+            // For the demo, if beneficiary is Self (or just generally for the super-app feel),
+            // we credit the destination wallet immediately so the user sees it when they toggle mode.
+            const destStr = userData[destBalanceField] || '0.00';
+            const destBalance = parseFloat(destStr.replace(/,/g, ''));
+            const newDestBalance = destBalance + amountOut;
+
+            // 3. Update User Doc
+            transaction.update(userDocRef, {
+                [sourceBalanceField]: newSourceBalance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+                [destBalanceField]: newDestBalance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+            });
+
+            // 4. Record Debit Transaction (Source)
+            const debitRef = doc(collection(db, 'users', userId, 'transactions'));
+            transaction.set(debitRef, {
+                amount: -amountIn,
+                currency: fromCurrency,
+                type: TransactionType.REMITTANCE,
+                category: 'Transfer',
+                merchant: `Remit to ${toCurrency}`,
+                timestamp: Timestamp.now(),
+                method: 'GIFT Wallet',
+                metadata: { rate, fees, ...beneficiaryMetadata }
+            });
+
+            // 5. Record Credit Transaction (Destination)
+            const creditRef = doc(collection(db, 'users', userId, 'transactions'));
+            transaction.set(creditRef, {
+                amount: amountOut,
+                currency: toCurrency,
+                type: TransactionType.DEPOSIT,
+                category: 'Income',
+                merchant: `Remittance from ${fromCurrency}`,
+                timestamp: Timestamp.now(),
+                method: 'System Transfer',
+                metadata: { rate, fees, sender: 'Self' }
             });
         });
     }

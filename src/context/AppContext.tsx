@@ -27,6 +27,10 @@ interface UserData {
   ibanDetails: IbanDetails | null;
   linkedAccounts: { us: BankAccount | null; inr: BankAccount | null; };
   categories: string[];
+  
+  // Compliance
+  lrsUsage: number; // Current FY LRS Usage in USD
+  lrsLimit: number; // Max $250,000
 }
 interface RawUserData extends Omit<UserData, 'balance'> {}
 
@@ -67,6 +71,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     ibanDetails: null,
     linkedAccounts: { us: null, inr: null },
     categories: ["Food", "Travel", "Shopping", "Entertainment", "Bills"],
+    lrsUsage: 0,
+    lrsLimit: 250000,
   });
   const [authFlow, setAuthFlow] = useState<AuthFlow>('loggedIn');
 
@@ -111,7 +117,9 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
               ...data,
               balance: computedBalance,
               usd_balance: data.usd_balance ?? '0.00',
-              inr_balance: data.inr_balance ?? '0.00'
+              inr_balance: data.inr_balance ?? '0.00',
+              lrsUsage: data.lrsUsage ?? 0,
+              lrsLimit: 250000
             }));
 
         } else {
@@ -133,6 +141,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
             ibanDetails: null,
             linkedAccounts: { us: null, inr: null },
             categories: ["Food", "Travel", "Shopping", "Entertainment", "Bills"],
+            lrsUsage: 0,
+            lrsLimit: 250000,
         });
         setAuthFlow('loggedIn');
     }
@@ -148,22 +158,63 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     // Create user document in Firestore with new architecture fields
     const userDocRef = doc(db, 'users', newUser.uid);
     const initialUserData: Partial<RawUserData> = {
-        usd_balance: '1000.00',
-        inr_balance: '25000.50',
+        usd_balance: '1250.00',
+        inr_balance: '45000.50',
         kycStatus: 'unverified',
         kycLevel: 'NONE',
         residencyStatus: null, // Will be set in SelectResidencyScreen
         giftAccountId: null,   // Will be generated upon KYC
         ibanDetails: null,
         linkedAccounts: { us: null, inr: null },
-        categories: ["Food", "Travel", "Shopping", "Entertainment", "Bills"]
+        categories: ["Food", "Travel", "Shopping", "Entertainment", "Bills"],
+        lrsUsage: 0,
+        lrsLimit: 250000
     };
     await setDoc(userDocRef, initialUserData);
 
-    // Seed mock transactions
+    // Seed mock transactions with Real Banking Descriptions
     const batch = writeBatch(db);
     const transactionsRef = collection(db, 'users', newUser.uid, 'transactions');
-    // ... seed logic omitted for brevity, keeping existing transactions ...
+    
+    // 1. Inward Remittance (USD) - Salary-like
+    const tx1Ref = doc(transactionsRef);
+    batch.set(tx1Ref, {
+        amount: 2500.00,
+        currency: 'USD',
+        type: TransactionType.INCOME,
+        category: 'Income',
+        merchant: 'Inward Remittance - WIRE/8821', // Real bank description
+        timestamp: Timestamp.now(),
+        method: 'Wire Transfer',
+        metadata: { sender: 'Employer Inc', swift: 'BOFAUS3N' }
+    });
+
+    // 2. UPI Spend (INR) - Real P2P look
+    const tx2Ref = doc(transactionsRef);
+    batch.set(tx2Ref, {
+        amount: -850.00,
+        currency: 'INR',
+        type: TransactionType.SPEND,
+        category: 'Food',
+        merchant: 'UPI/P2P/9876543210@ybl',
+        timestamp: Timestamp.now(),
+        method: 'UPI',
+        metadata: { rrn: '3298472938' }
+    });
+    
+    // 3. Card Spend (USD)
+    const tx3Ref = doc(transactionsRef);
+    batch.set(tx3Ref, {
+        amount: -12.99,
+        currency: 'USD',
+        type: TransactionType.SPEND,
+        category: 'Entertainment',
+        merchant: 'NETFLIX.COM',
+        timestamp: Timestamp.now(),
+        method: 'Virtual Card',
+        metadata: { last4: '4321' }
+    });
+
     await batch.commit();
   };
 
@@ -213,13 +264,22 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     
     const currency = userData.userMode === 'INDIA' ? 'INR' : 'USD';
     
+    // LRS Compliance Check for International Loads
+    if (currency === 'USD') {
+        if (userData.lrsUsage + amount > userData.lrsLimit) {
+            throw new Error(`LRS Limit Exceeded. You have used $${userData.lrsUsage} of your $${userData.lrsLimit} annual limit.`);
+        }
+        // Update LRS Usage
+        await updateUserDoc({ lrsUsage: userData.lrsUsage + amount });
+    }
+    
     // Use the new Ledger Service
     await LedgerService.recordTransaction({
         userId: user.uid,
         amount,
         currency,
         type: TransactionType.DEPOSIT,
-        description: 'Deposit',
+        description: currency === 'USD' ? 'Inward Remittance' : 'UPI Deposit',
         metadata: { method }
     });
   };
