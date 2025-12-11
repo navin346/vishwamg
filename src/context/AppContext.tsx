@@ -176,14 +176,14 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     const batch = writeBatch(db);
     const transactionsRef = collection(db, 'users', newUser.uid, 'transactions');
     
-    // 1. Inward Remittance (USD) - Salary-like
+    // 1. Inward Remittance (USD) - Professional
     const tx1Ref = doc(transactionsRef);
     batch.set(tx1Ref, {
         amount: 2500.00,
         currency: 'USD',
         type: TransactionType.INCOME,
         category: 'Income',
-        merchant: 'Inward Remittance - WIRE/8821', // Real bank description
+        merchant: 'ACH Transfer - STRIPE',
         timestamp: Timestamp.now(),
         method: 'Wire Transfer',
         metadata: { sender: 'Employer Inc', swift: 'BOFAUS3N' }
@@ -196,7 +196,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         currency: 'INR',
         type: TransactionType.SPEND,
         category: 'Food',
-        merchant: 'UPI/P2P/9876543210@ybl',
+        merchant: 'UPI/P2P/8904561234',
         timestamp: Timestamp.now(),
         method: 'UPI',
         metadata: { rrn: '3298472938' }

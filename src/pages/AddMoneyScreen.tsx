@@ -2,8 +2,9 @@
 import React, { useState, useEffect } from 'react';
 import { useAppContext } from '@/src/context/AppContext';
 import { CoreBankingService, BankAccountDetails } from '@/src/services/banking/CoreBankingService';
-import { Copy, Share2, FileText, Info } from 'lucide-react';
-import { triggerHaptic } from '@/src/utils/haptics';
+import { RazorpayService } from '@/src/services/razorpay';
+import BankDetailsCard from '@/src/components/BankDetailsCard';
+import { Info } from 'lucide-react';
 
 interface ModalProps {
     onClose: () => void;
@@ -25,6 +26,7 @@ const AddMoneyScreen: React.FC<ModalProps> = ({ onClose, openLinkBankModal, onGo
     const [bankDetails, setBankDetails] = useState<BankAccountDetails | null>(null);
     const [loadingBank, setLoadingBank] = useState(false);
 
+    // Fetch International Bank Details
     useEffect(() => {
         if (isInternational && user) {
             setLoadingBank(true);
@@ -34,11 +36,7 @@ const AddMoneyScreen: React.FC<ModalProps> = ({ onClose, openLinkBankModal, onGo
         }
     }, [isInternational, user]);
 
-    const handleCopy = (text: string) => {
-        navigator.clipboard.writeText(text);
-        triggerHaptic('light');
-    };
-
+    // Handle INR Payment via Razorpay
     const handleAddMoneyInr = async () => {
         const parsedAmount = parseFloat(amount);
         if (isNaN(parsedAmount) || parsedAmount <= 0) {
@@ -47,15 +45,29 @@ const AddMoneyScreen: React.FC<ModalProps> = ({ onClose, openLinkBankModal, onGo
         }
 
         setLoading(true);
-        try {
-            await addMoney(parsedAmount, 'UPI');
-            onClose(); 
-        } catch (error) {
-            console.error("Failed to add money:", error);
-            alert("There was an error adding funds.");
-        } finally {
-            setLoading(false);
-        }
+        
+        RazorpayService.openPayment(
+            parsedAmount,
+            "Add Money to Vishwam Wallet",
+            user,
+            async (paymentId) => {
+                // Payment Success
+                try {
+                    await addMoney(parsedAmount, 'UPI'); // Record in ledger
+                    setLoading(false);
+                    onClose();
+                } catch (error) {
+                    console.error("Ledger update failed:", error);
+                    alert("Payment successful but failed to update balance. Contact support.");
+                    setLoading(false);
+                }
+            },
+            (error) => {
+                // Payment Failure/Cancel
+                console.error("Payment failed:", error);
+                setLoading(false);
+            }
+        );
     };
 
     // KYC Gate
@@ -94,7 +106,7 @@ const AddMoneyScreen: React.FC<ModalProps> = ({ onClose, openLinkBankModal, onGo
                 </div>
 
                 {isInternational ? (
-                    // --- GLOBAL ACCOUNT DASHBOARD ---
+                    // --- INTERNATIONAL MODE: SHOW BANK DETAILS ---
                     <div className="space-y-6">
                          {loadingBank || !bankDetails ? (
                              <div className="p-10 flex justify-center">
@@ -102,81 +114,10 @@ const AddMoneyScreen: React.FC<ModalProps> = ({ onClose, openLinkBankModal, onGo
                              </div>
                          ) : (
                             <>
-                                {/* Bank Card Header */}
-                                <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl p-6 text-white shadow-lg relative overflow-hidden">
-                                    <div className="relative z-10">
-                                        <div className="flex justify-between items-start">
-                                            <div>
-                                                <p className="text-slate-400 text-xs font-bold uppercase tracking-wider mb-1">Bank Name</p>
-                                                <p className="font-bold text-lg">{bankDetails.bankName}</p>
-                                                <p className="text-sm text-slate-300">{bankDetails.branchName}</p>
-                                            </div>
-                                            <div className="bg-white/10 p-2 rounded-lg">
-                                                <Share2 size={18} />
-                                            </div>
-                                        </div>
-                                        
-                                        <div className="mt-6">
-                                            <p className="text-slate-400 text-xs font-bold uppercase tracking-wider mb-1">Beneficiary</p>
-                                            <p className="font-medium">{bankDetails.accountName}</p>
-                                        </div>
-                                    </div>
-                                    {/* Decor */}
-                                    <div className="absolute -right-4 -bottom-4 w-32 h-32 bg-white/5 rounded-full blur-2xl"></div>
-                                </div>
-
-                                {/* Account Details List */}
-                                <div className="space-y-4">
-                                    <div className="bg-gray-50 dark:bg-neutral-900 rounded-xl p-4 flex justify-between items-center border border-gray-100 dark:border-neutral-800">
-                                        <div>
-                                            <p className="text-xs text-gray-500 uppercase font-bold">Account Number</p>
-                                            <p className="font-mono text-lg font-bold text-gray-900 dark:text-white mt-1">{bankDetails.accountNumber}</p>
-                                        </div>
-                                        <button onClick={() => handleCopy(bankDetails.accountNumber)} className="p-2 hover:bg-gray-200 dark:hover:bg-neutral-800 rounded-lg text-violet-600 font-bold text-xs flex items-center gap-1">
-                                            <Copy size={14} /> Copy
-                                        </button>
-                                    </div>
-
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div className="bg-gray-50 dark:bg-neutral-900 rounded-xl p-4 border border-gray-100 dark:border-neutral-800">
-                                            <p className="text-xs text-gray-500 uppercase font-bold">SWIFT Code</p>
-                                            <div className="flex justify-between items-end mt-1">
-                                                <p className="font-mono font-bold text-gray-900 dark:text-white">{bankDetails.swiftCode}</p>
-                                                <button onClick={() => handleCopy(bankDetails.swiftCode)}><Copy size={14} className="text-gray-400" /></button>
-                                            </div>
-                                        </div>
-                                        <div className="bg-gray-50 dark:bg-neutral-900 rounded-xl p-4 border border-gray-100 dark:border-neutral-800">
-                                            <p className="text-xs text-gray-500 uppercase font-bold">IFSC Code</p>
-                                            <div className="flex justify-between items-end mt-1">
-                                                <p className="font-mono font-bold text-gray-900 dark:text-white">{bankDetails.ifscCode}</p>
-                                                <button onClick={() => handleCopy(bankDetails.ifscCode)}><Copy size={14} className="text-gray-400" /></button>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {bankDetails.routingNumber && (
-                                        <div className="bg-gray-50 dark:bg-neutral-900 rounded-xl p-4 border border-gray-100 dark:border-neutral-800">
-                                            <p className="text-xs text-gray-500 uppercase font-bold">Correspondent Routing (US)</p>
-                                            <div className="flex justify-between items-end mt-1">
-                                                <p className="font-mono font-bold text-gray-900 dark:text-white">{bankDetails.routingNumber}</p>
-                                                <button onClick={() => handleCopy(bankDetails.routingNumber)}><Copy size={14} className="text-gray-400" /></button>
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
-                                
-                                {/* Actions */}
-                                <div className="grid grid-cols-2 gap-4 pt-2">
-                                     <button className="flex items-center justify-center gap-2 py-3 rounded-xl border border-gray-200 dark:border-neutral-800 font-bold text-sm text-gray-700 dark:text-white hover:bg-gray-50 dark:hover:bg-neutral-800">
-                                        <FileText size={18} /> Statement
-                                     </button>
-                                     <button className="flex items-center justify-center gap-2 py-3 rounded-xl bg-gray-900 dark:bg-white text-white dark:text-black font-bold text-sm hover:opacity-90">
-                                        Share Details
-                                     </button>
-                                </div>
+                                <BankDetailsCard details={bankDetails} />
 
                                 {/* LRS Footer */}
-                                <div className="mt-4 p-3 bg-amber-50 dark:bg-amber-900/20 rounded-xl flex gap-3 items-start">
+                                <div className="mt-4 p-3 bg-amber-50 dark:bg-amber-900/20 rounded-xl flex gap-3 items-start border border-amber-100 dark:border-amber-800">
                                     <Info size={16} className="text-amber-600 mt-0.5" />
                                     <div>
                                         <p className="text-xs font-bold text-amber-700 dark:text-amber-500">LRS Limit: ${lrsUsage.toLocaleString()} / ${lrsLimit.toLocaleString()}</p>
@@ -187,12 +128,12 @@ const AddMoneyScreen: React.FC<ModalProps> = ({ onClose, openLinkBankModal, onGo
                          )}
                     </div>
                 ) : (
-                    // --- INR / UPI FLOW ---
+                    // --- INDIA MODE: SHOW RAZORPAY INPUT ---
                     <>
                         {linkedAccounts.inr ? (
                             <>
                                 <p className="text-sm text-gray-500 dark:text-neutral-400 mb-6">
-                                    Add funds instantly via UPI or Netbanking.
+                                    Add funds securely via Razorpay (UPI, Card, Netbanking).
                                 </p>
                                 <div className="space-y-4">
                                     <div>
@@ -205,7 +146,7 @@ const AddMoneyScreen: React.FC<ModalProps> = ({ onClose, openLinkBankModal, onGo
                                                 placeholder="5,000.00"
                                                 value={amount}
                                                 onChange={(e) => setAmount(e.target.value)}
-                                                className="w-full pl-8 pr-4 py-3 bg-gray-100 dark:bg-neutral-800 border border-gray-300 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500 text-gray-900 dark:text-white"
+                                                className="w-full pl-8 pr-4 py-3 bg-gray-100 dark:bg-neutral-800 border border-gray-300 dark:border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500 text-gray-900 dark:text-white font-bold text-lg"
                                             />
                                         </div>
                                     </div>
@@ -222,9 +163,9 @@ const AddMoneyScreen: React.FC<ModalProps> = ({ onClose, openLinkBankModal, onGo
                                 <button
                                     onClick={handleAddMoneyInr}
                                     disabled={loading}
-                                    className="w-full mt-6 bg-violet-600 hover:bg-violet-700 text-white font-bold py-3 px-4 rounded-lg transition-transform transform active:scale-95 disabled:bg-violet-400 disabled:cursor-not-allowed"
+                                    className="w-full mt-6 bg-violet-600 hover:bg-violet-700 text-white font-bold py-3 px-4 rounded-lg transition-transform transform active:scale-95 disabled:bg-violet-400 disabled:cursor-not-allowed flex justify-center items-center"
                                 >
-                                    {loading ? 'Processing...' : 'Add Money'}
+                                    {loading ? <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div> : 'Proceed to Pay'}
                                 </button>
                             </>
                         ) : (
