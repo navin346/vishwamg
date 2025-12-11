@@ -1,7 +1,9 @@
+
 import React, { useState } from 'react';
 import { useAppContext } from '@/src/context/AppContext';
 import { ActiveModal, BankAccountType } from '@/src/MainApp';
 import { User, ChevronRight, Settings, CreditCard, Landmark, LogOut, ShieldCheck, FileText } from 'lucide-react';
+import { triggerHaptic } from '@/src/utils/haptics';
 
 interface ProfileScreenProps {
     setActiveModal: (modal: ActiveModal) => void;
@@ -10,7 +12,7 @@ interface ProfileScreenProps {
 }
 
 const ProfileScreen: React.FC<ProfileScreenProps> = ({ setActiveModal, openLinkBankModal, installPrompt }) => {
-    const { userMode, kycStatus, ibanDetails, createIbanAccount, linkedAccounts, setAuthFlow } = useAppContext();
+    const { userMode, kycStatus, ibanDetails, createIbanAccount, linkedAccounts, setAuthFlow, signOut } = useAppContext();
     const isInternational = userMode === 'INTERNATIONAL';
     const [isCreatingIban, setIsCreatingIban] = useState(false);
 
@@ -19,6 +21,11 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ setActiveModal, openLinkB
         await createIbanAccount();
         setIsCreatingIban(false);
     }
+
+    const handleSignOut = async () => {
+        triggerHaptic('medium');
+        await signOut();
+    };
 
     const SectionHeader: React.FC<{ title: string }> = ({ title }) => (
         <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3 px-4 mt-8">{title}</h3>
@@ -112,7 +119,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ setActiveModal, openLinkB
             <SectionHeader title="App" />
             <MenuGroup>
                 {installPrompt && <MenuItem icon={<CreditCard size={20} />} title="Install App" onClick={() => installPrompt.prompt()} />}
-                <MenuItem isDestructive icon={<LogOut size={20} />} title="Sign Out" onClick={() => window.location.reload()} />
+                <MenuItem isDestructive icon={<LogOut size={20} />} title="Sign Out" onClick={handleSignOut} />
             </MenuGroup>
             
              <p className="text-center text-xs text-gray-300 mt-12 mb-4 font-medium">Vishwam v1.3.0</p>

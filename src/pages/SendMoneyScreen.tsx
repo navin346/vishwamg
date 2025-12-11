@@ -49,10 +49,29 @@ const SendMoneyScreen: React.FC<ModalProps> = ({ onClose, onGoToKyc }) => {
         }
     }, [amount]);
 
+    const handleSelectMyself = () => {
+        if (!linkedAccounts.inr) {
+            alert("You haven't linked an Indian Bank Account yet. Please go to Profile > Link Account.");
+            return;
+        }
+        setBeneficiary({ 
+            ...beneficiary, 
+            isSelf: true, 
+            name: user?.displayName || 'My Account', 
+            accountNumber: linkedAccounts.inr.accountNumber 
+        });
+    };
+
     const handleNext = () => {
         triggerHaptic('light');
         if (step === 'amount' && quote) setStep('beneficiary');
-        else if (step === 'beneficiary') setStep('review');
+        else if (step === 'beneficiary') {
+            if (!beneficiary.name || !beneficiary.accountNumber) {
+                alert("Please enter beneficiary details.");
+                return;
+            }
+            setStep('review');
+        }
     };
 
     const handleExecute = async () => {
@@ -168,7 +187,7 @@ const SendMoneyScreen: React.FC<ModalProps> = ({ onClose, onGoToKyc }) => {
                     {step === 'beneficiary' && (
                         <div className="space-y-4">
                             <button 
-                                onClick={() => setBeneficiary({ ...beneficiary, isSelf: true, name: user?.displayName || 'My Account', accountNumber: linkedAccounts.inr?.accountNumber || '**** 1234' })}
+                                onClick={handleSelectMyself}
                                 className={`w-full p-4 rounded-2xl border-2 flex items-center gap-4 transition-all ${beneficiary.isSelf ? 'border-violet-600 bg-violet-50 dark:bg-violet-900/20' : 'border-gray-100 dark:border-neutral-800'}`}
                             >
                                 <div className="w-12 h-12 rounded-full bg-violet-100 text-violet-600 flex items-center justify-center">
@@ -216,7 +235,7 @@ const SendMoneyScreen: React.FC<ModalProps> = ({ onClose, onGoToKyc }) => {
                                         placeholder="IFSC Code" 
                                         value={beneficiary.ifsc}
                                         onChange={e => setBeneficiary({...beneficiary, ifsc: e.target.value})}
-                                        className="w-full p-4 bg-gray-50 dark:bg-neutral-900 rounded-xl border border-gray-200 dark:border-neutral-800"
+                                        className="w-full p-4 bg-gray-50 dark:bg-neutral-900 rounded-xl border border-gray-200 dark:border-neutral-800 uppercase"
                                     />
                                 </div>
                             )}
