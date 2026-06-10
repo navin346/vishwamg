@@ -4,6 +4,7 @@ import { useAppContext } from '@/src/context/AppContext';
 import { ActiveModal, BankAccountType } from '@/src/MainApp';
 import { User, ChevronRight, Settings, CreditCard, Landmark, LogOut, ShieldCheck, FileText } from 'lucide-react';
 import { triggerHaptic } from '@/src/utils/haptics';
+import { isMockFirebase } from '@/src/firebase';
 
 interface ProfileScreenProps {
     setActiveModal: (modal: ActiveModal) => void;
@@ -122,7 +123,14 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ setActiveModal, openLinkB
                 <MenuItem isDestructive icon={<LogOut size={20} />} title="Sign Out" onClick={handleSignOut} />
             </MenuGroup>
             
-             <p className="text-center text-xs text-gray-300 mt-12 mb-4 font-medium">Vishwam v1.3.0</p>
+            <div className="flex flex-col items-center gap-1.5 mt-12 mb-4">
+                 <p className="text-center text-xs text-gray-300 font-semibold tracking-wide">Vishwam v1.3.0</p>
+                 {isMockFirebase && (
+                     <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[9px] font-bold bg-amber-500/10 text-amber-600 border border-amber-500/15 uppercase tracking-widest leading-none">
+                         Sandbox Mode Active
+                     </span>
+                 )}
+            </div>
         </div>
     );
 };

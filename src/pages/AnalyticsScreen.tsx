@@ -1,7 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useAppContext } from '@/src/context/AppContext';
-import { collection, query, where, getDocs, orderBy, Timestamp } from 'firebase/firestore';
-import { db } from '@/src/firebase';
+import { db, collection, query, where, getDocs, orderBy, Timestamp } from '@/src/firebase';
 import PieChart from '@/src/components/charts/PieChart';
 import BarChart from '@/src/components/charts/BarChart';
 import { TransactionSummary } from '@/src/data';

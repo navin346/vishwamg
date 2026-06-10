@@ -1,8 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useAppContext } from '@/src/context/AppContext';
-import { collection, query, where, getDocs, orderBy, Timestamp, limit } from 'firebase/firestore';
-import { db } from '@/src/firebase';
+import { db, collection, query, where, getDocs, orderBy, Timestamp, limit } from '@/src/firebase';
 import { TransactionSummary } from '@/src/data';
 import VirtualCard from '@/src/components/VirtualCard';
 import { ActiveModal } from '@/src/MainApp';

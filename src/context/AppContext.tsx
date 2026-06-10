@@ -1,8 +1,22 @@
 
 import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
-import { auth, db, authenticate } from '@/src/firebase';
-import { User, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut as firebaseSignOut } from 'firebase/auth';
-import { doc, setDoc, updateDoc, onSnapshot, collection, writeBatch, Timestamp } from 'firebase/firestore';
+import { 
+  auth, 
+  db, 
+  authenticate,
+  onAuthStateChanged, 
+  createUserWithEmailAndPassword, 
+  signInWithEmailAndPassword, 
+  signOut as firebaseSignOut,
+  doc, 
+  setDoc, 
+  updateDoc, 
+  onSnapshot, 
+  collection, 
+  writeBatch, 
+  Timestamp
+} from '@/src/firebase';
+import type { User } from 'firebase/auth';
 import { LedgerService, TransactionType } from '@/src/services/ledger';
 
 // --- TYPES ---

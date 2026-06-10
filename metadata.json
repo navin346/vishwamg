@@ -3,5 +3,6 @@
   "description": "A financial super-app for global payments, built as a Progressive Web App.",
   "requestFramePermissions": [
     "camera"
-  ]
+  ],
+  "majorCapabilities": []
 }

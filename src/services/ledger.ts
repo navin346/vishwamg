@@ -1,6 +1,5 @@
 
-import { db } from '@/src/firebase';
-import { doc, runTransaction, collection, Timestamp } from 'firebase/firestore';
+import { db, doc, runTransaction, collection, Timestamp } from '@/src/firebase';
 
 export enum TransactionType {
     DEPOSIT = 'DEPOSIT',

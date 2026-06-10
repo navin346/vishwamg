@@ -2,73 +2,57 @@ import React, { useState } from 'react';
 import { useAppContext } from '@/src/context/AppContext';
 import { FirebaseError } from 'firebase/app';
 import { triggerHaptic } from '@/src/utils/haptics';
-import { Smartphone, Mail, ArrowRight, Lock } from 'lucide-react';
+import { Smartphone, Mail, ArrowRight, Lock, Sparkles } from 'lucide-react';
 
 const LoginScreen: React.FC = () => {
   const { signUp, signIn } = useAppContext();
-  const [authMethod, setAuthMethod] = useState<'email' | 'mobile'>('mobile');
+  const [authMethod, setAuthMethod] = useState<'mobile' | 'email'>('mobile');
   const [isSignUp, setIsSignUp] = useState(false);
   
-  // Form States
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [mobile, setMobile] = useState('');
-  const [otp, setOtp] = useState('');
-  const [showOtpInput, setShowOtpInput] = useState(false);
+  // Form States pre-filled with high-fidelity Demo defaults
+  const [email, setEmail] = useState('demo@vishwam.io');
+  const [password, setPassword] = useState('password123');
+  const [mobile, setMobile] = useState('9876543210');
   
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const handleSendOtp = () => {
-      if (mobile.length < 10) {
-          setError("Please enter a valid mobile number");
-          return;
-      }
-      setLoading(true);
-      triggerHaptic('medium');
-      // Simulate API call
-      setTimeout(() => {
-          setLoading(false);
-          setShowOtpInput(true);
-          setError(null);
-      }, 1500);
-  };
-
-  const handleVerifyOtp = async () => {
-      if (otp === '12345') {
-          setLoading(true);
-          triggerHaptic('success');
-          const dummyEmail = `${mobile}@vishwam.demo`;
-          const dummyPass = "password123"; 
-          try {
-            await signIn(dummyEmail, dummyPass);
-          } catch (e) {
-             await signUp(dummyEmail, dummyPass);
-          }
-      } else {
-          triggerHaptic('error');
-          setError("Invalid OTP. Use 12345");
-      }
-  }
-
-  const handleEmailSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleOneClickLogin = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     setError(null);
     setLoading(true);
     triggerHaptic('medium');
+
+    const targetMobile = mobile.trim();
+    if (authMethod === 'mobile' && targetMobile.length < 10) {
+      setError("Please enter a valid mobile number");
+      setLoading(false);
+      return;
+    }
+
+    const dummyEmail = authMethod === 'mobile' 
+      ? `${targetMobile}@vishwam.demo` 
+      : email.trim();
+    const dummyPass = authMethod === 'mobile' 
+      ? "password123" 
+      : password;
+
     try {
-      if (isSignUp) {
-        await signUp(email, password);
-      } else {
-        await signIn(email, password);
-      }
+      // 1. Try to sign in the user
+      await signIn(dummyEmail, dummyPass);
       triggerHaptic('success');
-    } catch (err) {
-      triggerHaptic('error');
-      if (err instanceof FirebaseError) {
-        setError(err.message.replace('Firebase: ', ''));
-      } else {
-        setError("An unexpected error occurred.");
+    } catch (err: any) {
+      // 2. If the user does not exist in localstorage/Firebase, sign them up automatically!
+      try {
+        await signUp(dummyEmail, dummyPass);
+        triggerHaptic('success');
+      } catch (signUpErr) {
+        triggerHaptic('error');
+        if (signUpErr instanceof FirebaseError) {
+          setError(signUpErr.message.replace('Firebase: ', ''));
+        } else {
+          setError("An unexpected error occurred during demo account initialization.");
+        }
       }
     } finally {
       setLoading(false);
@@ -88,17 +72,24 @@ const LoginScreen: React.FC = () => {
              </div>
             <h1 className="text-4xl font-bold text-white mb-2 tracking-tight">Welcome</h1>
             <p className="text-neutral-400 font-medium">Sign in to your financial hub.</p>
+            
+            {/* Elegant Demo Mode Pill Badge */}
+            <div className="inline-flex items-center gap-1 mt-4 px-3 py-1 rounded-full text-[10px] font-bold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 uppercase tracking-widest">
+               <Sparkles size={10} className="text-indigo-400 animate-pulse" /> One-Click Demo Mode Active
+            </div>
         </div>
 
         {/* Toggle Auth Method */}
         <div className="flex bg-neutral-900 p-1.5 rounded-xl mb-8 border border-neutral-800">
             <button 
-                onClick={() => { setAuthMethod('mobile'); setError(null); setShowOtpInput(false); triggerHaptic('light'); }}
+                type="button"
+                onClick={() => { setAuthMethod('mobile'); setError(null); triggerHaptic('light'); }}
                 className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-lg text-sm font-bold transition-all ${authMethod === 'mobile' ? 'bg-white text-black shadow-lg' : 'text-neutral-500 hover:text-neutral-300'}`}
             >
                 <Smartphone size={18} /> Mobile
             </button>
             <button 
+                type="button"
                 onClick={() => { setAuthMethod('email'); setError(null); triggerHaptic('light'); }}
                 className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-lg text-sm font-bold transition-all ${authMethod === 'email' ? 'bg-white text-black shadow-lg' : 'text-neutral-500 hover:text-neutral-300'}`}
             >
@@ -108,58 +99,39 @@ const LoginScreen: React.FC = () => {
         
         {authMethod === 'mobile' ? (
             <div className="space-y-4">
-                {!showOtpInput ? (
-                    <div className="space-y-4">
-                        <div className="relative group">
-                            <span className="absolute left-4 top-4 text-neutral-400 border-r border-neutral-700 pr-3 pointer-events-none">+91</span>
-                            <input
-                                type="tel"
-                                value={mobile}
-                                onChange={(e) => setMobile(e.target.value)}
-                                placeholder="98765 43210"
-                                className="w-full pl-16 pr-4 py-4 bg-neutral-900 border border-neutral-800 rounded-2xl focus:outline-none focus:border-white/50 text-white placeholder-neutral-600 font-mono text-lg transition-all"
-                            />
-                        </div>
-                         <button
-                            onClick={handleSendOtp}
-                            disabled={loading}
-                            className="w-full bg-white hover:bg-gray-200 text-black font-bold py-4 rounded-2xl transition-transform transform active:scale-95 flex items-center justify-center gap-2 text-lg"
-                        >
-                            {loading ? <span className="animate-spin h-5 w-5 border-2 border-black border-t-transparent rounded-full"/> : <>Get OTP <ArrowRight size={20}/></>}
-                        </button>
-                    </div>
-                ) : (
-                    <div className="space-y-5 animate-in slide-in-from-right">
-                        <div className="text-center">
-                             <p className="text-neutral-400 text-sm">Code sent to <span className="text-white font-mono">+91 {mobile}</span></p>
-                        </div>
-                        <input
-                            type="text"
-                            value={otp}
-                            onChange={(e) => setOtp(e.target.value)}
-                            placeholder="• • • • •"
-                            maxLength={5}
-                            className="w-full text-center py-4 bg-neutral-900 border border-neutral-800 rounded-2xl focus:outline-none focus:border-indigo-500 text-white tracking-[1.5em] font-mono text-2xl"
-                        />
-                        <button
-                            onClick={handleVerifyOtp}
-                            disabled={loading}
-                            className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 rounded-2xl transition-transform transform active:scale-95 flex items-center justify-center gap-2 shadow-lg shadow-indigo-500/20 text-lg"
-                        >
-                             {loading ? <span className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full"/> : "Verify & Login"}
-                        </button>
-                         <button onClick={() => setShowOtpInput(false)} className="w-full text-xs text-neutral-500 hover:text-white uppercase tracking-wider font-bold mt-2">Change Number</button>
-                    </div>
-                )}
+                <div className="relative group">
+                    <span className="absolute left-4 top-4 text-neutral-400 border-r border-neutral-700 pr-3 pointer-events-none">+91</span>
+                    <input
+                        type="tel"
+                        value={mobile}
+                        onChange={(e) => setMobile(e.target.value)}
+                        placeholder="98765 43210"
+                        className="w-full pl-16 pr-4 py-4 bg-neutral-900 border border-neutral-800 rounded-2xl focus:outline-none focus:border-white/50 text-white placeholder-neutral-600 font-mono text-lg transition-all"
+                    />
+                </div>
+                 <button
+                    onClick={() => handleOneClickLogin()}
+                    disabled={loading}
+                    className="w-full bg-white hover:bg-gray-200 text-black font-bold py-4 rounded-2xl transition-transform transform active:scale-95 flex items-center justify-center gap-2 text-lg shadow-lg shadow-white/5"
+                >
+                    {loading ? (
+                        <span className="animate-spin h-5 w-5 border-2 border-black border-t-transparent rounded-full"/>
+                    ) : (
+                        <>Instant Sign-In <ArrowRight size={20}/></>
+                    )}
+                </button>
+                <p className="text-center text-xs text-neutral-500 mt-2">
+                    Enter any phone number or use default to log in instantly.
+                </p>
             </div>
         ) : (
-            <form onSubmit={handleEmailSubmit} className="space-y-4">
+            <form onSubmit={handleOneClickLogin} className="space-y-4">
                 <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Email Address"
-                    className="w-full px-5 py-4 bg-neutral-900 border border-neutral-800 rounded-2xl focus:outline-none focus:border-white/50 text-white placeholder-neutral-600 transition-all"
+                    className="w-full px-5 py-4 bg-neutral-900 border border-neutral-800 rounded-2xl focus:outline-none focus:border-white/50 text-white placeholder-neutral-600 transition-all font-sans"
                     required
                 />
                 <input
@@ -167,7 +139,7 @@ const LoginScreen: React.FC = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Password"
-                    className="w-full px-5 py-4 bg-neutral-900 border border-neutral-800 rounded-2xl focus:outline-none focus:border-white/50 text-white placeholder-neutral-600 transition-all"
+                    className="w-full px-5 py-4 bg-neutral-900 border border-neutral-800 rounded-2xl focus:outline-none focus:border-white/50 text-white placeholder-neutral-600 transition-all font-sans"
                     required
                 />
                 <button
@@ -175,7 +147,11 @@ const LoginScreen: React.FC = () => {
                     disabled={loading}
                     className="w-full bg-white hover:bg-gray-200 text-black font-bold py-4 rounded-2xl transition-transform transform active:scale-95 flex items-center justify-center gap-2 text-lg"
                 >
-                     {loading ? "Processing..." : (isSignUp ? "Create Account" : "Sign In")}
+                     {loading ? (
+                         <span className="animate-spin h-5 w-5 border-2 border-black border-t-transparent rounded-full"/>
+                     ) : (
+                         isSignUp ? "Instant Sign-Up" : "Instant Sign-In"
+                     )}
                 </button>
                 <p className="text-center text-sm text-neutral-500 mt-6">
                     {isSignUp ? "Existing user?" : "New here?"}
