@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { useAppContext } from '@/src/context/AppContext';
 import { FirebaseError } from 'firebase/app';
 import { triggerHaptic } from '@/src/utils/haptics';
-import { ArrowRight, Lock, Sparkles, Shield, Compass, Landmark } from 'lucide-react';
+import { ArrowRight, Lock, Sparkles, Shield, Compass } from 'lucide-react';
+import BackgroundMesh from '@/src/components/BackgroundMesh';
 
 const LoginScreen: React.FC = () => {
   const { signUp, signIn } = useAppContext();
@@ -27,8 +28,7 @@ const LoginScreen: React.FC = () => {
       try {
         await signUp(dummyEmail, dummyPass);
         triggerHaptic('success');
-      } catch (signUpErr) {
-        triggerHaptic('error');
+      } catch (signUpErr: any) {
         if (signUpErr instanceof FirebaseError) {
           setError(signUpErr.message.replace('Firebase: ', ''));
         } else {
@@ -41,11 +41,9 @@ const LoginScreen: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-between p-6 relative bg-black select-none">
+    <div className="h-full w-full flex flex-col items-center justify-between p-6 relative select-none overflow-y-auto scrollbar-hide">
+      <BackgroundMesh />
       
-      {/* Aesthetic glowing background orb */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
-
       {/* Top spacing */}
       <div className="h-4" />
 
@@ -53,45 +51,45 @@ const LoginScreen: React.FC = () => {
       <div className="w-full max-w-sm relative z-10 flex flex-col items-center">
         
         {/* Animated App Icon Module */}
-        <div className="relative mb-8 group">
-          <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-violet-600 via-indigo-500 to-pink-500 opacity-30 blur group-hover:opacity-55 transition duration-1000 group-hover:duration-200 animate-pulse"></div>
-          <div className="relative w-24 h-24 bg-neutral-900 rounded-3xl flex items-center justify-center border border-neutral-800">
-             <span className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-tr from-white to-neutral-400 tracking-tighter">V</span>
+        <div className="relative mb-6 group">
+          <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-violet-500 via-indigo-500 to-sky-500 opacity-40 blur group-hover:opacity-70 transition duration-1000 group-hover:duration-200 animate-pulse"></div>
+          <div className="relative w-20 h-20 bg-white rounded-3xl flex items-center justify-center border border-gray-100 shadow-md">
+             <span className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-tr from-violet-600 to-indigo-600 tracking-tighter">V</span>
           </div>
         </div>
 
         {/* Title and App Brand */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-extrabold text-white mb-2 tracking-tight">Vishwam</h1>
-          <p className="text-neutral-400 font-medium text-sm px-6">
+        <div className="text-center mb-6">
+          <h1 className="text-4xl font-extrabold text-gray-900 mb-2 tracking-tight bg-clip-text bg-gradient-to-tr from-gray-950 via-indigo-950 to-gray-950">Vishwam</h1>
+          <p className="text-gray-500 font-medium text-sm px-6">
             A secure financial super-app for global ledger bookkeeping and instant payments.
           </p>
           
           {/* Active Demo Mode Pill */}
-          <div className="inline-flex items-center gap-1.5 mt-4 px-3 py-1 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/15 uppercase tracking-widest">
-             <Sparkles size={10} className="text-emerald-400 animate-pulse" /> Sandbox Mode Active
+          <div className="inline-flex items-center gap-1.5 mt-3.5 px-3 py-1 rounded-full text-[10px] font-bold bg-violet-100 text-violet-700 border border-violet-200 uppercase tracking-widest">
+             <Sparkles size={10} className="text-violet-600 animate-pulse" /> Sandbox Mode Active
           </div>
         </div>
 
         {/* Info Card / Feature Highlights */}
-        <div className="w-full bg-neutral-900/60 backdrop-blur-md border border-neutral-800/80 rounded-2xl p-5 mb-8 space-y-4">
+        <div className="w-full bg-white/70 backdrop-blur-md border border-gray-100/80 rounded-2xl p-5 mb-6 space-y-4 shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-indigo-500/10 border border-indigo-500/10 text-indigo-400">
+            <div className="p-2 rounded-xl bg-indigo-50 text-indigo-600 border border-indigo-100">
               <Compass size={18} />
             </div>
             <div>
-              <h4 className="text-xs font-bold text-white uppercase tracking-wider">Multi-Currency Rails</h4>
-              <p className="text-[11px] text-neutral-400">Supports virtual cards and international settlements.</p>
+              <h4 className="text-xs font-bold text-gray-850 uppercase tracking-wider">Multi-Currency Rails</h4>
+              <p className="text-[11px] text-gray-500 font-medium">Supports virtual cards and international settlements.</p>
             </div>
           </div>
 
-          <div className="flex items-center gap-3 border-t border-neutral-800/50 pt-4">
-            <div className="p-2 rounded-xl bg-pink-500/10 border border-pink-500/10 text-pink-400">
+          <div className="flex items-center gap-3 border-t border-gray-100 pt-4">
+            <div className="p-2 rounded-xl bg-pink-50 text-pink-600 border border-pink-100">
               <Shield size={18} />
             </div>
             <div>
-              <h4 className="text-xs font-bold text-white uppercase tracking-wider">Biometric & Haptic Vault</h4>
-              <p className="text-[11px] text-neutral-400">Pristine client experience with rich feedback.</p>
+              <h4 className="text-xs font-bold text-gray-850 uppercase tracking-wider">Biometric & Haptic Vault</h4>
+              <p className="text-[11px] text-gray-500 font-medium">Pristine client experience with rich feedback.</p>
             </div>
           </div>
         </div>
@@ -101,25 +99,25 @@ const LoginScreen: React.FC = () => {
           <button
               onClick={handleInstantSignIn}
               disabled={loading}
-              className="relative w-full overflow-hidden group bg-white hover:bg-neutral-100 disabled:bg-neutral-800 disabled:text-neutral-500 text-black font-extrabold py-4.5 rounded-2xl transition-transform transform active:scale-98 flex items-center justify-center gap-2 text-lg shadow-xl shadow-white/5 cursor-pointer"
+              className="relative w-full overflow-hidden group bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-500 hover:to-indigo-500 disabled:from-gray-300 disabled:to-gray-400 text-white font-extrabold py-4 rounded-2xl transition-all transform active:scale-98 flex items-center justify-center gap-2 text-md shadow-lg shadow-violet-600/10 cursor-pointer"
           >
               {loading ? (
-                  <span className="animate-spin h-5 w-5 border-2 border-black border-t-transparent rounded-full" />
+                  <span className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full" />
               ) : (
                   <>
                     <span>Launch Super-App Applet</span>
-                    <ArrowRight size={20} className="transition-transform group-hover:translate-x-1" />
+                    <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
                   </>
               )}
           </button>
           
-          <p className="text-center text-[10px] text-neutral-500 font-semibold tracking-wider uppercase">
+          <p className="text-center text-[10px] text-gray-400 font-bold tracking-wider uppercase">
             No registration, phone, or OTP required to explore.
           </p>
         </div>
 
         {error && (
-          <div className="w-full mt-4 p-3.5 bg-red-500/10 border border-red-500/25 rounded-xl text-red-400 text-xs text-center font-semibold">
+          <div className="w-full mt-4 p-3.5 bg-red-50 border border-red-100 rounded-xl text-red-650 text-xs text-center font-bold">
             {error}
           </div>
         )}
@@ -127,9 +125,9 @@ const LoginScreen: React.FC = () => {
       </div>
 
       {/* Premium footer stamp */}
-      <div className="flex items-center gap-2 opacity-30 mt-8">
-        <Lock size={12} className="text-white" />
-        <p className="text-[9px] text-white uppercase tracking-widest font-semibold">Secure Demo Environment</p>
+      <div className="flex items-center gap-2 opacity-50 mt-6">
+        <Lock size={12} className="text-gray-400" />
+        <p className="text-[9px] text-gray-500 uppercase tracking-widest font-bold">Secure Demo Environment</p>
       </div>
     </div>
   );

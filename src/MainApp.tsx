@@ -141,7 +141,7 @@ const MainApp: React.FC<MainAppProps> = ({ onLogout }) => {
   }
 
   return (
-    <div className="relative mx-auto flex h-[100dvh] max-w-md flex-col bg-transparent shadow-2xl overflow-hidden font-sans border-x border-gray-200/50">
+    <div className="relative flex flex-col h-full w-full bg-transparent overflow-hidden font-sans">
       <Header onLogout={onLogout} />
       
       {/* Scrollable content area - pb-32 to account for the new taller bottom nav + floating button */}

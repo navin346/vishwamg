@@ -2,7 +2,7 @@ import React from 'react';
 
 const BackgroundMesh: React.FC = () => {
   return (
-    <div className="fixed inset-0 z-[-1] overflow-hidden pointer-events-none bg-[#FDFDFD]">
+    <div className="absolute inset-0 z-[-1] overflow-hidden pointer-events-none bg-gradient-to-tr from-violet-50/50 via-white to-sky-50/50">
       <style>
         {`
           @keyframes float-gentle {
